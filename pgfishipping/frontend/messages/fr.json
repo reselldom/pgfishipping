@@ -8,7 +8,9 @@
     "submit": "Soumettre",
     "continue": "Continuer",
     "back": "Retour",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "next": "Suivant",
+    "previous": "Précédent"
   },
   "nav": {
     "home": "Accueil",
@@ -16,6 +18,9 @@
     "calculator": "Calculateur",
     "addresses": "Adresses US",
     "support": "Support",
+    "about": "À propos",
+    "terms": "Conditions",
+    "privacy": "Confidentialité",
     "login": "Connexion",
     "register": "S'inscrire",
     "dashboard": "Tableau de bord"
@@ -40,7 +45,136 @@
         "title": "Suivi en temps réel",
         "desc": "Suivez chaque étape de l'entrepôt US au point de retrait en Haïti."
       }
+    },
+    "steps": {
+      "title": "Comment ça marche",
+      "s1": { "title": "Inscrivez-vous", "desc": "Créez un compte gratuit et recevez votre adresse US." },
+      "s2": { "title": "Achetez", "desc": "Utilisez votre adresse US sur n'importe quel site américain." },
+      "s3": { "title": "Nous recevons", "desc": "Nous récupérons, pesons et préparons vos colis à Miami." },
+      "s4": { "title": "Récupérez en Haïti", "desc": "Récupérez à Port-au-Prince, Cap-Haïtien ou Les Cayes." }
+    },
+    "cta": {
+      "title": "Prêt à expédier intelligemment ?",
+      "subtitle": "Inscrivez-vous en 60 secondes et recevez vos colis US en Haïti.",
+      "button": "Commencer — c'est gratuit"
     }
+  },
+  "track": {
+    "title": "Suivez votre colis",
+    "subtitle": "Entrez votre code de suivi (PG-XXXXXX) ou le numéro du transporteur.",
+    "placeholder": "PG-123456 ou 1Z…",
+    "search": "Suivre",
+    "notFound": "Code de suivi introuvable.",
+    "invalid": "Veuillez entrer un code.",
+    "step1": "Pré-alerte",
+    "step2": "Reçu aux US",
+    "step3": "En transit",
+    "step4": "Disponible en Haïti",
+    "delivered": "Livré",
+    "summary": "Résumé",
+    "events": "Événements",
+    "service": "Service",
+    "weight": "Poids (lbs)",
+    "destination": "Destination",
+    "createdAt": "Pré-alerté",
+    "deliveredAt": "Livré",
+    "carrier": "Transporteur",
+    "carrierTracking": "Suivi transporteur"
+  },
+  "calculator": {
+    "title": "Calculateur d'expédition",
+    "subtitle": "Estimez le coût d'expédition des US vers Haïti.",
+    "step1": "Service",
+    "step2": "Colis",
+    "step3": "Valeur",
+    "step4": "Estimation",
+    "service": {
+      "AIR": "Air (4–7 jours)",
+      "SEA": "Mer (3–4 semaines)",
+      "EXPRESS": "Express (1–3 jours)"
+    },
+    "weight": "Poids (lb)",
+    "length": "Longueur (po)",
+    "width": "Largeur (po)",
+    "height": "Hauteur (po)",
+    "dimsHelp": "Les dimensions sont facultatives ; utilisées pour l'aérien afin de calculer le poids volumétrique.",
+    "fobValue": "Valeur déclarée (optionnel)",
+    "fobCurrency": "Devise",
+    "contentType": "Type de contenu",
+    "package": "Colis",
+    "document": "Document",
+    "estimate": "Estimer",
+    "billable": "Poids facturable",
+    "subtotal": "Sous-total",
+    "tax": "Taxe",
+    "total": "Total",
+    "totalHtg": "Total (HTG)",
+    "rate": "Taux de change",
+    "newQuote": "Nouveau devis",
+    "errors": {
+      "weight": "Entrez un poids > 0"
+    }
+  },
+  "addresses": {
+    "title": "Votre adresse US gratuite",
+    "subtitle": "Utilisez cette adresse comme adresse de livraison sur n'importe quelle boutique US.",
+    "format": "Format de l'adresse",
+    "fmtName": "Votre nom",
+    "fmtCode": "Votre code client (attribué à l'inscription)",
+    "fmtLine1": "Adresse de l'entrepôt",
+    "fmtLine2": "Ville, État ZIP",
+    "fmtCountry": "États-Unis",
+    "warehouses": "Nos entrepôts",
+    "miami": "Miami, FL",
+    "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
+    "tip": "N'oubliez pas d'inclure votre code client (ex. ARI-001234) dans l'adresse — c'est comme ça que nous associons votre colis à votre compte.",
+    "ctaSignup": "Inscrivez-vous pour obtenir votre code"
+  },
+  "about": {
+    "title": "À propos de PGFI Shipping",
+    "intro": "PGFI Shipping aide la communauté haïtienne aux US et ailleurs à recevoir des colis en Haïti, avec des prix transparents et un suivi en temps réel.",
+    "missionTitle": "Notre mission",
+    "mission": "Rendre l'expédition transfrontalière abordable, prévisible et respectueuse du temps de nos clients.",
+    "valuesTitle": "Nos valeurs",
+    "v1": "Transparence sur les prix et les délais.",
+    "v2": "Soin de chaque colis, à chaque fois.",
+    "v3": "Un service qui parle votre langue."
+  },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "updated": "Mis à jour : avril 2026",
+    "p1": "En utilisant PGFI Shipping, vous acceptez ces conditions. Nous offrons un service de réexpédition de colis depuis nos entrepôts US vers nos succursales en Haïti.",
+    "h1": "1. Compte",
+    "p2": "Vous êtes responsable de l'exactitude des informations fournies et de la sécurité de votre mot de passe.",
+    "h2": "2. Articles interdits",
+    "p3": "Les matières dangereuses, armes, drogues et autres articles interdits par la loi ne peuvent pas être expédiés.",
+    "h3": "3. Tarification",
+    "p4": "Les prix sont calculés en fonction du poids (ou poids volumétrique, selon le plus élevé) et du type de service. Des taxes et frais peuvent s'appliquer.",
+    "h4": "4. Responsabilité",
+    "p5": "Notre responsabilité est limitée à la valeur déclarée du colis, jusqu'au maximum permis par la loi."
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "updated": "Mis à jour : avril 2026",
+    "p1": "Nous ne collectons que les données nécessaires : informations de contact, adresses, historique d'expédition.",
+    "h1": "Données collectées",
+    "p2": "Données du compte (nom, email, téléphone), données d'expédition (suivi, poids, déclaration de contenu) et métadonnées de paiement (nous ne stockons jamais les numéros de carte complets).",
+    "h2": "Utilisation des données",
+    "p3": "Pour fournir le service, communiquer sur vos colis et améliorer nos opérations.",
+    "h3": "Vos droits",
+    "p4": "Vous pouvez exporter ou supprimer vos données depuis le tableau de bord ou en contactant le support."
+  },
+  "support": {
+    "title": "Contacter le support",
+    "subtitle": "Nous répondons généralement sous un jour ouvré.",
+    "name": "Votre nom",
+    "email": "Email",
+    "subject": "Sujet",
+    "message": "Message",
+    "send": "Envoyer le message",
+    "sent": "Merci — votre message a été envoyé.",
+    "fallback": "Ou écrivez-nous directement :",
+    "phone": "Téléphone"
   },
   "auth": {
     "loginTitle": "Bon retour",

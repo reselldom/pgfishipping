@@ -8,7 +8,9 @@
     "submit": "Voye",
     "continue": "Kontinye",
     "back": "Retounen",
-    "logout": "Dekoneksyon"
+    "logout": "Dekoneksyon",
+    "next": "Pwochen",
+    "previous": "Anvan"
   },
   "nav": {
     "home": "Akèy",
@@ -16,6 +18,9 @@
     "calculator": "Kalkilatè",
     "addresses": "Adrès US",
     "support": "Sipò",
+    "about": "Konsènan",
+    "terms": "Kondisyon",
+    "privacy": "Konfidansyalite",
     "login": "Konekte",
     "register": "Enskri",
     "dashboard": "Tablodbò"
@@ -40,7 +45,136 @@
         "title": "Swiv an tan reyèl",
         "desc": "Swiv chak etap soti depo US la rive nan biwo Ayiti a."
       }
+    },
+    "steps": {
+      "title": "Kijan li mache",
+      "s1": { "title": "Enskri", "desc": "Kreye yon kont gratis epi resevwa adrès US ou." },
+      "s2": { "title": "Achte", "desc": "Itilize adrès US ou kòm adrès livrezon sou nenpòt magazen Ameriken." },
+      "s3": { "title": "Nou resevwa", "desc": "Nou kolekte, peze epi prepare pakè ou yo nan Miami." },
+      "s4": { "title": "Pran ann Ayiti", "desc": "Pran nan biwo Pòtoprens, Okap oswa Okay." }
+    },
+    "cta": {
+      "title": "Ou prè pou voye pi entelijan?",
+      "subtitle": "Enskri nan 60 segond epi kòmanse resevwa pakè US ou yo ann Ayiti.",
+      "button": "Kòmanse — li gratis"
     }
+  },
+  "track": {
+    "title": "Swiv pakè ou",
+    "subtitle": "Antre kòd swivi w (PG-XXXXXX) oswa nimewo transpòtè a.",
+    "placeholder": "PG-123456 oswa 1Z…",
+    "search": "Swiv",
+    "notFound": "Kòd swivi pa jwenn.",
+    "invalid": "Tanpri antre yon kòd.",
+    "step1": "Pre-alèt",
+    "step2": "Resevwa nan US",
+    "step3": "Nan vwayaj",
+    "step4": "Disponib ann Ayiti",
+    "delivered": "Livre",
+    "summary": "Rezime",
+    "events": "Evènman",
+    "service": "Sèvis",
+    "weight": "Pwa (lbs)",
+    "destination": "Destinasyon",
+    "createdAt": "Pre-alète",
+    "deliveredAt": "Livre",
+    "carrier": "Transpòtè",
+    "carrierTracking": "Swivi transpòtè"
+  },
+  "calculator": {
+    "title": "Kalkilatè voyaj",
+    "subtitle": "Estime pri voyaj la soti US vin Ayiti.",
+    "step1": "Sèvis",
+    "step2": "Pakè",
+    "step3": "Valè",
+    "step4": "Estimasyon",
+    "service": {
+      "AIR": "Avyon (4–7 jou)",
+      "SEA": "Lanmè (3–4 semèn)",
+      "EXPRESS": "Express (1–3 jou)"
+    },
+    "weight": "Pwa (lb)",
+    "length": "Longè (po)",
+    "width": "Lajè (po)",
+    "height": "Wotè (po)",
+    "dimsHelp": "Dimansyon yo opsyonèl ; itilize pou avyon pou kalkile pwa volimetrik la.",
+    "fobValue": "Valè deklare (opsyonèl)",
+    "fobCurrency": "Lajan",
+    "contentType": "Tip kontni",
+    "package": "Pakè",
+    "document": "Dokiman",
+    "estimate": "Estime",
+    "billable": "Pwa fakirab",
+    "subtotal": "Sou-total",
+    "tax": "Taks",
+    "total": "Total",
+    "totalHtg": "Total (HTG)",
+    "rate": "Pousantaj echanj",
+    "newQuote": "Nouvo devi",
+    "errors": {
+      "weight": "Antre yon pwa pi gran pase 0"
+    }
+  },
+  "addresses": {
+    "title": "Adrès US gratis ou",
+    "subtitle": "Itilize adrès sa kòm adrès livrezon sou nenpòt magazen US sou entènèt.",
+    "format": "Fòma adrès la",
+    "fmtName": "Non w",
+    "fmtCode": "Kòd kliyan w (ba ou nan enskripsyon)",
+    "fmtLine1": "Adrès depo a",
+    "fmtLine2": "Vil, Eta ZIP",
+    "fmtCountry": "Etazini",
+    "warehouses": "Depo nou yo",
+    "miami": "Miami, FL",
+    "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
+    "tip": "Pa bliye mete kòd kliyan w (egzanp ARI-001234) nan adrès la — se konsa nou voye pakè w la nan kont ou.",
+    "ctaSignup": "Enskri pou jwenn kòd ou"
+  },
+  "about": {
+    "title": "Konsènan PGFI Shipping",
+    "intro": "PGFI Shipping ede kominote ayisyen ann Etazini ak lòt kote yo resevwa pakè ann Ayiti, ak pri klè ak swivi an tan reyèl.",
+    "missionTitle": "Misyon nou",
+    "mission": "Fè voyaj transfrontalye a abòdab, previzib epi respekte tan kliyan nou yo.",
+    "valuesTitle": "Valè nou yo",
+    "v1": "Transparans sou pri ak delè.",
+    "v2": "Atansyon pou chak pakè, chak fwa.",
+    "v3": "Yon sèvis ki pale lang ou."
+  },
+  "terms": {
+    "title": "Kondisyon Sèvis",
+    "updated": "Dènye mizajou: Avril 2026",
+    "p1": "Lè ou itilize PGFI Shipping, ou aksepte kondisyon sa yo. Nou bay sèvis voyaj pakè soti depo US nou yo rive nan biwo livrezon nou yo ann Ayiti.",
+    "h1": "1. Kont",
+    "p2": "Ou responsab pou egzaktitid enfòmasyon ou bay yo ak sekirite modpas ou.",
+    "h2": "2. Atik entèdi",
+    "p3": "Materyèl danjere, zam, dwòg ak lòt atik lalwa entèdi pa ka voye.",
+    "h3": "3. Pri",
+    "p4": "Pri yo kalkile baze sou pwa (oswa pwa volimetrik, sa ki pi wo) ak tip sèvis la. Taks ak frè ka aplike.",
+    "h4": "4. Responsablite",
+    "p5": "Responsablite nou limite ak valè deklare pakè a, jiska maksimòm lalwa pèmèt."
+  },
+  "privacy": {
+    "title": "Politik Konfidansyalite",
+    "updated": "Dènye mizajou: Avril 2026",
+    "p1": "Nou kolekte sèlman done nou bezwen pou opere sèvis la: enfòmasyon kontak, adrès ak istwa voyaj.",
+    "h1": "Done nou kolekte",
+    "p2": "Done kont (non, imèl, telefòn), done voyaj (swivi, pwa, deklarasyon kontni) ak metadone peman (nou pa janm estoke nimewo kat antye).",
+    "h2": "Kijan nou itilize done w yo",
+    "p3": "Pou bay sèvis la, kominike sou pakè w yo epi amelyore operasyon nou yo.",
+    "h3": "Dwa w yo",
+    "p4": "Ou ka ekspòte oswa efase done w yo nan tablodbò a oswa kontakte sipò."
+  },
+  "support": {
+    "title": "Kontakte sipò",
+    "subtitle": "Nou tipikman reponn nan yon jou ouvrab.",
+    "name": "Non w",
+    "email": "Imèl",
+    "subject": "Sijè",
+    "message": "Mesaj",
+    "send": "Voye mesaj",
+    "sent": "Mèsi — mesaj ou voye.",
+    "fallback": "Oswa voye nou imèl dirèkteman:",
+    "phone": "Telefòn"
   },
   "auth": {
     "loginTitle": "Byenveni ankò",

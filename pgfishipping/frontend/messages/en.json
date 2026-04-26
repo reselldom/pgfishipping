@@ -8,7 +8,9 @@
     "submit": "Submit",
     "continue": "Continue",
     "back": "Back",
-    "logout": "Log out"
+    "logout": "Log out",
+    "next": "Next",
+    "previous": "Previous"
   },
   "nav": {
     "home": "Home",
@@ -16,6 +18,9 @@
     "calculator": "Calculator",
     "addresses": "US Addresses",
     "support": "Support",
+    "about": "About",
+    "terms": "Terms",
+    "privacy": "Privacy",
     "login": "Log in",
     "register": "Sign up",
     "dashboard": "Dashboard"
@@ -40,7 +45,136 @@
         "title": "Real-time Tracking",
         "desc": "Follow every step from US warehouse to Haiti pickup."
       }
+    },
+    "steps": {
+      "title": "How it works",
+      "s1": { "title": "Sign up", "desc": "Create a free account and receive your US address." },
+      "s2": { "title": "Shop", "desc": "Use your US address as the shipping address on any US store." },
+      "s3": { "title": "We receive", "desc": "We collect, weigh and prepare your packages in Miami." },
+      "s4": { "title": "Pick up in Haiti", "desc": "Pick up at our branches in Port-au-Prince, Cap-Haïtien or Les Cayes." }
+    },
+    "cta": {
+      "title": "Ready to ship smarter?",
+      "subtitle": "Sign up in 60 seconds and start receiving US packages in Haiti.",
+      "button": "Get started — it's free"
     }
+  },
+  "track": {
+    "title": "Track your package",
+    "subtitle": "Enter your tracking code (PG-XXXXXX) or carrier number.",
+    "placeholder": "PG-123456 or 1Z…",
+    "search": "Track",
+    "notFound": "Tracking code not found.",
+    "invalid": "Please enter a tracking code.",
+    "step1": "Pre-alert",
+    "step2": "Received in US",
+    "step3": "In transit",
+    "step4": "Available in Haiti",
+    "delivered": "Delivered",
+    "summary": "Summary",
+    "events": "Events",
+    "service": "Service",
+    "weight": "Weight (lbs)",
+    "destination": "Destination",
+    "createdAt": "Pre-alerted",
+    "deliveredAt": "Delivered",
+    "carrier": "Carrier",
+    "carrierTracking": "Carrier tracking"
+  },
+  "calculator": {
+    "title": "Shipping calculator",
+    "subtitle": "Estimate the cost to ship from the US to Haiti.",
+    "step1": "Service",
+    "step2": "Package",
+    "step3": "Value",
+    "step4": "Estimate",
+    "service": {
+      "AIR": "Air (4–7 days)",
+      "SEA": "Sea (3–4 weeks)",
+      "EXPRESS": "Express (1–3 days)"
+    },
+    "weight": "Weight (lb)",
+    "length": "Length (in)",
+    "width": "Width (in)",
+    "height": "Height (in)",
+    "dimsHelp": "Dimensions are optional but used for air shipments to compute dimensional weight.",
+    "fobValue": "Declared value (optional)",
+    "fobCurrency": "Currency",
+    "contentType": "Content type",
+    "package": "Package",
+    "document": "Document",
+    "estimate": "Estimate",
+    "billable": "Billable weight",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "total": "Total",
+    "totalHtg": "Total (HTG)",
+    "rate": "Exchange rate",
+    "newQuote": "New quote",
+    "errors": {
+      "weight": "Enter a weight greater than 0"
+    }
+  },
+  "addresses": {
+    "title": "Your free US address",
+    "subtitle": "Use this address as the shipping address on any US online store.",
+    "format": "Address format",
+    "fmtName": "Your name",
+    "fmtCode": "Your customer code (assigned at sign-up)",
+    "fmtLine1": "Warehouse address",
+    "fmtLine2": "City, State ZIP",
+    "fmtCountry": "United States",
+    "warehouses": "Our warehouses",
+    "miami": "Miami, FL",
+    "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
+    "tip": "Don't forget to include your customer code (e.g. ARI-001234) in the address — that's how we route your package to your account.",
+    "ctaSignup": "Sign up to get your code"
+  },
+  "about": {
+    "title": "About PGFI Shipping",
+    "intro": "PGFI Shipping helps the Haitian community in the US and abroad receive packages reliably in Haiti, with transparent pricing and real-time tracking.",
+    "missionTitle": "Our mission",
+    "mission": "Make cross-border shipping affordable, predictable and respectful of our customers' time.",
+    "valuesTitle": "Our values",
+    "v1": "Transparency on pricing and timing.",
+    "v2": "Care for every package, every time.",
+    "v3": "Service that speaks your language."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "updated": "Last updated: April 2026",
+    "p1": "By using PGFI Shipping, you agree to these terms. We provide package forwarding from our US warehouses to delivery branches in Haiti.",
+    "h1": "1. Account",
+    "p2": "You are responsible for the accuracy of the information you provide and for keeping your password safe.",
+    "h2": "2. Prohibited items",
+    "p3": "Hazardous materials, weapons, drugs and other items prohibited by law cannot be shipped.",
+    "h3": "3. Pricing",
+    "p4": "Prices are calculated based on weight (or dimensional weight, whichever is greater) and the service type. Taxes and fees may apply.",
+    "h4": "4. Liability",
+    "p5": "Our liability is limited to the declared value of the package, up to the maximum permitted by law."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "updated": "Last updated: April 2026",
+    "p1": "We collect only the data we need to operate the service: contact information, addresses, and shipment history.",
+    "h1": "Data we collect",
+    "p2": "Account data (name, email, phone), shipment data (tracking, weight, contents declaration), and payment metadata (we never store full card numbers).",
+    "h2": "How we use your data",
+    "p3": "To provide the service, communicate about your shipments, and improve our operations.",
+    "h3": "Your rights",
+    "p4": "You can export or delete your data from the dashboard or by contacting support."
+  },
+  "support": {
+    "title": "Contact support",
+    "subtitle": "We typically reply within one business day.",
+    "name": "Your name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send message",
+    "sent": "Thanks — your message has been sent.",
+    "fallback": "Or email us directly:",
+    "phone": "Phone"
   },
   "auth": {
     "loginTitle": "Welcome back",

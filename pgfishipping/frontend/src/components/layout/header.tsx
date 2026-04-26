@@ -44,6 +44,12 @@ export function Header(): JSX.Element {
             {t('calculator')}
           </Link>
           <Link
+            href={`/${locale}/addresses`}
+            className="text-sm hover:text-primary"
+          >
+            {t('addresses')}
+          </Link>
+          <Link
             href={`/${locale}/support`}
             className="text-sm hover:text-primary"
           >

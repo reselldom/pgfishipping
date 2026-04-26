@@ -8,7 +8,9 @@
     "submit": "Enviar",
     "continue": "Continuar",
     "back": "Volver",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "next": "Siguiente",
+    "previous": "Anterior"
   },
   "nav": {
     "home": "Inicio",
@@ -16,6 +18,9 @@
     "calculator": "Calculadora",
     "addresses": "Direcciones US",
     "support": "Soporte",
+    "about": "Acerca",
+    "terms": "Términos",
+    "privacy": "Privacidad",
     "login": "Entrar",
     "register": "Registrarse",
     "dashboard": "Panel"
@@ -40,7 +45,136 @@
         "title": "Rastreo en tiempo real",
         "desc": "Sigue cada paso desde el almacén US hasta la recogida en Haití."
       }
+    },
+    "steps": {
+      "title": "Cómo funciona",
+      "s1": { "title": "Regístrate", "desc": "Crea una cuenta gratuita y recibe tu dirección US." },
+      "s2": { "title": "Compra", "desc": "Usa tu dirección US como dirección de envío en cualquier tienda US." },
+      "s3": { "title": "Recibimos", "desc": "Recogemos, pesamos y preparamos tus paquetes en Miami." },
+      "s4": { "title": "Recoge en Haití", "desc": "Recoge en Puerto Príncipe, Cabo Haitiano o Les Cayes." }
+    },
+    "cta": {
+      "title": "¿Listo para enviar mejor?",
+      "subtitle": "Regístrate en 60 segundos y empieza a recibir paquetes US en Haití.",
+      "button": "Empezar — es gratis"
     }
+  },
+  "track": {
+    "title": "Rastrea tu paquete",
+    "subtitle": "Ingresa tu código de rastreo (PG-XXXXXX) o el número del transportista.",
+    "placeholder": "PG-123456 o 1Z…",
+    "search": "Rastrear",
+    "notFound": "Código no encontrado.",
+    "invalid": "Por favor ingresa un código.",
+    "step1": "Pre-aviso",
+    "step2": "Recibido en US",
+    "step3": "En tránsito",
+    "step4": "Disponible en Haití",
+    "delivered": "Entregado",
+    "summary": "Resumen",
+    "events": "Eventos",
+    "service": "Servicio",
+    "weight": "Peso (lbs)",
+    "destination": "Destino",
+    "createdAt": "Pre-avisado",
+    "deliveredAt": "Entregado",
+    "carrier": "Transportista",
+    "carrierTracking": "Rastreo transportista"
+  },
+  "calculator": {
+    "title": "Calculadora de envío",
+    "subtitle": "Estima el costo de enviar de EE.UU. a Haití.",
+    "step1": "Servicio",
+    "step2": "Paquete",
+    "step3": "Valor",
+    "step4": "Estimación",
+    "service": {
+      "AIR": "Aéreo (4–7 días)",
+      "SEA": "Marítimo (3–4 semanas)",
+      "EXPRESS": "Express (1–3 días)"
+    },
+    "weight": "Peso (lb)",
+    "length": "Largo (pulg)",
+    "width": "Ancho (pulg)",
+    "height": "Alto (pulg)",
+    "dimsHelp": "Las dimensiones son opcionales; usadas en envíos aéreos para calcular el peso volumétrico.",
+    "fobValue": "Valor declarado (opcional)",
+    "fobCurrency": "Moneda",
+    "contentType": "Tipo de contenido",
+    "package": "Paquete",
+    "document": "Documento",
+    "estimate": "Estimar",
+    "billable": "Peso facturable",
+    "subtotal": "Subtotal",
+    "tax": "Impuesto",
+    "total": "Total",
+    "totalHtg": "Total (HTG)",
+    "rate": "Tasa de cambio",
+    "newQuote": "Nueva cotización",
+    "errors": {
+      "weight": "Ingresa un peso > 0"
+    }
+  },
+  "addresses": {
+    "title": "Tu dirección US gratuita",
+    "subtitle": "Usa esta dirección como dirección de envío en cualquier tienda US.",
+    "format": "Formato de dirección",
+    "fmtName": "Tu nombre",
+    "fmtCode": "Tu código de cliente (asignado al registrarte)",
+    "fmtLine1": "Dirección del almacén",
+    "fmtLine2": "Ciudad, Estado ZIP",
+    "fmtCountry": "Estados Unidos",
+    "warehouses": "Nuestros almacenes",
+    "miami": "Miami, FL",
+    "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
+    "tip": "No olvides incluir tu código de cliente (ej. ARI-001234) en la dirección — así enrutamos tu paquete a tu cuenta.",
+    "ctaSignup": "Regístrate para obtener tu código"
+  },
+  "about": {
+    "title": "Acerca de PGFI Shipping",
+    "intro": "PGFI Shipping ayuda a la comunidad haitiana en EE.UU. y otros países a recibir paquetes en Haití de forma confiable, con precios transparentes y rastreo en tiempo real.",
+    "missionTitle": "Nuestra misión",
+    "mission": "Hacer el envío transfronterizo asequible, predecible y respetuoso con el tiempo de nuestros clientes.",
+    "valuesTitle": "Nuestros valores",
+    "v1": "Transparencia en precios y tiempos.",
+    "v2": "Cuidado de cada paquete, siempre.",
+    "v3": "Servicio que habla tu idioma."
+  },
+  "terms": {
+    "title": "Términos del Servicio",
+    "updated": "Última actualización: Abril 2026",
+    "p1": "Al usar PGFI Shipping, aceptas estos términos. Ofrecemos reenvío de paquetes desde nuestros almacenes US a sucursales de entrega en Haití.",
+    "h1": "1. Cuenta",
+    "p2": "Eres responsable de la exactitud de la información que proporcionas y de mantener segura tu contraseña.",
+    "h2": "2. Artículos prohibidos",
+    "p3": "Materiales peligrosos, armas, drogas y otros artículos prohibidos por ley no pueden ser enviados.",
+    "h3": "3. Precios",
+    "p4": "Los precios se calculan según el peso (o peso volumétrico, el mayor) y el tipo de servicio. Pueden aplicar impuestos y cargos.",
+    "h4": "4. Responsabilidad",
+    "p5": "Nuestra responsabilidad se limita al valor declarado del paquete, hasta el máximo permitido por la ley."
+  },
+  "privacy": {
+    "title": "Política de Privacidad",
+    "updated": "Última actualización: Abril 2026",
+    "p1": "Solo recopilamos los datos necesarios para operar el servicio: información de contacto, direcciones e historial de envíos.",
+    "h1": "Datos que recopilamos",
+    "p2": "Datos de cuenta (nombre, correo, teléfono), datos de envío (rastreo, peso, declaración de contenido) y metadatos de pago (nunca almacenamos números completos de tarjetas).",
+    "h2": "Cómo usamos tus datos",
+    "p3": "Para proveer el servicio, comunicarnos sobre tus envíos y mejorar nuestras operaciones.",
+    "h3": "Tus derechos",
+    "p4": "Puedes exportar o eliminar tus datos desde el panel o contactando soporte."
+  },
+  "support": {
+    "title": "Contactar soporte",
+    "subtitle": "Normalmente respondemos en un día hábil.",
+    "name": "Tu nombre",
+    "email": "Correo",
+    "subject": "Asunto",
+    "message": "Mensaje",
+    "send": "Enviar mensaje",
+    "sent": "Gracias — tu mensaje fue enviado.",
+    "fallback": "O escríbenos directamente:",
+    "phone": "Teléfono"
   },
   "auth": {
     "loginTitle": "Bienvenido de nuevo",
