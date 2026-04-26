@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { Package } from 'lucide-react';
 import { LanguageSwitcher } from './language-switcher';
 import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/brand/logo';
 import { useAuthStore } from '@/lib/store/auth';
 import { logout as apiLogout } from '@/lib/auth-api';
 import { useRouter } from 'next/navigation';
@@ -26,12 +26,8 @@ export function Header(): JSX.Element {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
       <div className="container flex h-16 items-center justify-between">
-        <Link
-          href={`/${locale}`}
-          className="flex items-center gap-2 text-lg font-bold text-primary"
-        >
-          <Package className="h-6 w-6" />
-          <span>{tc('appName')}</span>
+        <Link href={`/${locale}`} aria-label={tc('appName')}>
+          <Logo size="md" />
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
           <Link href={`/${locale}/track`} className="text-sm hover:text-primary">

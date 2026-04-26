@@ -4,17 +4,25 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, FileText, Upload, Download } from 'lucide-react';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+  ArrowLeft,
+  FileText,
+  Upload,
+  Download,
+  Send,
+  MapPin,
+  Package as PackageIcon,
+  Plane,
+  CheckCircle2,
+  CreditCard,
+  ShieldCheck,
+  Phone,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { StatusBadge } from '@/components/shipments/status-badge';
+import { useAuthStore } from '@/lib/store/auth';
 import {
   getShipment,
   payShipment,
@@ -23,6 +31,7 @@ import {
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useToastStore } from '@/lib/store/toast';
 import type { Shipment } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 export default function ShipmentDetailPage(): JSX.Element {
   const t = useTranslations('shipmentDetail');
@@ -30,12 +39,13 @@ export default function ShipmentDetailPage(): JSX.Element {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? '';
   const push = useToastStore((s) => s.push);
+  const user = useAuthStore((s) => s.user);
 
   const [ship, setShip] = useState<Shipment | null>(null);
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [showAuthForm, setShowAuthForm] = useState(false);
 
-  // 3rd-party auth form
   const [auth, setAuth] = useState({
     authorizedName: '',
     idType: 'NIF',
@@ -44,11 +54,8 @@ export default function ShipmentDetailPage(): JSX.Element {
   });
   const [savingAuth, setSavingAuth] = useState(false);
 
-  // Invoice upload
   const fileInput = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-
-  // Pay
   const [paying, setPaying] = useState(false);
 
   async function refresh(): Promise<void> {
@@ -91,6 +98,7 @@ export default function ShipmentDetailPage(): JSX.Element {
       await setThirdPartyAuth(id, auth);
       push({ kind: 'success', text: t('authSaved') });
       setAuth({ authorizedName: '', idType: 'NIF', idNumber: '', phone: '' });
+      setShowAuthForm(false);
     } catch (err) {
       push({ kind: 'error', text: getApiErrorMessage(err) });
     } finally {
@@ -122,7 +130,7 @@ export default function ShipmentDetailPage(): JSX.Element {
       <div className="space-y-3">
         <Link
           href={`/${locale}/dashboard/shipments`}
-          className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+          className="inline-flex items-center gap-1 text-sm text-brand-navy hover:underline"
         >
           <ArrowLeft className="h-4 w-4" /> {t('back')}
         </Link>
@@ -136,147 +144,243 @@ export default function ShipmentDetailPage(): JSX.Element {
   const apiBase =
     process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
 
+  const dims =
+    ship.dimensionLength && ship.dimensionWidth && ship.dimensionHeight
+      ? `${ship.dimensionLength} × ${ship.dimensionWidth} × ${ship.dimensionHeight}`
+      : `0 × 0 × 0`;
+
+  const customerCode = user?.customerCode ?? '';
+  const customerName =
+    user && (user.firstName || user.lastName)
+      ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()
+      : '';
+
   return (
     <div className="space-y-6">
-      <Link
-        href={`/${locale}/dashboard/shipments`}
-        className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="h-4 w-4" /> {t('back')}
-      </Link>
-
+      {/* Top bar */}
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-bold font-mono">{ship.trackingCode}</h1>
-          <p className="text-muted-foreground">
-            {ship.contentsDescription || ship.vendor || '—'}
-          </p>
+        <Link href={`/${locale}/dashboard/shipments`}>
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-brand-navy hover:bg-brand-navy/90"
+          >
+            <ArrowLeft className="mr-1.5 h-4 w-4" /> {t('back')}
+          </Button>
+        </Link>
+        <div className="text-right text-xs text-muted-foreground">
+          <div className="font-mono text-sm font-semibold text-brand-navy">
+            {customerName}
+          </div>
+          <div className="font-mono text-sm font-semibold text-brand-red">
+            {customerCode}
+          </div>
+          <div className="mt-0.5">
+            {t('shipmentNo')}{' '}
+            <span className="font-mono font-semibold text-foreground">
+              {ship.trackingCode}
+            </span>
+          </div>
         </div>
-        <StatusBadge status={ship.status} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>{t('summary')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <dl className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
-              <Row label={t('carrier')} value={ship.externalCarrier} />
-              <Row
-                label={t('carrierTracking')}
-                value={ship.externalTracking}
-                mono
-              />
-              <Row
-                label={t('weight')}
-                value={ship.weightLbs ? `${ship.weightLbs} lb` : null}
-              />
-              <Row label={t('service')} value={ship.serviceType} />
-              <Row label={t('vendor')} value={ship.vendor} />
-              <Row label={t('destination')} value={ship.destinationCountry} />
-              <Row label={t('recipient')} value={ship.recipientName} />
-              <Row
-                label={t('createdAt')}
-                value={new Date(ship.createdAt).toLocaleString()}
-              />
-              <Row
-                label={t('fob')}
-                value={
-                  ship.fobValue
-                    ? `${ship.fobValue} ${ship.fobCurrency ?? 'USD'}`
-                    : null
-                }
-              />
-              {ship.deliveredAt ? (
-                <Row
-                  label={t('deliveredAt')}
-                  value={new Date(ship.deliveredAt).toLocaleString()}
-                />
-              ) : null}
-              {ship.totalCost !== null ? (
-                <Row
-                  label={t('totalCost')}
-                  value={
-                    <span className="font-medium">
-                      ${ship.totalCost.toFixed(2)} USD —{' '}
-                      <span
-                        className={
-                          ship.isPaid
-                            ? 'text-green-700'
-                            : 'text-amber-700'
-                        }
-                      >
-                        {ship.isPaid ? t('paid') : t('unpaid')}
-                      </span>
-                    </span>
-                  }
-                />
-              ) : null}
-            </dl>
+      {/* 4 color-coded info cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <InfoCard
+          color="navy"
+          title={t('cardSender')}
+          chip={customerCode}
+          icon={<Send className="h-4 w-4" />}
+        >
+          <div className="text-sm font-semibold text-brand-navy">
+            {customerName || '—'}
+          </div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {ship.originCountry || 'United States'}
+          </div>
+          {user?.email ? (
+            <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
+              <Phone className="h-3 w-3" />
+              {user.email}
+            </div>
+          ) : null}
+        </InfoCard>
 
-            <div className="mt-6 flex flex-wrap gap-2">
+        <InfoCard
+          color="red"
+          title={t('cardRecipient')}
+          chip={customerCode}
+          icon={<MapPin className="h-4 w-4" />}
+        >
+          <div className="text-sm font-semibold text-brand-red">
+            {ship.recipientName || customerName || '—'}
+          </div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {ship.destinationCountry || 'Haiti'}
+          </div>
+          {ship.recipientPhone ? (
+            <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
+              <Phone className="h-3 w-3" />
+              {ship.recipientPhone}
+            </div>
+          ) : null}
+        </InfoCard>
+
+        <InfoCard
+          color="navy"
+          title={t('cardContents')}
+          icon={<PackageIcon className="h-4 w-4" />}
+        >
+          <KV label={t('vendor')} value={ship.vendor} />
+          <KV label={t('carrier')} value={ship.externalCarrier} />
+          <KV
+            label={t('carrierTracking')}
+            value={ship.externalTracking}
+            mono
+          />
+          <KV
+            label="Contents"
+            value={ship.contentsDescription}
+          />
+        </InfoCard>
+
+        <InfoCard
+          color="red"
+          title={t('cardShipment')}
+          icon={<Plane className="h-4 w-4" />}
+        >
+          <KV label={t('service')} value={t('serviceDesc')} />
+          <KV
+            label={t('destination')}
+            value={ship.destinationCountry || 'Haiti'}
+          />
+          <KV label={t('package')} value="1/1" />
+          <KV label={t('dimension')} value={dims} />
+          <KV
+            label={`${t('weight')} (LBS)`}
+            value={ship.weightLbs ? ship.weightLbs.toFixed(2) : '0.00'}
+          />
+        </InfoCard>
+      </div>
+
+      {/* Status + Options row */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <InfoCard
+          color="navy"
+          title={t('cardStatus')}
+          icon={<CheckCircle2 className="h-4 w-4" />}
+        >
+          <div className="flex items-center gap-2">
+            <StatusBadge status={ship.status} />
+            <span className="text-xs text-muted-foreground">
+              {new Date(ship.createdAt).toLocaleString()}
+            </span>
+          </div>
+          {ship.totalCost !== null ? (
+            <div className="mt-3 text-sm">
+              <span className="text-muted-foreground">{t('totalCost')}: </span>
+              <span className="font-semibold">
+                ${ship.totalCost.toFixed(2)} USD
+              </span>{' '}
+              ·{' '}
+              <span
+                className={cn(
+                  'font-semibold',
+                  ship.isPaid ? 'text-emerald-600' : 'text-amber-600',
+                )}
+              >
+                {ship.isPaid ? t('paid') : t('unpaid')}
+              </span>
+            </div>
+          ) : null}
+          {ship.deliveredAt ? (
+            <div className="mt-1 text-xs text-muted-foreground">
+              {t('deliveredAt')}: {new Date(ship.deliveredAt).toLocaleString()}
+            </div>
+          ) : null}
+        </InfoCard>
+
+        <InfoCard
+          color="navy"
+          title={t('cardOptions')}
+          icon={<FileText className="h-4 w-4" />}
+        >
+          <div className="-mt-1 flex flex-wrap gap-2">
+            <input
+              type="file"
+              ref={fileInput}
+              accept="image/*,application/pdf"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void uploadInvoice(f);
+                e.currentTarget.value = '';
+              }}
+            />
+            <Button
+              size="sm"
+              className="bg-brand-navy text-white hover:bg-brand-navy/90"
+              onClick={() => fileInput.current?.click()}
+              disabled={uploading}
+            >
+              <Upload className="mr-1.5 h-4 w-4" />
+              {uploading ? '…' : t('uploadInvoice')}
+            </Button>
+
+            <Button
+              size="sm"
+              className="bg-brand-red text-white hover:bg-brand-red/90"
+              onClick={() => setShowAuthForm((v) => !v)}
+            >
+              <ShieldCheck className="mr-1.5 h-4 w-4" />
+              {t('thirdParty')}
+            </Button>
+
+            <a
+              href={`${apiBase}/shipments/${ship.id}/label`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" size="sm">
+                <Download className="mr-1.5 h-4 w-4" />
+                {t('downloadLabel')}
+              </Button>
+            </a>
+
+            {ship.invoiceUrl ? (
               <a
-                href={`${apiBase}/shipments/${ship.id}/label`}
+                href={ship.invoiceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-md border bg-secondary/30 px-3 py-1.5 text-sm font-medium hover:bg-secondary"
               >
-                <Button variant="outline" size="sm">
-                  <Download className="mr-2 h-4 w-4" />
-                  {t('downloadLabel')}
-                </Button>
+                <FileText className="h-4 w-4" />
+                {t('invoiceOnFile')}
               </a>
+            ) : null}
 
-              <input
-                type="file"
-                ref={fileInput}
-                accept="image/*,application/pdf"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) void uploadInvoice(f);
-                  e.currentTarget.value = '';
-                }}
-              />
+            {ship.totalCost && !ship.isPaid ? (
               <Button
-                variant="outline"
                 size="sm"
-                onClick={() => fileInput.current?.click()}
-                disabled={uploading}
+                className="bg-emerald-500 text-white hover:bg-emerald-600"
+                disabled={paying}
+                onClick={pay}
               >
-                <Upload className="mr-2 h-4 w-4" />
-                {uploading ? '…' : t('uploadInvoice')}
+                <CreditCard className="mr-1.5 h-4 w-4" />
+                {paying ? '…' : t('pay')}
               </Button>
+            ) : null}
+          </div>
 
-              {ship.invoiceUrl ? (
-                <a
-                  href={ship.invoiceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border bg-secondary/30 px-3 py-1.5 text-sm hover:bg-secondary"
-                >
-                  <FileText className="h-4 w-4" />
-                  {t('invoiceOnFile')} — {t('viewInvoice')}
-                </a>
-              ) : null}
-
-              {ship.totalCost && !ship.isPaid ? (
-                <Button size="sm" disabled={paying} onClick={pay}>
-                  {paying ? '…' : t('pay')}
-                </Button>
-              ) : null}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('thirdParty')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={saveAuth} className="space-y-3">
+          {showAuthForm ? (
+            <form
+              onSubmit={saveAuth}
+              className="mt-4 space-y-3 rounded-md border bg-secondary/20 p-3"
+            >
               <div className="space-y-1.5">
-                <Label htmlFor="authName">{t('authName')}</Label>
+                <Label htmlFor="authName" className="text-xs font-semibold">
+                  {t('authName')}
+                </Label>
                 <Input
                   id="authName"
                   value={auth.authorizedName}
@@ -285,17 +389,23 @@ export default function ShipmentDetailPage(): JSX.Element {
                   }
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="authPhone">{t('authPhone')}</Label>
-                <Input
-                  id="authPhone"
-                  value={auth.phone}
-                  onChange={(e) => setAuth({ ...auth, phone: e.target.value })}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="idType">{t('authIdType')}</Label>
+                  <Label htmlFor="authPhone" className="text-xs font-semibold">
+                    {t('authPhone')}
+                  </Label>
+                  <Input
+                    id="authPhone"
+                    value={auth.phone}
+                    onChange={(e) =>
+                      setAuth({ ...auth, phone: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="idType" className="text-xs font-semibold">
+                    {t('authIdType')}
+                  </Label>
                   <Input
                     id="idType"
                     value={auth.idType}
@@ -304,65 +414,111 @@ export default function ShipmentDetailPage(): JSX.Element {
                     }
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="idNumber">{t('authIdNumber')}</Label>
-                  <Input
-                    id="idNumber"
-                    value={auth.idNumber}
-                    onChange={(e) =>
-                      setAuth({ ...auth, idNumber: e.target.value })
-                    }
-                  />
-                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="idNumber" className="text-xs font-semibold">
+                  {t('authIdNumber')}
+                </Label>
+                <Input
+                  id="idNumber"
+                  value={auth.idNumber}
+                  onChange={(e) =>
+                    setAuth({ ...auth, idNumber: e.target.value })
+                  }
+                />
               </div>
               <Button
                 type="submit"
                 size="sm"
-                className="w-full"
+                className="w-full bg-brand-navy hover:bg-brand-navy/90"
                 disabled={savingAuth}
               >
                 {savingAuth ? '…' : t('saveAuth')}
               </Button>
             </form>
-          </CardContent>
-        </Card>
+          ) : null}
+        </InfoCard>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('trackingEvents')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!ship.trackingEvents || ship.trackingEvents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t('noEvents')}</p>
-          ) : (
-            <ol className="relative space-y-4 border-l border-border pl-6">
-              {ship.trackingEvents.map((ev) => (
-                <li key={ev.id} className="relative">
-                  <span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-primary bg-background" />
-                  <div className="text-sm font-medium">
-                    {ev.label || ev.status}
+      {/* Tracking events */}
+      <div className="rounded-xl border bg-card p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-brand-navy">
+          {t('trackingEvents')}
+        </h2>
+        {!ship.trackingEvents || ship.trackingEvents.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t('noEvents')}</p>
+        ) : (
+          <ol className="relative space-y-4 border-l-2 border-brand-navy/30 pl-6">
+            {ship.trackingEvents.map((ev, idx) => (
+              <li key={ev.id} className="relative">
+                <span
+                  className={cn(
+                    'absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 bg-card',
+                    idx === 0 ? 'border-brand-red' : 'border-brand-navy',
+                  )}
+                />
+                <div className="text-sm font-semibold text-foreground">
+                  {ev.label || ev.status}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {new Date(ev.timestamp).toLocaleString()}
+                  {ev.location ? ` · ${ev.location}` : ''}
+                </div>
+                {ev.notes ? (
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {ev.notes}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {new Date(ev.timestamp).toLocaleString()}
-                    {ev.location ? ` · ${ev.location}` : ''}
-                  </div>
-                  {ev.notes ? (
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {ev.notes}
-                    </div>
-                  ) : null}
-                </li>
-              ))}
-            </ol>
-          )}
-        </CardContent>
-      </Card>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
     </div>
   );
 }
 
-function Row({
+function InfoCard({
+  color,
+  title,
+  chip,
+  icon,
+  children,
+}: {
+  color: 'navy' | 'red';
+  title: string;
+  chip?: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}): JSX.Element {
+  const headerClass =
+    color === 'navy'
+      ? 'bg-brand-navy text-white'
+      : 'bg-brand-red text-white';
+  return (
+    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+      <div
+        className={cn(
+          'flex items-center justify-between gap-2 px-4 py-2.5 text-sm font-semibold',
+          headerClass,
+        )}
+      >
+        <span className="inline-flex items-center gap-2">
+          {icon}
+          {title}
+        </span>
+        {chip ? (
+          <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold tracking-wide">
+            {chip}
+          </span>
+        ) : null}
+      </div>
+      <div className="p-4 text-sm">{children}</div>
+    </div>
+  );
+}
+
+function KV({
   label,
   value,
   mono,
@@ -372,13 +528,16 @@ function Row({
   mono?: boolean;
 }): JSX.Element {
   return (
-    <div>
-      <dt className="text-xs uppercase tracking-wider text-muted-foreground">
-        {label}
-      </dt>
-      <dd className={mono ? 'font-mono text-sm' : 'text-sm'}>
+    <div className="grid grid-cols-[8ch_1fr] items-baseline gap-x-2 gap-y-1 text-xs">
+      <span className="font-semibold text-muted-foreground">{label}:</span>
+      <span
+        className={cn(
+          'truncate text-foreground',
+          mono && 'font-mono text-[12px]',
+        )}
+      >
         {value || <span className="text-muted-foreground">—</span>}
-      </dd>
+      </span>
     </div>
   );
 }

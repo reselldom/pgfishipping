@@ -10,13 +10,8 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Logo } from '@/components/brand/logo';
+import { LanguageSwitcher } from '@/components/layout/language-switcher';
 import { useAuthStore } from '@/lib/store/auth';
 import { login as apiLogin } from '@/lib/auth-api';
 import { getApiErrorMessage } from '@/lib/api';
@@ -65,58 +60,105 @@ export default function LoginPage(): JSX.Element {
 
   return (
     <div className="container flex min-h-[80vh] items-center justify-center py-10">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>{t('loginTitle')}</CardTitle>
-          <CardDescription>{t('loginSubtitle')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('email')}</Label>
-              <Input id="email" type="email" autoComplete="email" {...register('email')} />
-              {errors.email && (
-                <p className="text-xs text-destructive">{tErr('emailInvalid')}</p>
-              )}
+      <div className="w-full max-w-md">
+        <div className="overflow-hidden rounded-2xl bg-card shadow-xl ring-1 ring-border">
+          <div className="brand-stripe-top h-16" />
+
+          <div className="px-8 pb-8 pt-6">
+            <div className="mb-6 flex justify-center">
+              <Logo size="xl" />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">{t('password')}</Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                {...register('password')}
-              />
-              {errors.password && (
-                <p className="text-xs text-destructive">{tErr('passwordMin')}</p>
+
+            <h1 className="text-2xl font-bold text-foreground">
+              {t('loginTitle')}
+            </h1>
+            <p className="mb-6 mt-1 text-sm text-muted-foreground">
+              {t('loginSubtitle')}
+            </p>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="font-semibold">
+                  {t('email')}
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  {...register('email')}
+                  className="h-11"
+                />
+                {errors.email && (
+                  <p className="text-xs text-destructive">
+                    {tErr('emailInvalid')}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="font-semibold">
+                  {t('password')} <span className="text-brand-red">*</span>
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  {...register('password')}
+                  className="h-11"
+                />
+                {errors.password && (
+                  <p className="text-xs text-destructive">
+                    {tErr('passwordMin')}
+                  </p>
+                )}
+              </div>
+
+              {serverError && (
+                <div className="rounded-md border border-destructive/40 bg-destructive/10 p-2 text-sm text-destructive">
+                  {serverError}
+                </div>
               )}
-            </div>
-            {serverError && (
-              <p className="text-sm text-destructive">{serverError}</p>
-            )}
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? tc('loading') : t('loginAction')}
-            </Button>
-            <div className="flex items-center justify-between text-sm">
-              <Link
-                href={`/${locale}/forgot-password`}
-                className="text-primary hover:underline"
+
+              <Button
+                type="submit"
+                className="h-11 w-full bg-brand-navy text-base font-semibold hover:bg-brand-navy/90"
+                disabled={isSubmitting}
               >
-                {t('forgotPassword')}
-              </Link>
-              <span>
+                {isSubmitting ? tc('loading') : t('loginAction')}
+              </Button>
+
+              <div className="pt-1">
+                <LanguageSwitcher />
+              </div>
+            </form>
+
+            <div className="mt-6 space-y-2 border-t pt-5 text-center text-sm">
+              <p>
                 {t('noAccount')}{' '}
                 <Link
                   href={`/${locale}/register`}
-                  className="text-primary hover:underline"
+                  className="font-semibold text-brand-red hover:underline"
                 >
                   {t('signupHere')}
                 </Link>
-              </span>
+              </p>
+              <p>
+                <Link
+                  href={`/${locale}/forgot-password`}
+                  className="font-semibold text-brand-navy hover:underline"
+                >
+                  {t('forgotPassword')}
+                </Link>
+              </p>
             </div>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+
+          <div className="brand-stripe-bottom h-16" />
+        </div>
+
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          PGFI Shipping — Haiti&apos;s trusted package forwarder
+        </p>
+      </div>
     </div>
   );
 }

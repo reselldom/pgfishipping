@@ -43,7 +43,7 @@ export function Sidebar(): JSX.Element {
 
   return (
     <aside className="w-full md:w-60 md:shrink-0">
-      <nav className="flex gap-1 overflow-x-auto md:flex-col md:gap-0.5 md:overflow-visible">
+      <nav className="flex gap-1 overflow-x-auto md:flex-col md:gap-1 md:overflow-visible md:rounded-xl md:border md:bg-card md:p-2 md:shadow-sm">
         {items.map(({ href, label, Icon }) => {
           const active =
             pathname === href ||
@@ -55,8 +55,8 @@ export function Sidebar(): JSX.Element {
               className={cn(
                 'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap',
                 active
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+                  ? 'bg-brand-navy text-white shadow-sm'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-brand-navy',
               )}
             >
               <Icon className="h-4 w-4" />
