@@ -7,6 +7,7 @@ import trackingRoutes from './tracking.routes';
 import calculatorRoutes from './calculator.routes';
 import walletRoutes from './wallet.routes';
 import webhookRoutes from './webhook.routes';
+import adminRoutes from './admin';
 
 const router = Router();
 
@@ -18,7 +19,6 @@ router.use('/track', trackingRoutes);
 router.use('/calculator', calculatorRoutes);
 router.use('/wallet', walletRoutes);
 router.use('/webhooks', webhookRoutes);
-
-// Coming next: notifications, admin/*
+router.use('/admin', adminRoutes);
 
 export default router;

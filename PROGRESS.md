@@ -28,6 +28,7 @@ Last updated: starting build.
 | 7 | Wallet (balance, deposit + webhook, gift card, pay shipment)               | ✅ |
 | 8 | Email system (welcome, reset, verify, package status, wallet, 3rd-party)   | ✅ |
 | 9 | Background jobs (BullMQ): tracking poll, weekly summary, exchange-rate refresh | ✅ |
+| 10 | Admin API (customers, shipments, pricing, warehouses, gift-cards, support, config, staff, broadcast, analytics) | ✅ |
 | 7 | Wallet (balance, transactions, MonCash/NatCash, gift cards, pay)          | ⬜ |
 | 8 | Email system (Resend + React Email templates + triggers)                  | ⬜ |
 | 9 | Background jobs (BullMQ tracking poll, weekly summary)                    | ⬜ |
