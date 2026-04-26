@@ -1,0 +1,81 @@
+{
+  "common": {
+    "appName": "PGFI Shipping",
+    "tagline": "Expédiez des États-Unis vers Haïti — rapide, sûr, transparent.",
+    "loading": "Chargement…",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "submit": "Soumettre",
+    "continue": "Continuer",
+    "back": "Retour",
+    "logout": "Se déconnecter"
+  },
+  "nav": {
+    "home": "Accueil",
+    "track": "Suivi",
+    "calculator": "Calculateur",
+    "addresses": "Adresses US",
+    "support": "Support",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "dashboard": "Tableau de bord"
+  },
+  "home": {
+    "hero": {
+      "title": "Vos colis des États-Unis vers Haïti, simplifiés.",
+      "subtitle": "Obtenez une adresse US gratuite. Commandez en ligne partout. Nous gérons le reste.",
+      "ctaPrimary": "Obtenir mon adresse US gratuite",
+      "ctaSecondary": "Suivre un colis"
+    },
+    "features": {
+      "free": {
+        "title": "Adresse US gratuite",
+        "desc": "Inscrivez-vous et recevez instantanément une adresse à Miami."
+      },
+      "transparent": {
+        "title": "Prix transparents",
+        "desc": "Calculez les frais d'expédition à l'avance."
+      },
+      "tracking": {
+        "title": "Suivi en temps réel",
+        "desc": "Suivez chaque étape de l'entrepôt US au point de retrait en Haïti."
+      }
+    }
+  },
+  "auth": {
+    "loginTitle": "Bon retour",
+    "loginSubtitle": "Connectez-vous pour gérer vos expéditions.",
+    "registerTitle": "Créez votre compte",
+    "registerSubtitle": "Obtenez votre adresse US gratuite en moins d'une minute.",
+    "email": "Email",
+    "password": "Mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phone": "Téléphone",
+    "loginAction": "Connexion",
+    "registerAction": "Créer le compte",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas de compte ?",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "signupHere": "Inscrivez-vous",
+    "loginHere": "Connectez-vous",
+    "resetTitle": "Réinitialiser le mot de passe",
+    "resetSubtitle": "Entrez votre email pour recevoir un lien.",
+    "resetAction": "Envoyer le lien",
+    "resetSent": "Si cet email existe, nous avons envoyé un lien.",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le nouveau mot de passe",
+    "saveNewPassword": "Enregistrer",
+    "passwordChanged": "Mot de passe mis à jour. Vous pouvez vous connecter.",
+    "verifyTitle": "Vérification de l'email",
+    "verifySuccess": "Votre email est vérifié. Vous pouvez vous connecter.",
+    "verifyFailed": "La vérification a échoué ou a expiré."
+  },
+  "errors": {
+    "required": "Ce champ est requis",
+    "emailInvalid": "Email invalide",
+    "passwordMin": "Le mot de passe doit faire au moins 8 caractères",
+    "generic": "Une erreur s'est produite. Réessayez.",
+    "network": "Erreur réseau. Vérifiez votre connexion."
+  }
+}

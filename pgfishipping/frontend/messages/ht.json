@@ -1,0 +1,81 @@
+{
+  "common": {
+    "appName": "PGFI Shipping",
+    "tagline": "Voye soti Etazini vin Ayiti — vit, sekirize, klè.",
+    "loading": "N ap chaje…",
+    "save": "Anrejistre",
+    "cancel": "Anile",
+    "submit": "Voye",
+    "continue": "Kontinye",
+    "back": "Retounen",
+    "logout": "Dekoneksyon"
+  },
+  "nav": {
+    "home": "Akèy",
+    "track": "Swiv",
+    "calculator": "Kalkilatè",
+    "addresses": "Adrès US",
+    "support": "Sipò",
+    "login": "Konekte",
+    "register": "Enskri",
+    "dashboard": "Tablodbò"
+  },
+  "home": {
+    "hero": {
+      "title": "Pakè ou yo soti nan US ap rive ann Ayiti, fasil.",
+      "subtitle": "Pran adrès US gratis. Achte sou entènèt nenpòt kote. Nou pran swen tout rès la.",
+      "ctaPrimary": "Pran adrès US gratis",
+      "ctaSecondary": "Swiv yon pakè"
+    },
+    "features": {
+      "free": {
+        "title": "Adrès US gratis",
+        "desc": "Enskri epi ou pral resevwa adrès Miami w la imedyatman."
+      },
+      "transparent": {
+        "title": "Pri klè",
+        "desc": "Kalkile pri voyaj la avan ak kalkilatè nou an."
+      },
+      "tracking": {
+        "title": "Swiv an tan reyèl",
+        "desc": "Swiv chak etap soti depo US la rive nan biwo Ayiti a."
+      }
+    }
+  },
+  "auth": {
+    "loginTitle": "Byenveni ankò",
+    "loginSubtitle": "Konekte pou jere voyaj ou yo.",
+    "registerTitle": "Kreye kont ou",
+    "registerSubtitle": "Pran adrès US gratis ou nan mwens pase yon minit.",
+    "email": "Imèl",
+    "password": "Modpas",
+    "firstName": "Premye non",
+    "lastName": "Siyati",
+    "phone": "Telefòn",
+    "loginAction": "Konekte",
+    "registerAction": "Kreye kont",
+    "forgotPassword": "Bliye modpas?",
+    "noAccount": "Pa gen kont?",
+    "haveAccount": "Ou gen yon kont deja?",
+    "signupHere": "Enskri la",
+    "loginHere": "Konekte la",
+    "resetTitle": "Reyajiste modpas ou",
+    "resetSubtitle": "Antre imèl ou pou n voye yon lyen.",
+    "resetAction": "Voye lyen an",
+    "resetSent": "Si imèl sa egziste, n voye yon lyen.",
+    "newPassword": "Nouvo modpas",
+    "confirmPassword": "Konfime nouvo modpas",
+    "saveNewPassword": "Anrejistre",
+    "passwordChanged": "Modpas chanje. Ou ka konekte kounye a.",
+    "verifyTitle": "Verifikasyon imèl",
+    "verifySuccess": "Imèl ou verifye. Ou ka konekte kounye a.",
+    "verifyFailed": "Verifikasyon echwe oswa fini."
+  },
+  "errors": {
+    "required": "Chan sa obligatwa",
+    "emailInvalid": "Imèl pa valab",
+    "passwordMin": "Modpas dwe genyen omwens 8 karaktè",
+    "generic": "Yon bagay mal pase. Eseye ankò.",
+    "network": "Erè rezo. Tcheke koneksyon ou."
+  }
+}

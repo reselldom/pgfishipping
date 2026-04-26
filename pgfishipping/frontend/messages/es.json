@@ -1,0 +1,81 @@
+{
+  "common": {
+    "appName": "PGFI Shipping",
+    "tagline": "Envía desde EE.UU. a Haití — rápido, seguro, transparente.",
+    "loading": "Cargando…",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "submit": "Enviar",
+    "continue": "Continuar",
+    "back": "Volver",
+    "logout": "Cerrar sesión"
+  },
+  "nav": {
+    "home": "Inicio",
+    "track": "Rastrear",
+    "calculator": "Calculadora",
+    "addresses": "Direcciones US",
+    "support": "Soporte",
+    "login": "Entrar",
+    "register": "Registrarse",
+    "dashboard": "Panel"
+  },
+  "home": {
+    "hero": {
+      "title": "Tus paquetes de EE.UU. a Haití, simplificados.",
+      "subtitle": "Obtén una dirección US gratuita. Compra en cualquier sitio. Nosotros nos encargamos del resto.",
+      "ctaPrimary": "Obtener mi dirección US gratis",
+      "ctaSecondary": "Rastrear un paquete"
+    },
+    "features": {
+      "free": {
+        "title": "Dirección US gratuita",
+        "desc": "Regístrate y recibe al instante una dirección en Miami."
+      },
+      "transparent": {
+        "title": "Precios transparentes",
+        "desc": "Calcula los costos de envío con anticipación."
+      },
+      "tracking": {
+        "title": "Rastreo en tiempo real",
+        "desc": "Sigue cada paso desde el almacén US hasta la recogida en Haití."
+      }
+    }
+  },
+  "auth": {
+    "loginTitle": "Bienvenido de nuevo",
+    "loginSubtitle": "Inicia sesión para gestionar tus envíos.",
+    "registerTitle": "Crea tu cuenta",
+    "registerSubtitle": "Obtén tu dirección US gratis en menos de un minuto.",
+    "email": "Correo",
+    "password": "Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "phone": "Teléfono",
+    "loginAction": "Entrar",
+    "registerAction": "Crear cuenta",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes cuenta?",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "signupHere": "Regístrate",
+    "loginHere": "Entrar",
+    "resetTitle": "Restablecer contraseña",
+    "resetSubtitle": "Ingresa tu correo para recibir un enlace.",
+    "resetAction": "Enviar enlace",
+    "resetSent": "Si ese correo existe, enviamos un enlace.",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar nueva contraseña",
+    "saveNewPassword": "Guardar",
+    "passwordChanged": "Contraseña actualizada. Ya puedes iniciar sesión.",
+    "verifyTitle": "Verificación de correo",
+    "verifySuccess": "Tu correo está verificado. Ya puedes iniciar sesión.",
+    "verifyFailed": "La verificación falló o expiró."
+  },
+  "errors": {
+    "required": "Este campo es obligatorio",
+    "emailInvalid": "Correo inválido",
+    "passwordMin": "La contraseña debe tener al menos 8 caracteres",
+    "generic": "Algo salió mal. Inténtalo de nuevo.",
+    "network": "Error de red. Revisa tu conexión."
+  }
+}

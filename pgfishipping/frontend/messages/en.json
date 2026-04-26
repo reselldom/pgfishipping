@@ -1,0 +1,81 @@
+{
+  "common": {
+    "appName": "PGFI Shipping",
+    "tagline": "Ship from the US to Haiti — fast, safe, transparent.",
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "continue": "Continue",
+    "back": "Back",
+    "logout": "Log out"
+  },
+  "nav": {
+    "home": "Home",
+    "track": "Track",
+    "calculator": "Calculator",
+    "addresses": "US Addresses",
+    "support": "Support",
+    "login": "Log in",
+    "register": "Sign up",
+    "dashboard": "Dashboard"
+  },
+  "home": {
+    "hero": {
+      "title": "Your packages from the US to Haiti, simplified.",
+      "subtitle": "Get a free US address. Shop anywhere online. We handle the rest.",
+      "ctaPrimary": "Get your free US address",
+      "ctaSecondary": "Track a package"
+    },
+    "features": {
+      "free": {
+        "title": "Free US Address",
+        "desc": "Sign up and instantly receive a free Miami warehouse address."
+      },
+      "transparent": {
+        "title": "Transparent Pricing",
+        "desc": "Calculate shipping costs upfront with our calculator."
+      },
+      "tracking": {
+        "title": "Real-time Tracking",
+        "desc": "Follow every step from US warehouse to Haiti pickup."
+      }
+    }
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Log in to manage your shipments.",
+    "registerTitle": "Create your account",
+    "registerSubtitle": "Get your free US address in under a minute.",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone",
+    "loginAction": "Log in",
+    "registerAction": "Create account",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "signupHere": "Sign up",
+    "loginHere": "Log in",
+    "resetTitle": "Reset your password",
+    "resetSubtitle": "Enter your email and we'll send you a reset link.",
+    "resetAction": "Send reset link",
+    "resetSent": "If that email exists, we've sent a reset link.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "saveNewPassword": "Save new password",
+    "passwordChanged": "Password updated. You can now log in.",
+    "verifyTitle": "Email verification",
+    "verifySuccess": "Your email is verified. You can now log in.",
+    "verifyFailed": "Verification failed or expired."
+  },
+  "errors": {
+    "required": "This field is required",
+    "emailInvalid": "Invalid email",
+    "passwordMin": "Password must be at least 8 characters",
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Check your connection."
+  }
+}
