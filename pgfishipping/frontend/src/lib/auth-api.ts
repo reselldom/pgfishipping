@@ -6,9 +6,12 @@ export interface LoginResponse {
   tokens: { accessToken: string; refreshToken: string };
 }
 
-export async function login(email: string, password: string): Promise<LoginResponse> {
+export async function login(
+  identifier: string,
+  password: string,
+): Promise<LoginResponse> {
   const r = await api.post<ApiSuccess<LoginResponse>>('/auth/login', {
-    email,
+    identifier,
     password,
   });
   return unwrap(r);
