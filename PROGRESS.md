@@ -24,7 +24,9 @@ Last updated: starting build.
 | 3 | Auth (register, login, JWT, password reset, email verify, change pwd)     | ✅ |
 | 4 | User & profile (me, profile update, photo, ID, address, data export)      | ✅ |
 | 5 | Shipments (pre-alert, list, detail, FOB, invoice, 3rd-party, label, public track) | ✅ |
-| 6 | Calculator + pricing rules + exchange rate                                 | 🟡 |
+| 6 | Calculator + pricing rules + exchange rate                                 | ✅ |
+| 7 | Wallet (balance, deposit + webhook, gift card, pay shipment)               | ✅ |
+| 8 | Email system (welcome, reset, verify, package status, wallet, 3rd-party)   | ✅ |
 | 7 | Wallet (balance, transactions, MonCash/NatCash, gift cards, pay)          | ⬜ |
 | 8 | Email system (Resend + React Email templates + triggers)                  | ⬜ |
 | 9 | Background jobs (BullMQ tracking poll, weekly summary)                    | ⬜ |

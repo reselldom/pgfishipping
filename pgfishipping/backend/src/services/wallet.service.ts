@@ -10,6 +10,8 @@ import { WALLET } from '../config/constants';
 import { getUsdToHtgRate } from './exchangeRate.service';
 import { generateRandomToken } from '../utils/generateCode';
 import { env } from '../config/env';
+import { notifyDepositConfirmed } from './notifications.service';
+import { logger } from '../utils/logger';
 
 export async function getOrCreateWallet(userId: string): Promise<Wallet> {
   const existing = await prisma.wallet.findUnique({ where: { userId } });
@@ -112,10 +114,10 @@ export async function initDeposit(
  * Idempotent: a second hit with the same reference is a no-op.
  */
 export async function confirmDeposit(reference: string): Promise<Transaction> {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const t = await tx.transaction.findFirst({ where: { reference } });
     if (!t) throw Errors.notFound('Transaction not found');
-    if (t.status === 'COMPLETED') return t;
+    if (t.status === 'COMPLETED') return { tx: t, alreadyCompleted: true };
     if (t.status !== 'PENDING') {
       throw Errors.badRequest(`Cannot confirm transaction in state ${t.status}`);
     }
@@ -130,8 +132,15 @@ export async function confirmDeposit(reference: string): Promise<Transaction> {
       data: { balanceUsd: { increment: t.amount } },
     });
 
-    return updated;
+    return { tx: updated, alreadyCompleted: false };
   });
+
+  if (!result.alreadyCompleted) {
+    notifyDepositConfirmed(result.tx.id).catch((err) => {
+      logger.warn({ err, txId: result.tx.id }, 'notifyDepositConfirmed failed');
+    });
+  }
+  return result.tx;
 }
 
 export async function failDeposit(reference: string, reason: string): Promise<void> {

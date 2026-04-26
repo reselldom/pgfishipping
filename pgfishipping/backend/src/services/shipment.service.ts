@@ -11,6 +11,11 @@ import { prisma } from '../config/database';
 import { Errors } from '../utils/response';
 import { generateTrackingCode } from '../utils/generateCode';
 import { uploadFile } from './storage.service';
+import {
+  notifyShipmentStatus,
+  notifyThirdPartyAuth,
+} from './notifications.service';
+import { logger } from '../utils/logger';
 
 export interface PreAlertInput {
   externalTracking?: string;
@@ -211,11 +216,15 @@ export async function setThirdPartyAuth(
   input: ThirdPartyAuthInput,
 ): Promise<unknown> {
   await assertOwn(userId, shipmentId);
-  return prisma.thirdPartyAuth.upsert({
+  const result = await prisma.thirdPartyAuth.upsert({
     where: { shipmentId },
     update: { ...input },
     create: { ...input, shipmentId, userId },
   });
+  notifyThirdPartyAuth(shipmentId).catch((err) => {
+    logger.warn({ err, shipmentId }, 'notifyThirdPartyAuth failed');
+  });
+  return result;
 }
 
 export async function getThirdPartyAuth(
@@ -248,6 +257,67 @@ export async function mergeShipments(
     data: { mergeGroupId },
   });
   return { mergeGroupId, count: shipments.length };
+}
+
+export interface SetStatusInput {
+  status: ShipmentStatus;
+  label?: string;
+  location?: string;
+  source?: string; // 'admin' | 'aftership' | 'system'
+}
+
+const STATUS_LABEL: Record<ShipmentStatus, string> = {
+  WAITING: 'Waiting for package at US warehouse',
+  RECEIVED: 'Package received at US warehouse',
+  IN_TRANSIT: 'In transit',
+  IN_TRANSIT_B: 'In transit to local branch',
+  INVENTORY: 'In inventory at destination',
+  AVAILABLE: 'Ready for pickup',
+  DELIVERED: 'Delivered',
+  RETURNED: 'Returned',
+  LOST: 'Lost',
+  CANCELLED: 'Cancelled',
+};
+
+/**
+ * Updates a shipment's status, records a tracking event, and fires the
+ * appropriate customer notification email. Used by the admin API and by the
+ * BullMQ tracking-poll job. Idempotent: same status twice = no-op.
+ */
+export async function setShipmentStatus(
+  shipmentId: string,
+  input: SetStatusInput,
+): Promise<Shipment> {
+  const shipment = await prisma.shipment.findUnique({ where: { id: shipmentId } });
+  if (!shipment) throw Errors.notFound('Shipment not found');
+
+  if (shipment.status === input.status) {
+    return shipment;
+  }
+
+  const data: Prisma.ShipmentUpdateInput = { status: input.status };
+  if (input.status === 'DELIVERED' && !shipment.deliveredAt) {
+    data.deliveredAt = new Date();
+  }
+
+  const [updated] = await prisma.$transaction([
+    prisma.shipment.update({ where: { id: shipmentId }, data }),
+    prisma.trackingEvent.create({
+      data: {
+        shipmentId,
+        status: input.status,
+        label: input.label ?? STATUS_LABEL[input.status],
+        location: input.location ?? null,
+        notes: input.source ? `source:${input.source}` : null,
+      },
+    }),
+  ]);
+
+  notifyShipmentStatus(shipmentId, input.status).catch((err) => {
+    logger.warn({ err, shipmentId, status: input.status }, 'notifyShipmentStatus failed');
+  });
+
+  return updated;
 }
 
 async function assertOwn(userId: string, shipmentId: string): Promise<void> {
