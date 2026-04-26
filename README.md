@@ -89,6 +89,18 @@ npm run dev                        # http://localhost:3001 (login as super admin
 
 Default seeded super admin: `admin@pgfishipping.com` / `ChangeMe!Now123`.
 
+### Mobile app (Expo)
+
+```bash
+cd pgfishipping/mobile
+cp .env.example .env
+npm install
+npm run typecheck
+npm run start                      # then press i (iOS), a (Android), or w (web)
+```
+
+Set `EXPO_PUBLIC_API_URL` to your API base, e.g. `http://localhost:4000/api` (use your machine’s LAN IP from a physical device).
+
 ---
 
 ## Build Strategy
