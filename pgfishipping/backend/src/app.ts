@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import { corsOrigins, env, isProd } from './config/env';
+import { corsOrigins, env, isDev, isProd } from './config/env';
 import { generalLimiter } from './middleware/rateLimit';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import routes from './routes';
@@ -28,6 +28,13 @@ export function createApp(): Express {
       origin: (origin, cb) => {
         if (!origin) return cb(null, true);
         if (corsOrigins.includes(origin)) return cb(null, true);
+        // Dev: allow any local browser origin (3000, 3030, Next.js, Vite, etc.)
+        if (
+          isDev &&
+          /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+        ) {
+          return cb(null, true);
+        }
         return cb(new Error('Not allowed by CORS'));
       },
       credentials: true,
