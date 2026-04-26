@@ -27,24 +27,43 @@
   },
   "home": {
     "hero": {
-      "title": "Tus paquetes de EE.UU. a Haití, simplificados.",
-      "subtitle": "Obtén una dirección US gratuita. Compra en cualquier sitio. Nosotros nos encargamos del resto.",
+      "eyebrow": "De EE.UU. a Haití — rápido, seguro, transparente.",
+      "title": "Rastrear un paquete",
+      "subtitle": "Ingresa tu número PGFI o el número del transportista de la tienda donde compraste.",
+      "placeholder": "PG-123456 o 1Z…",
+      "search": "Rastrear",
       "ctaPrimary": "Obtener mi dirección US gratis",
-      "ctaSecondary": "Rastrear un paquete"
+      "ctaSecondary": "Crear cuenta gratis"
     },
-    "features": {
-      "free": {
-        "title": "Dirección US gratuita",
-        "desc": "Regístrate y recibe al instante una dirección en Miami."
+    "actions": {
+      "title": "¿En qué podemos ayudarte?",
+      "send": {
+        "title": "Enviar un paquete",
+        "desc": "Usa nuestros servicios para enviar tus paquetes entre EE.UU. y Haití — por avión o por barco.",
+        "cta": "Crear cuenta"
       },
-      "transparent": {
-        "title": "Precios transparentes",
-        "desc": "Calcula los costos de envío con anticipación."
+      "shop": {
+        "title": "Compra en línea",
+        "desc": "Usa tu dirección US gratuita en Amazon, eBay, Shein y cualquier tienda US. Nosotros enviamos a Haití.",
+        "cta": "Mi dirección"
       },
-      "tracking": {
-        "title": "Rastreo en tiempo real",
-        "desc": "Sigue cada paso desde el almacén US hasta la recogida en Haití."
+      "addresses": {
+        "title": "Nuestras direcciones",
+        "desc": "Encuentra nuestros almacenes en EE.UU. y nuestras sucursales en Haití — fáciles de localizar.",
+        "cta": "Ver direcciones"
+      },
+      "calculator": {
+        "title": "Calculadora",
+        "desc": "Estima el costo según peso o dimensiones, más el valor FOB de tus artículos.",
+        "cta": "Estimar ahora"
       }
+    },
+    "how": {
+      "eyebrow": "Servicio rápido",
+      "title": "Cómo enviar paquetes con PGFI Shipping",
+      "p1": "Crea una cuenta gratuita para recibir una dirección US personalizada que puedes usar en cualquier tienda. Sigue cada paso, recibe notificaciones por email y paga en línea o en sucursal.",
+      "p2": "Cuando tu paquete llegue a Haití, recógelo en la sucursal que elegiste. Tu historial, facturas y etiquetas quedan en tu panel.",
+      "cta": "Crear cuenta"
     },
     "steps": {
       "title": "Cómo funciona",
@@ -52,6 +71,47 @@
       "s2": { "title": "Compra", "desc": "Usa tu dirección US como dirección de envío en cualquier tienda US." },
       "s3": { "title": "Recibimos", "desc": "Recogemos, pesamos y preparamos tus paquetes en Miami." },
       "s4": { "title": "Recoge en Haití", "desc": "Recoge en Puerto Príncipe, Cabo Haitiano o Les Cayes." }
+    },
+    "stats": {
+      "eyebrow": "Entrega segura",
+      "title": "Entrega entre EE.UU. y Haití",
+      "subtitle": "Ya sea por avión o por barco, estamos para ti.",
+      "branchesValue": "3+",
+      "branchesLabel": "Sucursales en Haití",
+      "branchesDesc": "Puerto Príncipe, Cabo Haitiano, Les Cayes.",
+      "languagesValue": "4",
+      "languagesLabel": "Idiomas",
+      "languagesDesc": "English, Français, Kreyòl, Español.",
+      "servicesValue": "2",
+      "servicesLabel": "Tipos de servicio",
+      "servicesDesc": "Aéreo (4–7 días) y Marítimo (3–4 semanas).",
+      "trackingValue": "24/7",
+      "trackingLabel": "Rastreo",
+      "trackingDesc": "Actualizaciones en tiempo real y alertas por email."
+    },
+    "app": {
+      "title": "Descarga la app PGFI",
+      "desc": "Rastrea tus paquetes en tiempo real, escanea facturas con la cámara, paga desde tu billetera — todas las funciones en tu bolsillo.",
+      "comingSoon": "Próximamente",
+      "googlePlay": "Google Play",
+      "appStore": "App Store"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Preguntas frecuentes",
+      "subtitle": "Hemos reunido las preguntas más comunes.",
+      "q1": "¿Cómo rastreo mi paquete?",
+      "a1": "Cuando tu paquete llegue a nuestro almacén US, recibirás un email de confirmación con un número PGFI. Úsalo en la página de Rastreo o en tu panel.",
+      "q2": "¿Cómo creo una cuenta?",
+      "a2": "Haz clic en « Registrarse » arriba a la derecha y crea una cuenta gratuita. Recibirás al instante una dirección US para comprar en cualquier sitio.",
+      "q3": "¿Qué métodos de pago aceptan?",
+      "a3": "Aceptamos MonCash, NatCash, PayMon, transferencia bancaria y tarjetas de regalo. Una vez acreditada tu billetera, paga cualquier envío en un clic.",
+      "q4": "¿Cuánto tarda la entrega?",
+      "a4": "Los envíos aéreos llegan en 4–7 días tras llegar al almacén US. Los marítimos tardan 3–4 semanas. Hay opciones express bajo solicitud.",
+      "q5": "¿Mi paquete está asegurado?",
+      "a5": "Tu paquete está protegido automáticamente hasta el valor FOB declarado, según nuestros términos. Para mayor cobertura, contacta a soporte antes del envío.",
+      "q6": "¿Cómo se calcula la tarifa?",
+      "a6": "Nuestra tarifa usa el peso real (LBS) o el peso volumétrico (L × A × H), el mayor de los dos. Usa la Calculadora para una estimación instantánea."
     },
     "cta": {
       "title": "¿Listo para enviar mejor?",

@@ -27,24 +27,43 @@
   },
   "home": {
     "hero": {
-      "title": "Vos colis des États-Unis vers Haïti, simplifiés.",
-      "subtitle": "Obtenez une adresse US gratuite. Commandez en ligne partout. Nous gérons le reste.",
+      "eyebrow": "Des États-Unis vers Haïti — rapide, sûr, transparent.",
+      "title": "Suivre un colis",
+      "subtitle": "Entrez votre code PGFI ou le numéro du transporteur du magasin où vous avez commandé.",
+      "placeholder": "PG-123456 ou 1Z…",
+      "search": "Suivre",
       "ctaPrimary": "Obtenir mon adresse US gratuite",
-      "ctaSecondary": "Suivre un colis"
+      "ctaSecondary": "Ouvrir un compte gratuit"
     },
-    "features": {
-      "free": {
-        "title": "Adresse US gratuite",
-        "desc": "Inscrivez-vous et recevez instantanément une adresse à Miami."
+    "actions": {
+      "title": "Comment pouvons-nous vous aider ?",
+      "send": {
+        "title": "Envoyer un colis",
+        "desc": "Profitez de nos services pour envoyer vos colis entre les États-Unis et Haïti — par avion ou par bateau.",
+        "cta": "Créer un compte"
       },
-      "transparent": {
-        "title": "Prix transparents",
-        "desc": "Calculez les frais d'expédition à l'avance."
+      "shop": {
+        "title": "Achat en ligne",
+        "desc": "Utilisez votre adresse US gratuite sur Amazon, eBay, Shein et tout magasin américain. Nous transférons vers Haïti.",
+        "cta": "Mon adresse"
       },
-      "tracking": {
-        "title": "Suivi en temps réel",
-        "desc": "Suivez chaque étape de l'entrepôt US au point de retrait en Haïti."
+      "addresses": {
+        "title": "Nos adresses",
+        "desc": "Trouvez nos entrepôts aux États-Unis et nos succursales à travers Haïti — faciles à localiser.",
+        "cta": "Voir les adresses"
+      },
+      "calculator": {
+        "title": "Calculateur",
+        "desc": "Estimez le coût d'expédition selon le poids ou les dimensions, plus la valeur FOB de vos articles.",
+        "cta": "Estimer maintenant"
       }
+    },
+    "how": {
+      "eyebrow": "Service rapide",
+      "title": "Comment envoyer des colis avec PGFI Shipping",
+      "p1": "Créez un compte gratuit pour recevoir une adresse d'expédition US personnalisée, utilisable partout en ligne. Suivez chaque étape, recevez des notifications par email et payez en ligne ou en succursale.",
+      "p2": "Quand votre colis arrive en Haïti, récupérez-le à la succursale de votre choix. Votre historique, factures et étiquettes restent dans votre tableau de bord.",
+      "cta": "Créer un compte"
     },
     "steps": {
       "title": "Comment ça marche",
@@ -52,6 +71,47 @@
       "s2": { "title": "Achetez", "desc": "Utilisez votre adresse US sur n'importe quel site américain." },
       "s3": { "title": "Nous recevons", "desc": "Nous récupérons, pesons et préparons vos colis à Miami." },
       "s4": { "title": "Récupérez en Haïti", "desc": "Récupérez à Port-au-Prince, Cap-Haïtien ou Les Cayes." }
+    },
+    "stats": {
+      "eyebrow": "Livraison sécurisée",
+      "title": "Livraison entre les États-Unis et Haïti",
+      "subtitle": "Que ce soit par avion ou par bateau, nous sommes là pour vous.",
+      "branchesValue": "3+",
+      "branchesLabel": "Succursales en Haïti",
+      "branchesDesc": "Port-au-Prince, Cap-Haïtien, Les Cayes.",
+      "languagesValue": "4",
+      "languagesLabel": "Langues",
+      "languagesDesc": "English, Français, Kreyòl, Español.",
+      "servicesValue": "2",
+      "servicesLabel": "Types de service",
+      "servicesDesc": "Avion (4–7 jours) et Bateau (3–4 semaines).",
+      "trackingValue": "24/7",
+      "trackingLabel": "Suivi",
+      "trackingDesc": "Mises à jour en temps réel et alertes email."
+    },
+    "app": {
+      "title": "Téléchargez l'application PGFI",
+      "desc": "Suivez vos colis en temps réel, scannez vos factures avec la caméra, payez avec votre portefeuille — toutes les fonctionnalités du web dans votre poche.",
+      "comingSoon": "Bientôt disponible",
+      "googlePlay": "Google Play",
+      "appStore": "App Store"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Questions fréquentes",
+      "subtitle": "Voici les questions les plus courantes.",
+      "q1": "Comment suivre mon colis ?",
+      "a1": "Une fois votre colis reçu dans notre entrepôt américain, vous recevez un email de confirmation avec un numéro de suivi PGFI. Utilisez-le sur la page Suivi ou dans votre tableau de bord.",
+      "q2": "Comment créer un compte ?",
+      "a2": "Cliquez sur « S'inscrire » en haut à droite et créez un compte gratuit. Vous recevez instantanément une adresse US utilisable partout en ligne.",
+      "q3": "Quels modes de paiement acceptez-vous ?",
+      "a3": "Nous acceptons MonCash, NatCash, PayMon, virement bancaire et cartes cadeaux. Une fois votre portefeuille crédité, payez vos envois en un clic.",
+      "q4": "Combien de temps prend la livraison ?",
+      "a4": "Les envois aériens arrivent généralement en 4–7 jours après réception aux États-Unis. Les envois maritimes prennent 3–4 semaines. Des options express sont disponibles sur demande.",
+      "q5": "Mon colis est-il assuré ?",
+      "a5": "Votre colis est automatiquement protégé jusqu'à la valeur FOB déclarée, selon nos conditions. Pour une couverture supérieure, contactez le support avant l'expédition.",
+      "q6": "Comment le tarif est-il calculé ?",
+      "a6": "Notre tarif utilise le poids réel (LBS) ou le poids volumétrique (L × l × H), le plus élevé des deux. Utilisez notre Calculateur pour une estimation instantanée."
     },
     "cta": {
       "title": "Prêt à expédier intelligemment ?",

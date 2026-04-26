@@ -27,24 +27,43 @@
   },
   "home": {
     "hero": {
-      "title": "Your packages from the US to Haiti, simplified.",
-      "subtitle": "Get a free US address. Shop anywhere online. We handle the rest.",
+      "eyebrow": "From the US to Haiti — fast, safe, transparent.",
+      "title": "Track a package",
+      "subtitle": "Enter the PGFI tracking number or the carrier number from the store where the package came from.",
+      "placeholder": "PG-123456 or 1Z…",
+      "search": "Track",
       "ctaPrimary": "Get your free US address",
-      "ctaSecondary": "Track a package"
+      "ctaSecondary": "Open a free account"
     },
-    "features": {
-      "free": {
-        "title": "Free US Address",
-        "desc": "Sign up and instantly receive a free Miami warehouse address."
+    "actions": {
+      "title": "What can we help you with?",
+      "send": {
+        "title": "Send a package",
+        "desc": "Use our services to send your packages between the US and Haiti — by air or by sea.",
+        "cta": "Create an account"
       },
-      "transparent": {
-        "title": "Transparent Pricing",
-        "desc": "Calculate shipping costs upfront with our calculator."
+      "shop": {
+        "title": "Online purchase",
+        "desc": "Use your free US address to shop on Amazon, eBay, Shein and any US store. We forward to Haiti.",
+        "cta": "Get my address"
       },
-      "tracking": {
-        "title": "Real-time Tracking",
-        "desc": "Follow every step from US warehouse to Haiti pickup."
+      "addresses": {
+        "title": "Our addresses",
+        "desc": "Find our warehouses in the US and our branches across Haiti — easy to locate and visit.",
+        "cta": "View addresses"
+      },
+      "calculator": {
+        "title": "Calculator",
+        "desc": "Estimate shipping cost based on weight or dimensions, plus the FOB value of your goods.",
+        "cta": "Estimate now"
       }
+    },
+    "how": {
+      "eyebrow": "Fast service",
+      "title": "How to send packages with PGFI Shipping",
+      "p1": "Create a free account to receive a personalized US shipping address you can use anywhere online. Track every step of your package, get notified by email, and pay online or at the branch.",
+      "p2": "When your package arrives in Haiti, pick it up at the branch you selected. Your shipping history, invoices and labels stay in your dashboard.",
+      "cta": "Create an account"
     },
     "steps": {
       "title": "How it works",
@@ -52,6 +71,47 @@
       "s2": { "title": "Shop", "desc": "Use your US address as the shipping address on any US store." },
       "s3": { "title": "We receive", "desc": "We collect, weigh and prepare your packages in Miami." },
       "s4": { "title": "Pick up in Haiti", "desc": "Pick up at our branches in Port-au-Prince, Cap-Haïtien or Les Cayes." }
+    },
+    "stats": {
+      "eyebrow": "Secure delivery",
+      "title": "Delivery between the US and Haiti",
+      "subtitle": "Whether by plane or by boat, we are there for you.",
+      "branchesValue": "3+",
+      "branchesLabel": "Branches in Haiti",
+      "branchesDesc": "Port-au-Prince, Cap-Haïtien, Les Cayes.",
+      "languagesValue": "4",
+      "languagesLabel": "Languages",
+      "languagesDesc": "English, Français, Kreyòl, Español.",
+      "servicesValue": "2",
+      "servicesLabel": "Service types",
+      "servicesDesc": "Air (4–7 days) and Sea (3–4 weeks).",
+      "trackingValue": "24/7",
+      "trackingLabel": "Tracking",
+      "trackingDesc": "Real-time updates and email alerts."
+    },
+    "app": {
+      "title": "Download the PGFI app",
+      "desc": "Track your packages in real time, scan invoices with your camera, pay from your wallet and access all the same features as the web.",
+      "comingSoon": "Coming soon",
+      "googlePlay": "Google Play",
+      "appStore": "App Store"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Frequently asked questions",
+      "subtitle": "We've listed the most common questions below.",
+      "q1": "How can I track my package?",
+      "a1": "Once your package is received in our US warehouse, you'll receive a confirmation email with a PGFI tracking number. Use it on the Track page or in your dashboard to follow every step.",
+      "q2": "How do I create an account?",
+      "a2": "Click \"Sign up\" on the top right and create a free personal account. You'll instantly get a US shipping address you can use anywhere online.",
+      "q3": "What forms of payment do you accept?",
+      "a3": "We accept MonCash, NatCash, PayMon, bank transfers and gift cards. Once funds are credited to your wallet, you can pay any shipment in one click.",
+      "q4": "How long does delivery take?",
+      "a4": "Air shipments typically arrive in 4–7 days after they reach our US warehouse. Sea shipments take 3–4 weeks. Express options are available on request.",
+      "q5": "Is my package insured?",
+      "a5": "Your package is automatically protected up to the declared FOB value, within our terms. For higher coverage, contact support before the package leaves the US warehouse.",
+      "q6": "How is the shipping rate calculated?",
+      "a6": "Our rate uses the actual weight (LBS) or the dimensional weight (L × W × H), whichever is greater. Use our Calculator to get an instant estimate."
     },
     "cta": {
       "title": "Ready to ship smarter?",

@@ -27,24 +27,43 @@
   },
   "home": {
     "hero": {
-      "title": "Pakè ou yo soti nan US ap rive ann Ayiti, fasil.",
-      "subtitle": "Pran adrès US gratis. Achte sou entènèt nenpòt kote. Nou pran swen tout rès la.",
+      "eyebrow": "Soti Etazini rive ann Ayiti — vit, sekirize, klè.",
+      "title": "Swiv yon pakè",
+      "subtitle": "Antre nimewo PGFI ou oswa nimewo transpòtè magazen kote ou te achte a.",
+      "placeholder": "PG-123456 oswa 1Z…",
+      "search": "Swiv",
       "ctaPrimary": "Pran adrès US gratis",
-      "ctaSecondary": "Swiv yon pakè"
+      "ctaSecondary": "Ouvè yon kont gratis"
     },
-    "features": {
-      "free": {
-        "title": "Adrès US gratis",
-        "desc": "Enskri epi ou pral resevwa adrès Miami w la imedyatman."
+    "actions": {
+      "title": "Ki sa nou ka fè pou ou?",
+      "send": {
+        "title": "Voye yon pakè",
+        "desc": "Sèvi ak sèvis nou yo pou voye pakè ou yo ant Etazini ak Ayiti — pa avyon oswa pa bato.",
+        "cta": "Kreye yon kont"
       },
-      "transparent": {
-        "title": "Pri klè",
-        "desc": "Kalkile pri voyaj la avan ak kalkilatè nou an."
+      "shop": {
+        "title": "Achte sou entènèt",
+        "desc": "Sèvi ak adrès US gratis ou sou Amazon, eBay, Shein ak nenpòt magazen Ameriken. Nou voye an Ayiti.",
+        "cta": "Pran adrès mwen"
       },
-      "tracking": {
-        "title": "Swiv an tan reyèl",
-        "desc": "Swiv chak etap soti depo US la rive nan biwo Ayiti a."
+      "addresses": {
+        "title": "Adrès nou yo",
+        "desc": "Jwenn depo nou yo nan Etazini ak biwo nou yo atravè Ayiti — fasil pou jwenn.",
+        "cta": "Wè adrès yo"
+      },
+      "calculator": {
+        "title": "Kalkilatè",
+        "desc": "Estime pri voyaj la dapre pwa oswa dimansyon pakè ou ak valè FOB la.",
+        "cta": "Estime kounye a"
       }
+    },
+    "how": {
+      "eyebrow": "Sèvis rapid",
+      "title": "Kijan pou voye pakè ak PGFI Shipping",
+      "p1": "Kreye yon kont gratis pou jwenn yon adrès livrezon US pèsonèl ou ka itilize nenpòt kote sou entènèt. Swiv chak etap, jwenn imèl, peye sou liy oswa nan biwo a.",
+      "p2": "Lè pakè ou rive ann Ayiti, pran l nan biwo ou chwazi a. Istwa ou, fakti ak etikèt rete nan tablodbò ou.",
+      "cta": "Kreye yon kont"
     },
     "steps": {
       "title": "Kijan li mache",
@@ -52,6 +71,47 @@
       "s2": { "title": "Achte", "desc": "Itilize adrès US ou kòm adrès livrezon sou nenpòt magazen Ameriken." },
       "s3": { "title": "Nou resevwa", "desc": "Nou kolekte, peze epi prepare pakè ou yo nan Miami." },
       "s4": { "title": "Pran ann Ayiti", "desc": "Pran nan biwo Pòtoprens, Okap oswa Okay." }
+    },
+    "stats": {
+      "eyebrow": "Livrezon ki an sekirite",
+      "title": "Livrezon ant Etazini ak Ayiti",
+      "subtitle": "Kit se pa avyon kit se pa bato, nou la pou ou.",
+      "branchesValue": "3+",
+      "branchesLabel": "Biwo ann Ayiti",
+      "branchesDesc": "Pòtoprens, Okap, Okay.",
+      "languagesValue": "4",
+      "languagesLabel": "Lang",
+      "languagesDesc": "English, Français, Kreyòl, Español.",
+      "servicesValue": "2",
+      "servicesLabel": "Tip sèvis",
+      "servicesDesc": "Avyon (4–7 jou) ak Bato (3–4 semèn).",
+      "trackingValue": "24/7",
+      "trackingLabel": "Swivi",
+      "trackingDesc": "Mizajou an tan reyèl ak alèt imèl."
+    },
+    "app": {
+      "title": "Telechaje aplikasyon PGFI a",
+      "desc": "Swiv pakè ou yo an tan reyèl, eskane fakti ak kamera w, peye ak bous ou — tout fonksyon yo nan men ou.",
+      "comingSoon": "Pral disponib",
+      "googlePlay": "Google Play",
+      "appStore": "App Store"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Kesyon yo poze souvan",
+      "subtitle": "Men kesyon yo poze pi souvan yo.",
+      "q1": "Kijan mwen ka swiv pakè mwen?",
+      "a1": "Yon fwa pakè ou rive nan depo nou nan Etazini, w ap resevwa yon imèl konfimasyon ak yon nimewo PGFI. Itilize l sou paj Swivi a oswa nan tablodbò ou.",
+      "q2": "Kijan pou m kreye yon kont?",
+      "a2": "Klike sou « Enskri » anlè a dwat epi kreye yon kont gratis. W ap resevwa yon adrès US ou ka itilize touswit sou tout magazen.",
+      "q3": "Ki mòd peman nou aksepte?",
+      "a3": "Nou aksepte MonCash, NatCash, PayMon, viman bankè ak kat kado. Lè bous ou kredite, peye nenpòt pakè nan yon klik.",
+      "q4": "Konbyen tan livrezon an pran?",
+      "a4": "Voyaj pa avyon pran 4–7 jou apre yo rive nan depo US la. Voyaj pa bato pran 3–4 semèn. Opsyon express disponib si w mande.",
+      "q5": "Èske pakè mwen asire?",
+      "a5": "Pakè ou pwoteje otomatikman jiska valè FOB ou deklare a, dapre kondisyon nou yo. Pou plis kouvèti, kontakte sipò avan pakè a kite Etazini.",
+      "q6": "Kijan tarif la kalkile?",
+      "a6": "Tarif nou itilize pwa reyèl (LBS) oswa pwa volimetrik (L × L × H), pi gwo nan de yo. Itilize Kalkilatè nou an pou yon estimasyon imedyat."
     },
     "cta": {
       "title": "Ou prè pou voye pi entelijan?",
