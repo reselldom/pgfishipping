@@ -27,6 +27,7 @@ Last updated: starting build.
 | 6 | Calculator + pricing rules + exchange rate                                 | ✅ |
 | 7 | Wallet (balance, deposit + webhook, gift card, pay shipment)               | ✅ |
 | 8 | Email system (welcome, reset, verify, package status, wallet, 3rd-party)   | ✅ |
+| 9 | Background jobs (BullMQ): tracking poll, weekly summary, exchange-rate refresh | ✅ |
 | 7 | Wallet (balance, transactions, MonCash/NatCash, gift cards, pay)          | ⬜ |
 | 8 | Email system (Resend + React Email templates + triggers)                  | ⬜ |
 | 9 | Background jobs (BullMQ tracking poll, weekly summary)                    | ⬜ |

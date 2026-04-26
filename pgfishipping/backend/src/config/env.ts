@@ -47,6 +47,15 @@ const schema = z.object({
 
   WEBHOOK_SHARED_SECRET: z.string().optional().default('dev-webhook-secret'),
 
+  JOBS_ENABLED: z
+    .string()
+    .optional()
+    .default('true')
+    .transform((v) => v === 'true' || v === '1'),
+  TRACKING_POLL_CRON: z.string().default('*/30 * * * *'),
+  EXCHANGE_RATE_REFRESH_CRON: z.string().default('0 */6 * * *'),
+  WEEKLY_SUMMARY_CRON: z.string().default('0 13 * * 1'),
+
   SUPER_ADMIN_EMAIL: z.string().email().default('admin@pgfishipping.com'),
   SUPER_ADMIN_PASSWORD: z.string().min(8).default('ChangeMe!Now123'),
 
