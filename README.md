@@ -71,12 +71,16 @@ Health check: `curl http://localhost:4000/health`
 
 ### Customer portal (frontend)
 
+The customer app listens on **3030** so **3000 stays free** for any other local project you run.
+
 ```bash
 cd pgfishipping/frontend
 cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:4000/api
 npm install
 npm run dev                        # http://localhost:3030
 ```
+
+If your backend still has an older `.env`, set `APP_URL` and `CORS_ORIGINS` to use `http://localhost:3030` (see `pgfishipping/backend/.env.example`).
 
 ### Admin panel
 

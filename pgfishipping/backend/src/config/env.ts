@@ -6,7 +6,7 @@ const schema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
 
   APP_NAME: z.string().default('PGFI Shipping'),
-  APP_URL: z.string().url().default('http://localhost:3000'),
+  APP_URL: z.string().url().default('http://localhost:3030'),
   API_URL: z.string().url().default('http://localhost:4000'),
   ADMIN_URL: z.string().url().default('http://localhost:3001'),
 
@@ -61,7 +61,7 @@ const schema = z.object({
 
   CORS_ORIGINS: z
     .string()
-    .default('http://localhost:3000,http://localhost:3001'),
+    .default('http://localhost:3030,http://localhost:3001'),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
 

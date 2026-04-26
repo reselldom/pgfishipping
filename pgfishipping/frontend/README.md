@@ -36,7 +36,7 @@ The app expects the backend API at `NEXT_PUBLIC_API_URL` (defaults to `http://lo
 
 ## Scripts
 
-- `npm run dev` — start dev server on http://localhost:3000
+- `npm run dev` — start dev server on http://localhost:3030
 - `npm run build` — build for production
 - `npm run start` — start production server
 - `npm run lint` — run Next/ESLint
