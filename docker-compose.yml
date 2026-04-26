@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: pgfi-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pgfi
+      POSTGRES_PASSWORD: pgfi_local_password
+      POSTGRES_DB: pgfishipping
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgfi_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pgfi -d pgfishipping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: pgfi-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - pgfi_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgfi_postgres_data:
+  pgfi_redis_data:

@@ -1,0 +1,455 @@
+// PGFI Shipping — Prisma schema
+// Mirrors section 8 of pgfishipping-spec.md.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ───────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  CUSTOMER
+  SUPER_ADMIN
+  MANAGER
+  WAREHOUSE_STAFF
+  COURIER
+  FINANCE
+  SUPPORT
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+  DELETED
+}
+
+enum ClientType {
+  PERSONAL
+  BUSINESS
+}
+
+enum Language {
+  EN
+  FR
+  HT
+  ES
+}
+
+enum ServiceType {
+  AIR
+  SEA
+}
+
+enum ShipmentStatus {
+  WAITING
+  RECEIVED
+  IN_TRANSIT
+  IN_TRANSIT_B
+  INVENTORY
+  AVAILABLE
+  DELIVERED
+  RETURNED
+  LOST
+  CANCELLED
+}
+
+enum ContentType {
+  PACKAGE
+  DOCUMENT
+}
+
+enum SpecialFlag {
+  FRAGILE
+  LIQUID
+  TIRES
+  TV
+  ELECTRONICS
+  REFRIGERATED
+  MEDICATIONS
+  PERISHABLE
+  MOBILE_PHONE
+}
+
+enum TransactionType {
+  DEPOSIT
+  PAYMENT
+  REFUND
+  ADJUSTMENT
+  GIFT_CARD_REDEMPTION
+}
+
+enum PaymentMethod {
+  MONCASH
+  NATCASH
+  PAYMON
+  BANK_TRANSFER
+  GIFT_CARD
+  ADMIN_ADJUSTMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum NotificationChannel {
+  EMAIL
+  PUSH
+}
+
+enum GiftCardStatus {
+  ACTIVE
+  USED
+  EXPIRED
+  CANCELLED
+}
+
+// ─── MODELS ──────────────────────────────────────────────────────────────────
+
+model User {
+  id                 String              @id @default(cuid())
+  customerCode       String              @unique
+  email              String              @unique
+  passwordHash       String
+  firstName          String
+  lastName           String
+  phoneCell          String?
+  phoneHome          String?
+  role               UserRole            @default(CUSTOMER)
+  status             UserStatus          @default(PENDING_VERIFICATION)
+  clientType         ClientType          @default(PERSONAL)
+  language           Language            @default(EN)
+  gender             String?
+  dateOfBirth        DateTime?
+  profilePhotoUrl    String?
+  idPhotoUrl         String?
+  idType             String?
+  idNumber           String?
+  referralCode       String              @unique
+  referredById       String?
+  loyaltyPoints      Int                 @default(0)
+  pointsExpiresAt    DateTime?
+  preferredBranchId  String?
+  emailVerified      Boolean             @default(false)
+  emailVerifyToken   String?
+  resetToken         String?
+  resetTokenExpiry   DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  deletedAt          DateTime?
+
+  referredBy         User?               @relation("Referrals", fields: [referredById], references: [id])
+  referrals          User[]              @relation("Referrals")
+  addresses          UserAddress[]
+  usWarehouseAddress UsWarehouseAddress?
+  shipments          Shipment[]
+  wallet             Wallet?
+  notifications      NotificationLog[]
+  supportTickets     SupportTicket[]
+  thirdPartyAuths    ThirdPartyAuth[]
+  loyaltyHistory     LoyaltyEvent[]
+  preferredBranch    Warehouse?          @relation(fields: [preferredBranchId], references: [id])
+
+  @@index([email])
+  @@index([customerCode])
+  @@index([referralCode])
+  @@map("users")
+}
+
+model UserAddress {
+  id           String   @id @default(cuid())
+  userId       String
+  addressType  String
+  fullAddress  String?
+  street       String?
+  apt          String?
+  neighborhood String?
+  city         String
+  state        String?
+  zip          String?
+  country      String
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_addresses")
+}
+
+model UsWarehouseAddress {
+  id          String     @id @default(cuid())
+  userId      String     @unique
+  aptNumber   String
+  airAddress  String
+  seaAddress  String
+  warehouseId String?
+  createdAt   DateTime   @default(now())
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  warehouse   Warehouse? @relation(fields: [warehouseId], references: [id])
+
+  @@map("us_warehouse_addresses")
+}
+
+model Shipment {
+  id                  String          @id @default(cuid())
+  trackingCode        String          @unique
+  userId              String
+  externalTracking    String?
+  externalCarrier     String?
+  serviceType         ServiceType     @default(AIR)
+  status              ShipmentStatus  @default(WAITING)
+  originCountry       String          @default("US")
+  destinationCountry  String          @default("HT")
+  contentType         ContentType     @default(PACKAGE)
+  contentsDescription String?
+  vendor              String?
+  specialFlags        SpecialFlag[]
+  weightLbs           Float?
+  dimensionLength     Float?
+  dimensionWidth      Float?
+  dimensionHeight     Float?
+  fobValue            Float?
+  fobCurrency         String          @default("USD")
+  invoiceUrl          String?
+  additionalNotes     String?
+  changeDestination   Boolean         @default(false)
+  alternateAddressId  String?
+  mergeGroupId        String?
+  originWarehouseId   String?
+  destinationBranchId String?
+  recipientName       String?
+  recipientPhone      String?
+  totalCost           Float?
+  costBreakdown       Json?
+  paidAt              DateTime?
+  deliveredAt         DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  user                User            @relation(fields: [userId], references: [id])
+  trackingEvents      TrackingEvent[]
+  thirdPartyAuth      ThirdPartyAuth?
+  transactions        Transaction[]
+  originWarehouse     Warehouse?      @relation("OriginWarehouse", fields: [originWarehouseId], references: [id])
+  destinationBranch   Warehouse?      @relation("DestinationBranch", fields: [destinationBranchId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([trackingCode])
+  @@index([externalTracking])
+  @@map("shipments")
+}
+
+model TrackingEvent {
+  id          String         @id @default(cuid())
+  shipmentId  String
+  status      ShipmentStatus
+  label       String
+  location    String?
+  notes       String?
+  createdById String?
+  timestamp   DateTime       @default(now())
+
+  shipment    Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([shipmentId])
+  @@map("tracking_events")
+}
+
+model Warehouse {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  address   String
+  city      String
+  state     String?
+  country   String
+  phone     String?
+  email     String?
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  usAddresses      UsWarehouseAddress[]
+  originShipments  Shipment[]           @relation("OriginWarehouse")
+  destShipments    Shipment[]           @relation("DestinationBranch")
+  preferredByUsers User[]
+
+  @@map("warehouses")
+}
+
+model Wallet {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  balanceUsd Float    @default(0)
+  balanceHtg Float    @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@map("wallets")
+}
+
+model Transaction {
+  id            String            @id @default(cuid())
+  walletId      String
+  type          TransactionType
+  amount        Float
+  currency      String            @default("USD")
+  paymentMethod PaymentMethod?
+  status        TransactionStatus @default(PENDING)
+  reference     String?
+  shipmentId    String?
+  giftCardId    String?
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  wallet   Wallet    @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  shipment Shipment? @relation(fields: [shipmentId], references: [id])
+  giftCard GiftCard? @relation(fields: [giftCardId], references: [id])
+
+  @@index([walletId])
+  @@index([status])
+  @@map("transactions")
+}
+
+model ThirdPartyAuth {
+  id             String   @id @default(cuid())
+  shipmentId     String   @unique
+  userId         String
+  authorizedName String
+  idType         String
+  idNumber       String
+  phone          String
+  createdAt      DateTime @default(now())
+
+  shipment Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@map("third_party_auths")
+}
+
+model PricingRule {
+  id          String      @id @default(cuid())
+  name        String
+  serviceType ServiceType
+  feeType     String
+  ratePerLb   Float?
+  flatFee     Float?
+  minCharge   Float?
+  currency    String      @default("USD")
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("pricing_rules")
+}
+
+model LoyaltyEvent {
+  id          String    @id @default(cuid())
+  userId      String
+  points      Int
+  reason      String
+  referenceId String?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("loyalty_events")
+}
+
+model Referral {
+  id            String   @id @default(cuid())
+  referrerId    String
+  referredId    String
+  commissionUsd Float    @default(0)
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+
+  @@map("referrals")
+}
+
+model GiftCard {
+  id        String         @id @default(cuid())
+  code      String         @unique
+  valueUsd  Float
+  issuedTo  String?
+  usedBy    String?
+  expiresAt DateTime?
+  status    GiftCardStatus @default(ACTIVE)
+  createdAt DateTime       @default(now())
+
+  transactions Transaction[]
+
+  @@map("gift_cards")
+}
+
+model NotificationLog {
+  id        String              @id @default(cuid())
+  userId    String
+  channel   NotificationChannel
+  template  String
+  subject   String?
+  toEmail   String?
+  status    String              @default("sent")
+  createdAt DateTime            @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notification_logs")
+}
+
+model SupportTicket {
+  id         String   @id @default(cuid())
+  userId     String
+  subject    String
+  message    String
+  reply      String?
+  status     String   @default("open")
+  assignedTo String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("support_tickets")
+}
+
+model SystemConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("system_config")
+}
+
+model Staff {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  warehouseId  String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@map("staff")
+}

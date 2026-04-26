@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/
+package-lock.json.bak
+
+# Testing
+coverage/
+*.lcov
+.nyc_output
+
+# Build output
+dist/
+build/
+.next/
+out/
+.expo/
+.expo-shared/
+
+# Production
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+!.env.example
+
+# IDE
+.vscode/
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+prisma/dev.db*
+prisma/migrations/dev/
+
+# Local uploads (dev fallback storage)
+uploads/
+
+# Mobile
+*.ipa
+*.apk
+*.aab
+
+# Heavy reference docs (kept local only)
+Claude.pdf
+
+# Misc
+*.pem
+.cache/
+.turbo/
