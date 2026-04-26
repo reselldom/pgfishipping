@@ -15,9 +15,9 @@ pgfishipping.com/
 ├── PROGRESS.md              # What is built / what is next
 ├── docker-compose.yml       # Local Postgres + Redis
 └── pgfishipping/            # Actual application code (monorepo)
-    ├── backend/             # Express + TypeScript + Prisma API
-    ├── frontend/            # Next.js 14 customer portal (later phase)
-    ├── admin/               # Next.js 14 admin panel (later phase)
+    ├── backend/             # Express + TypeScript + Prisma API (port 4000)
+    ├── frontend/            # Next.js 14 customer portal (port 3030)
+    ├── admin/               # Next.js 14 admin panel (port 3001)
     └── mobile/              # Expo React Native app (later phase)
 ```
 
@@ -68,6 +68,26 @@ npm run dev                # http://localhost:4000
 ```
 
 Health check: `curl http://localhost:4000/health`
+
+### Customer portal (frontend)
+
+```bash
+cd pgfishipping/frontend
+cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:4000/api
+npm install
+npm run dev                        # http://localhost:3030
+```
+
+### Admin panel
+
+```bash
+cd pgfishipping/admin
+cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:4000/api
+npm install
+npm run dev                        # http://localhost:3001 (login as super admin)
+```
+
+Default seeded super admin: `admin@pgfishipping.com` / `ChangeMe!Now123`.
 
 ---
 
