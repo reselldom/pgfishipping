@@ -114,11 +114,19 @@ export default function AdminShipmentsPage(): JSX.Element {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Shipments</h1>
-          <p className="text-sm text-muted-foreground">
-            {total.toLocaleString()} total
-          </p>
+        <div className="flex flex-wrap items-end gap-3">
+          <div>
+            <h1 className="text-2xl font-bold">Shipments</h1>
+            <p className="text-sm text-muted-foreground">
+              {total.toLocaleString()} total
+            </p>
+          </div>
+          <Link
+            href="/shipments/intake"
+            className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            + Receive package
+          </Link>
         </div>
         <form onSubmit={submitSearch} className="flex flex-wrap gap-2">
           <div className="relative">

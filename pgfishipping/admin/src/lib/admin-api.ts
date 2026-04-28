@@ -112,6 +112,56 @@ export async function getCustomer(id: string): Promise<CustomerDetail> {
   return unwrap(r);
 }
 
+/** Type-ahead rows for Receive Package (search by code, name, email, phone). */
+export interface IntakeCustomerSummary {
+  id: string;
+  customerCode: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneCell: string | null;
+  status: string;
+}
+
+export async function searchCustomersForIntake(
+  q: string,
+): Promise<IntakeCustomerSummary[]> {
+  const r = await api.get<ApiSuccess<IntakeCustomerSummary[]>>(
+    '/admin/customers/lookup',
+    { params: { q } },
+  );
+  return unwrap(r);
+}
+
+/** Full customer snapshot after selecting a code (US addresses, wallet, etc.). */
+export interface IntakeCustomerDetail {
+  id: string;
+  customerCode: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneCell: string | null;
+  phoneHome: string | null;
+  status: string;
+  language: string;
+  emailVerified: boolean;
+  loyaltyPoints: number;
+  createdAt: string;
+  walletUsd: number;
+  walletHtg: number;
+  airAddress: string;
+  seaAddress: string;
+}
+
+export async function getCustomerByCodeForIntake(
+  code: string,
+): Promise<IntakeCustomerDetail> {
+  const r = await api.get<ApiSuccess<IntakeCustomerDetail>>(
+    `/admin/customers/by-code/${encodeURIComponent(code.trim())}`,
+  );
+  return unwrap(r);
+}
+
 export async function setCustomerStatus(
   id: string,
   status: string,
@@ -152,6 +202,7 @@ export interface AdminShipment {
   fobValue?: number | null;
   vendor?: string | null;
   contentsDescription?: string | null;
+  labelImageUrl?: string | null;
   createdAt: string;
   user?: {
     id: string;
@@ -161,6 +212,52 @@ export interface AdminShipment {
     email: string;
     phoneCell?: string | null;
   } | null;
+}
+
+export interface AdminIntakePayload {
+  customerCode?: string;
+  userId?: string;
+  serviceType: 'AIR' | 'SEA';
+  contentType?: 'PACKAGE' | 'DOCUMENT';
+  externalTracking?: string;
+  externalCarrier?: string;
+  contentsDescription?: string;
+  vendor?: string;
+  weightLbs?: number;
+  dimensionLength?: number;
+  dimensionWidth?: number;
+  dimensionHeight?: number;
+  fobValue?: number;
+  fobCurrency?: 'USD' | 'EUR';
+  specialFlags?: string[];
+  recipientName?: string;
+  recipientPhone?: string;
+  originWarehouseId?: string | null;
+  destinationBranchId?: string | null;
+  additionalNotes?: string;
+  initialStatus?: 'WAITING' | 'RECEIVED';
+  location?: string;
+}
+
+export async function submitAdminIntake(
+  payload: AdminIntakePayload,
+  labelImage?: File | null,
+): Promise<AdminShipment> {
+  if (labelImage && labelImage.size > 0) {
+    const fd = new FormData();
+    fd.append('data', JSON.stringify(payload));
+    fd.append('labelImage', labelImage);
+    const r = await api.post<ApiSuccess<AdminShipment>>(
+      '/admin/shipments/intake',
+      fd,
+    );
+    return unwrap(r);
+  }
+  const r = await api.post<ApiSuccess<AdminShipment>>(
+    '/admin/shipments/intake',
+    payload,
+  );
+  return unwrap(r);
 }
 
 export async function listAdminShipments(params: {

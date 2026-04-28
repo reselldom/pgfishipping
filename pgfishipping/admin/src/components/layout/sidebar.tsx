@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Users,
   Package,
+  PackagePlus,
   DollarSign,
   Warehouse,
   Gift,
@@ -29,6 +30,7 @@ const ITEMS: Item[] = [
   { href: '/', label: 'Dashboard', Icon: LayoutDashboard },
   { href: '/customers', label: 'Customers', Icon: Users },
   { href: '/shipments', label: 'Shipments', Icon: Package },
+  { href: '/shipments/intake', label: 'Receive package', Icon: PackagePlus },
   { href: '/pricing', label: 'Pricing', Icon: DollarSign },
   { href: '/warehouses', label: 'Warehouses', Icon: Warehouse },
   { href: '/gift-cards', label: 'Gift cards', Icon: Gift },
@@ -62,8 +64,12 @@ export function Sidebar(): JSX.Element {
       <nav className="flex-1 space-y-0.5 p-2">
         {ITEMS.map(({ href, label, Icon }) => {
           const active =
-            pathname === href ||
-            (href !== '/' && pathname.startsWith(href));
+            href === '/shipments'
+              ? pathname === '/shipments' ||
+                (pathname.startsWith('/shipments/') &&
+                  !pathname.startsWith('/shipments/intake'))
+              : pathname === href ||
+                (href !== '/' && pathname.startsWith(href));
           return (
             <Link
               key={href}

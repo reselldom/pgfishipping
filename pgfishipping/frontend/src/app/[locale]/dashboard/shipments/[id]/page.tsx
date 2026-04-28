@@ -464,11 +464,6 @@ export default function ShipmentDetailPage(): JSX.Element {
                   {new Date(ev.timestamp).toLocaleString()}
                   {ev.location ? ` · ${ev.location}` : ''}
                 </div>
-                {ev.notes ? (
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {ev.notes}
-                  </div>
-                ) : null}
               </li>
             ))}
           </ol>

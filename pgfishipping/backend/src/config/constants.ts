@@ -9,6 +9,7 @@ export const FILE_LIMITS = {
   PROFILE_PHOTO_MAX_BYTES: 5 * 1024 * 1024,
   ID_DOC_MAX_BYTES: 5 * 1024 * 1024,
   INVOICE_MAX_BYTES: 10 * 1024 * 1024,
+  LABEL_IMAGE_MAX_BYTES: 8 * 1024 * 1024,
   ALLOWED_PROFILE: ['image/jpeg', 'image/png', 'image/webp'],
   ALLOWED_ID: ['image/jpeg', 'image/png', 'application/pdf'],
   ALLOWED_INVOICE: [
@@ -18,6 +19,7 @@ export const FILE_LIMITS = {
     'image/gif',
     'image/bmp',
   ],
+  ALLOWED_LABEL_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
 } as const;
 
 export const WALLET = {

@@ -35,3 +35,9 @@ export const invoiceUpload = multer({
   limits: { fileSize: FILE_LIMITS.INVOICE_MAX_BYTES, files: 1 },
   fileFilter: fileFilter(FILE_LIMITS.ALLOWED_INVOICE),
 });
+
+export const labelImageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: FILE_LIMITS.LABEL_IMAGE_MAX_BYTES, files: 1 },
+  fileFilter: fileFilter(FILE_LIMITS.ALLOWED_LABEL_IMAGE),
+});

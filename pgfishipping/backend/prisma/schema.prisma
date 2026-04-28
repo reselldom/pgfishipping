@@ -221,6 +221,7 @@ model Shipment {
   fobValue            Float?
   fobCurrency         String          @default("USD")
   invoiceUrl          String?
+  labelImageUrl       String?
   additionalNotes     String?
   changeDestination   Boolean         @default(false)
   alternateAddressId  String?

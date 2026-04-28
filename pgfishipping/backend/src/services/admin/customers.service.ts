@@ -1,6 +1,8 @@
 import { Prisma, UserStatus, TransactionType } from '@prisma/client';
 import { prisma } from '../../config/database';
 import { Errors } from '../../utils/response';
+import { CUSTOMER_CODE_PREFIX } from '../../config/constants';
+import { buildWarehouseAddress } from '../customerCode.service';
 
 export interface ListCustomersInput {
   search?: string;
@@ -131,6 +133,116 @@ export async function updateCustomerStatus(
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw Errors.notFound('Customer not found');
   return prisma.user.update({ where: { id: userId }, data: { status } });
+}
+
+/**
+ * Quick customer lookup used by the admin "Receive Package" intake form.
+ * Accepts either a full customer code (HT-XXXXXX), case-insensitive, or
+ * just the numeric tail (the leading "HT-" is added automatically).
+ * Returns the minimal info needed to populate the intake form.
+ */
+/**
+ * Type-ahead search for the admin intake form (name, email, phone, or code).
+ */
+export async function searchCustomersForIntake(
+  q: string,
+  limit = 8,
+): Promise<
+  Array<{
+    id: string;
+    customerCode: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneCell: string | null;
+    status: UserStatus;
+  }>
+> {
+  const term = q.trim();
+  if (term.length < 2) return [];
+  const take = Math.min(20, Math.max(1, limit));
+  return prisma.user.findMany({
+    where: {
+      role: 'CUSTOMER',
+      deletedAt: null,
+      OR: [
+        { customerCode: { contains: term, mode: 'insensitive' as const } },
+        { email: { contains: term, mode: 'insensitive' as const } },
+        { firstName: { contains: term, mode: 'insensitive' as const } },
+        { lastName: { contains: term, mode: 'insensitive' as const } },
+        { phoneCell: { contains: term } },
+      ],
+    },
+    take,
+    orderBy: { customerCode: 'asc' },
+    select: {
+      id: true,
+      customerCode: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      phoneCell: true,
+      status: true,
+    },
+  });
+}
+
+export async function findCustomerForIntake(
+  rawCode: string,
+): Promise<{
+  id: string;
+  customerCode: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneCell: string | null;
+  phoneHome: string | null;
+  status: UserStatus;
+  language: string;
+  emailVerified: boolean;
+  loyaltyPoints: number;
+  createdAt: Date;
+  walletUsd: number;
+  walletHtg: number;
+  airAddress: string;
+  seaAddress: string;
+}> {
+  const trimmed = rawCode.trim();
+  if (!trimmed) throw Errors.badRequest('Customer code is required');
+  const code = trimmed.toUpperCase().startsWith(CUSTOMER_CODE_PREFIX)
+    ? trimmed.toUpperCase()
+    : `${CUSTOMER_CODE_PREFIX}${trimmed}`.toUpperCase();
+  const user = await prisma.user.findUnique({
+    where: { customerCode: code },
+    include: { wallet: true },
+  });
+  if (!user || user.deletedAt) throw Errors.notFound('Customer not found');
+  if (user.role !== 'CUSTOMER') {
+    throw Errors.badRequest('That account is not a customer account');
+  }
+  const { airAddress, seaAddress } = buildWarehouseAddress({
+    customerCode: user.customerCode,
+    firstName: user.firstName,
+    lastName: user.lastName,
+  });
+  return {
+    id: user.id,
+    customerCode: user.customerCode,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phoneCell: user.phoneCell,
+    phoneHome: user.phoneHome,
+    status: user.status,
+    language: user.language,
+    emailVerified: user.emailVerified,
+    loyaltyPoints: user.loyaltyPoints,
+    createdAt: user.createdAt,
+    walletUsd: user.wallet?.balanceUsd ?? 0,
+    walletHtg: user.wallet?.balanceHtg ?? 0,
+    airAddress,
+    seaAddress,
+  };
 }
 
 export async function adjustWalletBalance(

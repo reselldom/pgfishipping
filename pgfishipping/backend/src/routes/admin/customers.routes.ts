@@ -9,6 +9,8 @@ import {
   getCustomerDetail,
   updateCustomerStatus,
   adjustWalletBalance,
+  findCustomerForIntake,
+  searchCustomersForIntake,
 } from '../../services/admin/customers.service';
 
 const router = Router();
@@ -26,6 +28,29 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const result = await listCustomers(req.query as z.infer<typeof listSchema>);
     paginated(res, result.items, result.page, result.pageSize, result.total);
+  }),
+);
+
+const intakeLookupSchema = z.object({
+  q: z.string().min(2).max(80),
+  limit: z.coerce.number().int().min(1).max(20).optional(),
+});
+
+router.get(
+  '/lookup',
+  validate({ query: intakeLookupSchema }),
+  asyncHandler(async (req: Request, res: Response) => {
+    const { q, limit } = req.query as unknown as z.infer<typeof intakeLookupSchema>;
+    ok(res, await searchCustomersForIntake(q, limit ?? 8));
+  }),
+);
+
+// Quick lookup by customer code (HT-XXXXXX) for the admin "Receive Package"
+// intake form. Must be declared BEFORE `/:id` so it doesn't get shadowed.
+router.get(
+  '/by-code/:code',
+  asyncHandler(async (req: Request, res: Response) => {
+    ok(res, await findCustomerForIntake(req.params.code));
   }),
 );
 

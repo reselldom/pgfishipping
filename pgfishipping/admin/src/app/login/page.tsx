@@ -40,7 +40,7 @@ function Inner(): JSX.Element {
         setError('This account does not have admin privileges.');
         return;
       }
-      setSession(r.user, r.tokens.accessToken);
+      setSession(r.user, r.tokens.accessToken, r.tokens.refreshToken);
       router.push('/');
     } catch (err) {
       setError(getApiErrorMessage(err));

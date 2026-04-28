@@ -1,15 +1,18 @@
 import { Router, type Request, type Response } from 'express';
 import { z } from 'zod';
-import { ShipmentStatus, ServiceType } from '@prisma/client';
+import { ShipmentStatus, ServiceType, ContentType, SpecialFlag } from '@prisma/client';
 import { asyncHandler } from '../../utils/asyncHandler';
 import { validate } from '../../middleware/validate';
-import { ok, paginated } from '../../utils/response';
+import { ok, paginated, Errors } from '../../utils/response';
+import { labelImageUpload } from '../../middleware/upload';
 import {
   adminListShipments,
   adminGetShipment,
   adminUpdateShipment,
   adminAddTrackingEvent,
   adminBulkUpdateStatus,
+  adminIntakeShipment,
+  attachShipmentLabelImage,
 } from '../../services/admin/shipments.service';
 
 const router = Router();
@@ -79,6 +82,90 @@ router.post(
       req.body.location,
     );
     ok(res, result, undefined, 201);
+  }),
+);
+
+// ─── Receive Package (admin intake) ─────────────────────────────────────────
+//
+// Two intake modes:
+//   1. JSON only: POST /admin/shipments/intake with application/json body.
+//   2. With label photo: POST /admin/shipments/intake as multipart/form-data
+//      where one field "data" is the JSON payload and one optional file
+//      "labelImage" is the photo of the package label.
+//
+// Both modes accept the same payload schema below.
+
+const intakeSchema = z
+  .object({
+    customerCode: z.string().trim().min(1).optional(),
+    userId: z.string().trim().min(1).optional(),
+    serviceType: z.nativeEnum(ServiceType),
+    contentType: z.nativeEnum(ContentType).optional(),
+    externalTracking: z.string().trim().max(120).optional(),
+    externalCarrier: z.string().trim().max(80).optional(),
+    contentsDescription: z.string().trim().max(500).optional(),
+    vendor: z.string().trim().max(200).optional(),
+    weightLbs: z.number().positive().max(2000).optional(),
+    dimensionLength: z.number().positive().optional(),
+    dimensionWidth: z.number().positive().optional(),
+    dimensionHeight: z.number().positive().optional(),
+    fobValue: z.number().nonnegative().optional(),
+    fobCurrency: z.enum(['USD', 'EUR']).optional(),
+    specialFlags: z.array(z.nativeEnum(SpecialFlag)).optional(),
+    recipientName: z.string().trim().max(200).optional(),
+    recipientPhone: z.string().trim().max(40).optional(),
+    originWarehouseId: z.string().trim().min(1).optional(),
+    destinationBranchId: z.string().trim().min(1).optional(),
+    additionalNotes: z.string().trim().max(2000).optional(),
+    initialStatus: z.enum(['WAITING', 'RECEIVED']).optional(),
+    location: z.string().trim().max(200).optional(),
+  })
+  .refine((v) => v.customerCode || v.userId, {
+    message: 'customerCode or userId is required',
+    path: ['customerCode'],
+  });
+
+router.post(
+  '/intake',
+  labelImageUpload.single('labelImage'),
+  asyncHandler(async (req: Request, res: Response) => {
+    // When sent as multipart/form-data, the JSON payload comes in the "data" field.
+    let raw: unknown = req.body;
+    if (typeof req.body?.data === 'string') {
+      try {
+        raw = JSON.parse(req.body.data);
+      } catch {
+        throw Errors.badRequest('Invalid JSON in "data" field');
+      }
+    }
+    const parsed = intakeSchema.safeParse(raw);
+    if (!parsed.success) {
+      throw Errors.badRequest(
+        parsed.error.issues.map((i) => i.message).join('; '),
+      );
+    }
+    const file = req.file;
+    const result = await adminIntakeShipment(
+      parsed.data,
+      req.auth?.userId,
+      file ? { buffer: file.buffer, mimetype: file.mimetype } : undefined,
+    );
+    ok(res, result, undefined, 201);
+  }),
+);
+
+router.post(
+  '/:id/label-image',
+  labelImageUpload.single('labelImage'),
+  asyncHandler(async (req: Request, res: Response) => {
+    if (!req.file) throw Errors.badRequest('labelImage file is required');
+    ok(
+      res,
+      await attachShipmentLabelImage(req.params.id, {
+        buffer: req.file.buffer,
+        mimetype: req.file.mimetype,
+      }),
+    );
   }),
 );
 

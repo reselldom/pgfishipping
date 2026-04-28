@@ -35,15 +35,20 @@ async function refreshAccessToken(): Promise<string | null> {
   if (refreshing) return refreshing;
   refreshing = (async () => {
     try {
-      const r = await axios.post(
-        `${API_URL}/auth/refresh`,
-        {},
-        { withCredentials: true },
-      );
-      const data = r.data as ApiSuccess<{ accessToken: string }>;
-      if (data.ok) {
-        useAuthStore.getState().setAccessToken(data.data.accessToken);
-        return data.data.accessToken;
+      const rt = useAuthStore.getState().refreshToken;
+      if (!rt) {
+        useAuthStore.getState().clear();
+        return null;
+      }
+      const r = await axios.post<
+        ApiSuccess<{ tokens: { accessToken: string; refreshToken: string } }>
+      >(`${API_URL}/auth/refresh`, { refreshToken: rt }, { withCredentials: true });
+      const data = r.data;
+      if (data.ok && data.data.tokens?.accessToken && data.data.tokens.refreshToken) {
+        useAuthStore
+          .getState()
+          .setTokens(data.data.tokens.accessToken, data.data.tokens.refreshToken);
+        return data.data.tokens.accessToken;
       }
     } catch {
       useAuthStore.getState().clear();

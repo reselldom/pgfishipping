@@ -1,9 +1,11 @@
 import rateLimit from 'express-rate-limit';
-import { env } from '../config/env';
+import { env, isDev } from '../config/env';
 
+// Local dev: dashboard pages fire several API calls at once; 100/15min is easy
+// to hit while clicking around. Production keeps env-driven limits.
 export const generalLimiter = rateLimit({
   windowMs: env.RATE_LIMIT_WINDOW_MS,
-  max: env.RATE_LIMIT_MAX,
+  max: isDev ? Math.max(env.RATE_LIMIT_MAX, 10_000) : env.RATE_LIMIT_MAX,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
