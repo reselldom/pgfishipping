@@ -10,7 +10,26 @@
     "back": "Back",
     "logout": "Log out",
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "lang": {
+      "label": "Language",
+      "aria": "Choose language",
+      "option_en": "English",
+      "option_fr": "Français",
+      "option_ht": "Kreyòl",
+      "option_es": "Español"
+    }
+  },
+  "footer": {
+    "copyrightPrefix": "Copyright ©{year}",
+    "copyrightSuffix": "All rights reserved",
+    "contact": "Contact",
+    "hours": "Hours",
+    "phones": "Phones",
+    "emailLabel": "Email",
+    "usa": "USA",
+    "haiti": "Haiti",
+    "quickLinks": "Quick links"
   },
   "nav": {
     "home": "Home",
@@ -70,21 +89,21 @@
       "s1": { "title": "Sign up", "desc": "Create a free account and receive your US address." },
       "s2": { "title": "Shop", "desc": "Use your US address as the shipping address on any US store." },
       "s3": { "title": "We receive", "desc": "We collect, weigh and prepare your packages in Miami." },
-      "s4": { "title": "Pick up in Haiti", "desc": "Pick up at our branches in Port-au-Prince, Cap-Haïtien or Les Cayes." }
+      "s4": { "title": "Pick up in Haiti", "desc": "Pick up at our branches in Port-au-Prince (PAP) or Cap-Haïtien (CAP)." }
     },
     "stats": {
       "eyebrow": "Secure delivery",
       "title": "Delivery between the US and Haiti",
       "subtitle": "Whether by plane or by boat, we are there for you.",
-      "branchesValue": "3+",
+      "branchesValue": "2",
       "branchesLabel": "Branches in Haiti",
-      "branchesDesc": "Port-au-Prince, Cap-Haïtien, Les Cayes.",
+      "branchesDesc": "Port-au-Prince (PAP) and Cap-Haïtien (CAP).",
       "languagesValue": "4",
       "languagesLabel": "Languages",
       "languagesDesc": "English, Français, Kreyòl, Español.",
       "servicesValue": "2",
       "servicesLabel": "Service types",
-      "servicesDesc": "Air (4–7 days) and Sea (3–4 weeks).",
+      "servicesDesc": "Air (7–15 days) and Sea (30–45 days).",
       "trackingValue": "24/7",
       "trackingLabel": "Tracking",
       "trackingDesc": "Real-time updates and email alerts."
@@ -107,7 +126,7 @@
       "q3": "What forms of payment do you accept?",
       "a3": "We accept MonCash, NatCash, PayMon, bank transfers and gift cards. Once funds are credited to your wallet, you can pay any shipment in one click.",
       "q4": "How long does delivery take?",
-      "a4": "Air shipments typically arrive in 4–7 days after they reach our US warehouse. Sea shipments take 3–4 weeks. Express options are available on request.",
+      "a4": "Air shipments typically arrive in 7–15 days after they reach our US warehouse. Sea shipments take 30–45 days. Express options are available on request.",
       "q5": "Is my package insured?",
       "a5": "Your package is automatically protected up to the declared FOB value, within our terms. For higher coverage, contact support before the package leaves the US warehouse.",
       "q6": "How is the shipping rate calculated?",
@@ -149,8 +168,8 @@
     "step3": "Value",
     "step4": "Estimate",
     "service": {
-      "AIR": "Air (4–7 days)",
-      "SEA": "Sea (3–4 weeks)",
+      "AIR": "Air (7–15 days)",
+      "SEA": "Sea (30–45 days)",
       "EXPRESS": "Express (1–3 days)"
     },
     "weight": "Weight (lb)",
@@ -358,6 +377,7 @@
     "recipient": "Recipient",
     "createdAt": "Created",
     "deliveredAt": "Delivered",
+    "receivedBy": "Received by",
     "fob": "Declared value (FOB)",
     "totalCost": "Total cost",
     "paid": "Paid",
@@ -369,6 +389,8 @@
     "pay": "Pay with wallet",
     "noEvents": "No tracking events yet.",
     "thirdParty": "Third-party pickup",
+    "thirdPartyAuthTitle": "Authorized third-party pickup",
+    "thirdPartyRecordedAt": "Recorded",
     "authName": "Authorized name",
     "authPhone": "Phone",
     "authIdType": "ID type",
@@ -430,7 +452,9 @@
     "seaTitle": "For sea shipments",
     "copy": "Copy",
     "copied": "Copied!",
-    "warehouse": "Warehouse"
+    "warehouse": "Warehouse",
+    "warehousePhone": "Phone",
+    "warehouseEmail": "Email"
   },
   "settings": {
     "title": "Settings",

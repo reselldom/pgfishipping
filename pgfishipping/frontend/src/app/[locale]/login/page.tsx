@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/brand/logo';
-import { LanguageSwitcher } from '@/components/layout/language-switcher';
 import { useAuthStore } from '@/lib/store/auth';
 import { login as apiLogin } from '@/lib/auth-api';
 import { getApiErrorMessage } from '@/lib/api';
@@ -129,10 +128,6 @@ export default function LoginPage(): JSX.Element {
               >
                 {isSubmitting ? tc('loading') : t('loginAction')}
               </Button>
-
-              <div className="pt-1">
-                <LanguageSwitcher />
-              </div>
             </form>
 
             <div className="mt-6 space-y-2 border-t pt-5 text-center text-sm">

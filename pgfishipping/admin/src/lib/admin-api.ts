@@ -199,6 +199,8 @@ export interface AdminShipment {
   totalCost: number | null;
   paidAt: string | null;
   deliveredAt: string | null;
+  deliveredSignerRole?: string | null;
+  deliveredSignerName?: string | null;
   fobValue?: number | null;
   vendor?: string | null;
   contentsDescription?: string | null;
@@ -289,7 +291,16 @@ export interface AdminShipmentDetail extends AdminShipment {
     status: string;
     createdAt: string;
   }>;
-  thirdPartyAuth?: unknown;
+  thirdPartyAuth?: {
+    id: string;
+    shipmentId: string;
+    userId: string;
+    authorizedName: string;
+    idType: string;
+    idNumber: string;
+    phone: string;
+    createdAt: string;
+  } | null;
   destinationBranch?: { id: string; name: string; city: string } | null;
   originWarehouse?: { id: string; name: string; city: string } | null;
 }
@@ -317,10 +328,22 @@ export async function addShipmentEvent(
   status: string,
   label?: string,
   location?: string,
+  deliveredSignerRole?: string,
+  deliveredSignerCustomName?: string,
 ): Promise<unknown> {
+  const payload: Record<string, unknown> = {
+    status,
+    label,
+    location,
+  };
+  if (status === 'DELIVERED') {
+    payload.deliveredSignerRole = deliveredSignerRole;
+    payload.deliveredSignerCustomName =
+      deliveredSignerRole === 'CUSTOM' ? deliveredSignerCustomName ?? '' : undefined;
+  }
   const r = await api.post<ApiSuccess<unknown>>(
     `/admin/shipments/${id}/events`,
-    { status, label, location },
+    payload,
   );
   return unwrap(r);
 }

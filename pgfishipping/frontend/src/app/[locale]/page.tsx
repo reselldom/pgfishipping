@@ -57,7 +57,7 @@ export default function HomePage(): JSX.Element {
     }
 
     return (
-      <section className="relative overflow-hidden bg-brand-navy text-white">
+      <section className="relative z-0 overflow-hidden bg-brand-navy text-white">
         {/* Diagonal red accent on the right edge */}
         <div
           aria-hidden
@@ -143,7 +143,7 @@ export default function HomePage(): JSX.Element {
                 <div className="brand-stripe-top h-3" />
                 <div className="space-y-4 p-6 text-brand-navy">
                   <div className="flex items-center justify-between">
-                    <Logo size="md" />
+                    <Logo size="lg" />
                     <span className="rounded-full bg-brand-red/10 px-3 py-0.5 text-xs font-bold uppercase tracking-wide text-brand-red">
                       Live
                     </span>
@@ -167,7 +167,7 @@ export default function HomePage(): JSX.Element {
                       icon={<MapPin className="h-4 w-4" />}
                       tone="amber"
                       title="PG-204147"
-                      subtitle="Les Cayes branch"
+                      subtitle="Cap-Haïtien branch"
                       status="Ready for pickup"
                     />
                   </div>
@@ -182,6 +182,9 @@ export default function HomePage(): JSX.Element {
   }
 
   function ActionsSection({ locale }: { locale: string }): JSX.Element {
+    // All four cards share the same visual treatment as the "Online purchase"
+    // card: red rounded-square icon, deep shadow, white surface. Visual
+    // variety lives in the icon glyphs themselves, not the tone.
     const items = [
       {
         href: `/${locale}/register`,
@@ -189,7 +192,7 @@ export default function HomePage(): JSX.Element {
         title: t('actions.send.title'),
         desc: t('actions.send.desc'),
         cta: t('actions.send.cta'),
-        tone: 'navy' as const,
+        tone: 'red' as const,
       },
       {
         href: `/${locale}/register`,
@@ -205,7 +208,7 @@ export default function HomePage(): JSX.Element {
         title: t('actions.addresses.title'),
         desc: t('actions.addresses.desc'),
         cta: t('actions.addresses.cta'),
-        tone: 'navy' as const,
+        tone: 'red' as const,
       },
       {
         href: `/${locale}/calculator`,
@@ -213,15 +216,18 @@ export default function HomePage(): JSX.Element {
         title: t('actions.calculator.title'),
         desc: t('actions.calculator.desc'),
         cta: t('actions.calculator.cta'),
-        tone: 'amber' as const,
+        tone: 'red' as const,
       },
     ];
 
     return (
-      <section className="container -mt-12 grid gap-5 pb-12 md:grid-cols-2 lg:grid-cols-4 lg:-mt-16">
-        {items.map((item) => (
-          <ActionCard key={item.title} {...item} />
-        ))}
+      <section className="relative z-[2] isolate -mt-12 overflow-visible pb-12 lg:-mt-16">
+        {/* Must stack above hero (z-0) so overlap does not bury card tops. */}
+        <div className="container grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {items.map((item) => (
+            <ActionCard key={item.title} {...item} />
+          ))}
+        </div>
       </section>
     );
   }
@@ -243,7 +249,7 @@ export default function HomePage(): JSX.Element {
                     <p className="text-xs uppercase tracking-wider text-white/60">
                       Air freight
                     </p>
-                    <p className="text-lg font-bold">4–7 days</p>
+                    <p className="text-lg font-bold">7–15 days</p>
                   </div>
                 </div>
                 <div className="h-px bg-white/10" />
@@ -255,7 +261,7 @@ export default function HomePage(): JSX.Element {
                     <p className="text-xs uppercase tracking-wider text-white/60">
                       Sea freight
                     </p>
-                    <p className="text-lg font-bold">3–4 weeks</p>
+                    <p className="text-lg font-bold">30–45 days</p>
                   </div>
                 </div>
                 <div className="h-px bg-white/10" />
@@ -267,7 +273,7 @@ export default function HomePage(): JSX.Element {
                     <p className="text-xs uppercase tracking-wider text-white/60">
                       Pickup branches
                     </p>
-                    <p className="text-lg font-bold">PAP · CAP · LCY</p>
+                    <p className="text-lg font-bold">PAP · CAP</p>
                   </div>
                 </div>
               </div>
@@ -431,7 +437,7 @@ export default function HomePage(): JSX.Element {
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-brand-navy to-brand-red opacity-90" />
               <div className="relative h-full w-44 rounded-[2rem] border-[10px] border-brand-navy bg-brand-navy shadow-2xl">
                 <div className="m-2 flex h-[calc(100%-1rem)] flex-col items-center justify-center rounded-[1.4rem] bg-white p-4 text-center text-brand-navy">
-                  <Logo size="md" />
+                  <Logo size="lg" />
                   <p className="mt-4 text-[10px] uppercase tracking-widest text-brand-red">
                     Tracking
                   </p>
@@ -613,27 +619,29 @@ function ActionCard({
 }): JSX.Element {
   const accent =
     tone === 'red'
-      ? 'bg-brand-red text-white'
+      ? 'bg-brand-red text-white shadow-brand-red/30'
       : tone === 'amber'
-        ? 'bg-amber-500 text-white'
-        : 'bg-brand-navy text-white';
+        ? 'bg-amber-500 text-white shadow-amber-500/30'
+        : 'bg-brand-navy text-white shadow-brand-navy/30';
   const ring =
     tone === 'red'
-      ? 'group-hover:ring-brand-red/40'
+      ? 'hover:ring-brand-red/40'
       : tone === 'amber'
-        ? 'group-hover:ring-amber-500/40'
-        : 'group-hover:ring-brand-navy/40';
+        ? 'hover:ring-amber-500/40'
+        : 'hover:ring-brand-navy/40';
   return (
     <Link
       href={href}
       className={cn(
-        'group flex flex-col rounded-2xl bg-white p-6 shadow-md ring-1 ring-border transition-all hover:-translate-y-1 hover:shadow-xl',
+        'group relative z-[1] flex flex-col rounded-2xl bg-white p-6 shadow-2xl ring-1 ring-border transition-all',
+        '-translate-y-1',
+        'hover:-translate-y-2',
         ring,
       )}
     >
       <div
         className={cn(
-          'flex h-12 w-12 items-center justify-center rounded-xl',
+          'flex h-12 w-12 items-center justify-center rounded-xl shadow-lg',
           accent,
         )}
       >

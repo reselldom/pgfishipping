@@ -1,5 +1,6 @@
 import {
   ContentType,
+  DeliverySignerRole,
   Prisma,
   ServiceType,
   ShipmentStatus,
@@ -259,11 +260,52 @@ export async function mergeShipments(
   return { mergeGroupId, count: shipments.length };
 }
 
+/** Passed when marking DELIVERED from admin (physical receiver / signature line). */
+export interface DeliverySignerInput {
+  role: 'ACCOUNT_HOLDER' | 'AUTHORIZED_THIRD_PARTY' | 'CUSTOM';
+  customName?: string;
+}
+
 export interface SetStatusInput {
   status: ShipmentStatus;
   label?: string;
   location?: string;
   source?: string; // 'admin' | 'aftership' | 'system'
+  /** Required for admin-delivered parcels when transitioning to DELIVERED. */
+  deliverySigner?: DeliverySignerInput;
+}
+
+async function resolveDeliverySignerForShipment(
+  shipmentId: string,
+  signer: DeliverySignerInput,
+): Promise<{ role: DeliverySignerRole; name: string }> {
+  const s = await prisma.shipment.findUnique({
+    where: { id: shipmentId },
+    include: {
+      user: { select: { firstName: true, lastName: true } },
+      thirdPartyAuth: true,
+    },
+  });
+  if (!s) throw Errors.notFound('Shipment not found');
+
+  if (signer.role === 'ACCOUNT_HOLDER') {
+    const name = `${s.user.firstName} ${s.user.lastName}`.trim();
+    return { role: 'ACCOUNT_HOLDER', name: name || '(Account holder)' };
+  }
+  if (signer.role === 'AUTHORIZED_THIRD_PARTY') {
+    const t = s.thirdPartyAuth;
+    if (!t) {
+      throw Errors.badRequest(
+        'No third-party pickup is registered for this shipment. The customer must add authorization first.',
+      );
+    }
+    return { role: 'AUTHORIZED_THIRD_PARTY', name: t.authorizedName };
+  }
+  const custom = signer.customName?.trim();
+  if (!custom) {
+    throw Errors.badRequest('Enter the receiver name when "Other recipient" is selected.');
+  }
+  return { role: 'CUSTOM', name: custom };
 }
 
 const STATUS_LABEL: Record<ShipmentStatus, string> = {
@@ -296,9 +338,33 @@ export async function setShipmentStatus(
   }
 
   const data: Prisma.ShipmentUpdateInput = { status: input.status };
+
+  if (input.status !== 'DELIVERED') {
+    data.deliveredSignerRole = null;
+    data.deliveredSignerName = null;
+  }
+
+  let resolvedSigner: { role: DeliverySignerRole; name: string } | null = null;
+  if (input.status === 'DELIVERED' && input.deliverySigner) {
+    resolvedSigner = await resolveDeliverySignerForShipment(
+      shipmentId,
+      input.deliverySigner,
+    );
+    data.deliveredSignerRole = resolvedSigner.role;
+    data.deliveredSignerName = resolvedSigner.name;
+  }
+
   if (input.status === 'DELIVERED' && !shipment.deliveredAt) {
     data.deliveredAt = new Date();
   }
+
+  const fallbackLabel = STATUS_LABEL[input.status];
+  const eventLabel =
+    input.label?.trim()
+      ? input.label
+      : input.status === 'DELIVERED' && resolvedSigner
+        ? `${fallbackLabel} — Received by: ${resolvedSigner.name}`
+        : fallbackLabel;
 
   const [updated] = await prisma.$transaction([
     prisma.shipment.update({ where: { id: shipmentId }, data }),
@@ -306,7 +372,7 @@ export async function setShipmentStatus(
       data: {
         shipmentId,
         status: input.status,
-        label: input.label ?? STATUS_LABEL[input.status],
+        label: eventLabel,
         location: input.location ?? null,
         notes: input.source ? `source:${input.source}` : null,
       },

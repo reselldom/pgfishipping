@@ -59,6 +59,13 @@ enum ShipmentStatus {
   CANCELLED
 }
 
+/// Who physically received / signed at delivery (picked at staff workstation).
+enum DeliverySignerRole {
+  ACCOUNT_HOLDER
+  AUTHORIZED_THIRD_PARTY
+  CUSTOM
+}
+
 enum ContentType {
   PACKAGE
   DOCUMENT
@@ -234,6 +241,8 @@ model Shipment {
   costBreakdown       Json?
   paidAt              DateTime?
   deliveredAt         DateTime?
+  deliveredSignerRole DeliverySignerRole?
+  deliveredSignerName String?
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 

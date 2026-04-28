@@ -8,10 +8,12 @@ import calculatorRoutes from './calculator.routes';
 import walletRoutes from './wallet.routes';
 import webhookRoutes from './webhook.routes';
 import adminRoutes from './admin';
+import publicRoutes from './public.routes';
 
 const router = Router();
 
 router.use('/health', healthRoutes);
+router.use('/public', publicRoutes);
 router.use('/auth', authRoutes);
 router.use('/user', userRoutes);
 router.use('/shipments', shipmentRoutes);

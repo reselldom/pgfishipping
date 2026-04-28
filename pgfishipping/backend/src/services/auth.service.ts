@@ -8,6 +8,9 @@ import { generateRandomToken, generateReferralCode } from '../utils/generateCode
 import {
   allocateCustomerCode,
   buildWarehouseAddress,
+  warehouseToShipmentAddressString,
+  resolvePhysicalWarehouseLineForCustomer,
+  refreshUsWarehouseAddressStringsForUserId,
 } from './customerCode.service';
 import { signAccessToken, signRefreshToken } from '../middleware/auth';
 import { sendEmail } from './email.service';
@@ -122,10 +125,21 @@ export async function registerCustomer(input: RegisterInput): Promise<AuthResult
       },
     });
 
+    const primaryUs = await tx.warehouse.findFirst({
+      where: { type: 'US', isActive: true },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+    });
+
+    const warehouseLine =
+      primaryUs !== null
+        ? warehouseToShipmentAddressString(primaryUs)
+        : env.DEFAULT_US_WAREHOUSE_ADDRESS;
+
     const { airAddress, seaAddress } = buildWarehouseAddress({
       customerCode,
       firstName: created.firstName,
       lastName: created.lastName,
+      warehouseAddress: warehouseLine,
     });
 
     await tx.usWarehouseAddress.create({
@@ -134,6 +148,7 @@ export async function registerCustomer(input: RegisterInput): Promise<AuthResult
         aptNumber: customerCode,
         airAddress,
         seaAddress,
+        warehouseId: primaryUs?.id ?? null,
       },
     });
 

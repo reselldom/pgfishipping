@@ -2,8 +2,8 @@ import { prisma } from '../config/database';
 import { Errors } from '../utils/response';
 import { uploadFile, deleteFile } from './storage.service';
 import { toPublicUser, type PublicUser } from './auth.service';
-import type { Language, User } from '@prisma/client';
-import { buildWarehouseAddress } from './customerCode.service';
+import type { Language, User, Warehouse } from '@prisma/client';
+import { buildWarehouseAddress, refreshUsWarehouseAddressStringsForUserId, resolvePhysicalWarehouseLineForCustomer } from './customerCode.service';
 
 export interface UpdateProfileInput {
   firstName?: string;
@@ -77,15 +77,7 @@ export async function updateProfile(
   // If the customer's name changed, regenerate their printed warehouse address
   // strings so the labels stay correct.
   if (input.firstName !== undefined || input.lastName !== undefined) {
-    const { airAddress, seaAddress } = buildWarehouseAddress({
-      customerCode: updated.customerCode,
-      firstName: updated.firstName,
-      lastName: updated.lastName,
-    });
-    await prisma.usWarehouseAddress.update({
-      where: { userId },
-      data: { airAddress, seaAddress },
-    });
+    await refreshUsWarehouseAddressStringsForUserId(userId);
   }
 
   return toPublicUser(updated);
@@ -156,11 +148,37 @@ export async function setIdPhoto(
   return { url: result.url };
 }
 
+function usReceivingHubSummary(w: Warehouse | null): {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  phone: string | null;
+  email: string | null;
+} | null {
+  if (!w) return null;
+  return {
+    id: w.id,
+    name: w.name,
+    address: w.address,
+    city: w.city,
+    phone: w.phone ?? null,
+    email: w.email ?? null,
+  };
+}
+
 export async function getMyAddresses(userId: string): Promise<{
   customerCode: string;
   airAddress: string;
   seaAddress: string;
-  warehouse: { id: string; name: string; address: string; city: string } | null;
+  warehouse: {
+    id: string;
+    name: string;
+    address: string;
+    city: string;
+    phone: string | null;
+    email: string | null;
+  } | null;
 }> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -169,10 +187,16 @@ export async function getMyAddresses(userId: string): Promise<{
   if (!user) throw Errors.notFound('User not found');
   if (!user.usWarehouseAddress) {
     // Backfill if missing (older accounts).
+    const line = await resolvePhysicalWarehouseLineForCustomer(null);
+    const primaryUs = await prisma.warehouse.findFirst({
+      where: { type: 'US', isActive: true },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+    });
     const { airAddress, seaAddress } = buildWarehouseAddress({
       customerCode: user.customerCode,
       firstName: user.firstName,
       lastName: user.lastName,
+      warehouseAddress: line,
     });
     await prisma.usWarehouseAddress.create({
       data: {
@@ -180,23 +204,54 @@ export async function getMyAddresses(userId: string): Promise<{
         aptNumber: user.customerCode,
         airAddress,
         seaAddress,
+        warehouseId: primaryUs?.id ?? null,
       },
     });
     return {
       customerCode: user.customerCode,
       airAddress,
       seaAddress,
-      warehouse: null,
+      warehouse: usReceivingHubSummary(primaryUs),
     };
   }
-  const w = user.usWarehouseAddress.warehouse;
+  const uw = user.usWarehouseAddress;
+
+  /** Recompute from live warehouse row so Admin edits always match the dashboard. */
+  const line = await resolvePhysicalWarehouseLineForCustomer(uw.warehouseId);
+  const rebuilt = buildWarehouseAddress({
+    customerCode: user.customerCode,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    warehouseAddress: line,
+  });
+
+  if (
+    rebuilt.airAddress !== uw.airAddress ||
+    rebuilt.seaAddress !== uw.seaAddress
+  ) {
+    await prisma.usWarehouseAddress.update({
+      where: { userId },
+      data: {
+        airAddress: rebuilt.airAddress,
+        seaAddress: rebuilt.seaAddress,
+      },
+    });
+  }
+
+  let w = uw.warehouse;
+  if (!w) {
+    w =
+      (await prisma.warehouse.findFirst({
+        where: { type: 'US', isActive: true },
+        orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+      })) ?? null;
+  }
+
   return {
     customerCode: user.customerCode,
-    airAddress: user.usWarehouseAddress.airAddress,
-    seaAddress: user.usWarehouseAddress.seaAddress,
-    warehouse: w
-      ? { id: w.id, name: w.name, address: w.address, city: w.city }
-      : null,
+    airAddress: rebuilt.airAddress,
+    seaAddress: rebuilt.seaAddress,
+    warehouse: usReceivingHubSummary(w),
   };
 }
 

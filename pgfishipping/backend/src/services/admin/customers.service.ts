@@ -2,7 +2,7 @@ import { Prisma, UserStatus, TransactionType } from '@prisma/client';
 import { prisma } from '../../config/database';
 import { Errors } from '../../utils/response';
 import { CUSTOMER_CODE_PREFIX } from '../../config/constants';
-import { buildWarehouseAddress } from '../customerCode.service';
+import { buildWarehouseAddress, resolvePhysicalWarehouseLineForCustomer } from '../customerCode.service';
 
 export interface ListCustomersInput {
   search?: string;
@@ -214,17 +214,29 @@ export async function findCustomerForIntake(
     : `${CUSTOMER_CODE_PREFIX}${trimmed}`.toUpperCase();
   const user = await prisma.user.findUnique({
     where: { customerCode: code },
-    include: { wallet: true },
+    include: { wallet: true, usWarehouseAddress: true },
   });
   if (!user || user.deletedAt) throw Errors.notFound('Customer not found');
   if (user.role !== 'CUSTOMER') {
     throw Errors.badRequest('That account is not a customer account');
   }
-  const { airAddress, seaAddress } = buildWarehouseAddress({
-    customerCode: user.customerCode,
-    firstName: user.firstName,
-    lastName: user.lastName,
-  });
+  let airAddress: string;
+  let seaAddress: string;
+  if (user.usWarehouseAddress) {
+    airAddress = user.usWarehouseAddress.airAddress;
+    seaAddress = user.usWarehouseAddress.seaAddress;
+  } else {
+    const line = await resolvePhysicalWarehouseLineForCustomer(null);
+    const built = buildWarehouseAddress({
+      customerCode: user.customerCode,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      warehouseAddress: line,
+    });
+    airAddress = built.airAddress;
+    seaAddress = built.seaAddress;
+  }
+
   return {
     id: user.id,
     customerCode: user.customerCode,

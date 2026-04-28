@@ -5,6 +5,7 @@ import { asyncHandler } from '../../utils/asyncHandler';
 import { validate } from '../../middleware/validate';
 import { ok, paginated, Errors } from '../../utils/response';
 import { labelImageUpload } from '../../middleware/upload';
+import type { DeliverySignerInput } from '../../services/shipment.service';
 import {
   adminListShipments,
   adminGetShipment,
@@ -65,21 +66,53 @@ router.patch(
   }),
 );
 
-const eventSchema = z.object({
-  status: z.nativeEnum(ShipmentStatus),
-  label: z.string().max(200).optional(),
-  location: z.string().max(200).optional(),
-});
+const eventSchema = z
+  .object({
+    status: z.nativeEnum(ShipmentStatus),
+    label: z.string().max(200).optional(),
+    location: z.string().max(200).optional(),
+    deliveredSignerRole: z
+      .enum(['ACCOUNT_HOLDER', 'AUTHORIZED_THIRD_PARTY', 'CUSTOM'])
+      .optional(),
+    deliveredSignerCustomName: z.string().max(200).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.status === 'DELIVERED') {
+      if (!data.deliveredSignerRole) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Select who received the package when marking as DELIVERED',
+          path: ['deliveredSignerRole'],
+        });
+      }
+      if (data.deliveredSignerRole === 'CUSTOM') {
+        if (!data.deliveredSignerCustomName?.trim()) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Enter the recipient name for "Other recipient"',
+            path: ['deliveredSignerCustomName'],
+          });
+        }
+      }
+    }
+  });
 
 router.post(
   '/:id/events',
   validate({ body: eventSchema }),
   asyncHandler(async (req: Request, res: Response) => {
+    const body = req.body as z.infer<typeof eventSchema>;
+    const deliverySigner: DeliverySignerInput | undefined =
+      body.status === 'DELIVERED' && body.deliveredSignerRole
+        ? { role: body.deliveredSignerRole, customName: body.deliveredSignerCustomName }
+        : undefined;
     const result = await adminAddTrackingEvent(
       req.params.id,
-      req.body.status,
-      req.body.label,
-      req.body.location,
+      body.status,
+      body.label,
+      body.location,
+      'admin',
+      deliverySigner,
     );
     ok(res, result, undefined, 201);
   }),

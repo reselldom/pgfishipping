@@ -6,6 +6,7 @@ import {
   DEFAULT_AIR_RATES,
   DEFAULT_SEA_RATES,
 } from '../src/config/constants';
+import { FALLBACK_PUBLIC_FOOTER_JSON } from '../src/services/public/site.service';
 import { generateReferralCode } from '../src/utils/generateCode';
 
 const prisma = new PrismaClient();
@@ -135,6 +136,8 @@ async function seedSystemConfig() {
     { key: 'tax_rate', value: '0' },
     { key: 'maintenance_mode', value: 'false' },
     { key: 'min_deposit_usd', value: '5' },
+    { key: 'public_social_links', value: '{}' },
+    { key: 'public_footer_content', value: FALLBACK_PUBLIC_FOOTER_JSON },
   ];
   for (const cfg of defaults) {
     await prisma.systemConfig.upsert({

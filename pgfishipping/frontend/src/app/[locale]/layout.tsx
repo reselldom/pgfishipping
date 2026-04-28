@@ -5,6 +5,7 @@ import { Inter, Manrope } from 'next/font/google';
 import { locales, type Locale } from '@/lib/i18n/config';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { ScrollToTopButton } from '@/components/layout/scroll-to-top';
 import { Toaster } from '@/components/ui/toaster';
 import '../globals.css';
 
@@ -42,6 +43,7 @@ export default async function LocaleLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <ScrollToTopButton />
           <Toaster />
         </NextIntlClientProvider>
       </body>

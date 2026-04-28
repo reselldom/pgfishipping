@@ -10,7 +10,26 @@
     "back": "Volver",
     "logout": "Cerrar sesión",
     "next": "Siguiente",
-    "previous": "Anterior"
+    "previous": "Anterior",
+    "lang": {
+      "label": "Idioma",
+      "aria": "Elegir idioma",
+      "option_en": "Inglés",
+      "option_fr": "Francés",
+      "option_ht": "Creole",
+      "option_es": "Español"
+    }
+  },
+  "footer": {
+    "copyrightPrefix": "Copyright ©{year}",
+    "copyrightSuffix": "Todos los derechos reservados",
+    "contact": "Contacto",
+    "hours": "Horario",
+    "phones": "Teléfonos",
+    "emailLabel": "Correo",
+    "usa": "EE. UU.",
+    "haiti": "Haití",
+    "quickLinks": "Enlaces rápidos"
   },
   "nav": {
     "home": "Inicio",
@@ -70,21 +89,21 @@
       "s1": { "title": "Regístrate", "desc": "Crea una cuenta gratuita y recibe tu dirección US." },
       "s2": { "title": "Compra", "desc": "Usa tu dirección US como dirección de envío en cualquier tienda US." },
       "s3": { "title": "Recibimos", "desc": "Recogemos, pesamos y preparamos tus paquetes en Miami." },
-      "s4": { "title": "Recoge en Haití", "desc": "Recoge en Puerto Príncipe, Cabo Haitiano o Les Cayes." }
+      "s4": { "title": "Recoge en Haití", "desc": "Recoge en Puerto Príncipe (PAP) o Cabo Haitiano (CAP)." }
     },
     "stats": {
       "eyebrow": "Entrega segura",
       "title": "Entrega entre EE.UU. y Haití",
       "subtitle": "Ya sea por avión o por barco, estamos para ti.",
-      "branchesValue": "3+",
+      "branchesValue": "2",
       "branchesLabel": "Sucursales en Haití",
-      "branchesDesc": "Puerto Príncipe, Cabo Haitiano, Les Cayes.",
+      "branchesDesc": "Puerto Príncipe (PAP) y Cabo Haitiano (CAP).",
       "languagesValue": "4",
       "languagesLabel": "Idiomas",
       "languagesDesc": "English, Français, Kreyòl, Español.",
       "servicesValue": "2",
       "servicesLabel": "Tipos de servicio",
-      "servicesDesc": "Aéreo (4–7 días) y Marítimo (3–4 semanas).",
+      "servicesDesc": "Aéreo (7–15 días) y Marítimo (30–45 días).",
       "trackingValue": "24/7",
       "trackingLabel": "Rastreo",
       "trackingDesc": "Actualizaciones en tiempo real y alertas por email."
@@ -107,7 +126,7 @@
       "q3": "¿Qué métodos de pago aceptan?",
       "a3": "Aceptamos MonCash, NatCash, PayMon, transferencia bancaria y tarjetas de regalo. Una vez acreditada tu billetera, paga cualquier envío en un clic.",
       "q4": "¿Cuánto tarda la entrega?",
-      "a4": "Los envíos aéreos llegan en 4–7 días tras llegar al almacén US. Los marítimos tardan 3–4 semanas. Hay opciones express bajo solicitud.",
+      "a4": "Los envíos aéreos llegan en 7–15 días tras llegar al almacén US. Los marítimos tardan 30–45 días. Hay opciones express bajo solicitud.",
       "q5": "¿Mi paquete está asegurado?",
       "a5": "Tu paquete está protegido automáticamente hasta el valor FOB declarado, según nuestros términos. Para mayor cobertura, contacta a soporte antes del envío.",
       "q6": "¿Cómo se calcula la tarifa?",
@@ -149,8 +168,8 @@
     "step3": "Valor",
     "step4": "Estimación",
     "service": {
-      "AIR": "Aéreo (4–7 días)",
-      "SEA": "Marítimo (3–4 semanas)",
+      "AIR": "Aéreo (7–15 días)",
+      "SEA": "Marítimo (30–45 días)",
       "EXPRESS": "Express (1–3 días)"
     },
     "weight": "Peso (lb)",
@@ -357,6 +376,7 @@
     "recipient": "Destinatario",
     "createdAt": "Creado",
     "deliveredAt": "Entregado",
+    "receivedBy": "Recibido por",
     "fob": "Valor declarado (FOB)",
     "totalCost": "Costo total",
     "paid": "Pagado",
@@ -368,6 +388,8 @@
     "pay": "Pagar con billetera",
     "noEvents": "Aún no hay eventos.",
     "thirdParty": "Recogida por terceros",
+    "thirdPartyAuthTitle": "Recogida autorizada por terceros",
+    "thirdPartyRecordedAt": "Registrado",
     "authName": "Nombre autorizado",
     "authPhone": "Teléfono",
     "authIdType": "Tipo de ID",
@@ -429,7 +451,9 @@
     "seaTitle": "Para envíos marítimos",
     "copy": "Copiar",
     "copied": "¡Copiado!",
-    "warehouse": "Bodega"
+    "warehouse": "Bodega",
+    "warehousePhone": "Teléfono",
+    "warehouseEmail": "Correo"
   },
   "settings": {
     "title": "Ajustes",

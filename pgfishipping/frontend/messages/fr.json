@@ -10,7 +10,26 @@
     "back": "Retour",
     "logout": "Se déconnecter",
     "next": "Suivant",
-    "previous": "Précédent"
+    "previous": "Précédent",
+    "lang": {
+      "label": "Langue",
+      "aria": "Choisir la langue",
+      "option_en": "Anglais",
+      "option_fr": "Français",
+      "option_ht": "Créole",
+      "option_es": "Espagnol"
+    }
+  },
+  "footer": {
+    "copyrightPrefix": "Copyright ©{year}",
+    "copyrightSuffix": "Tous droits réservés",
+    "contact": "Contact",
+    "hours": "Heures",
+    "phones": "Téléphones",
+    "emailLabel": "E-mail",
+    "usa": "États-Unis",
+    "haiti": "Haïti",
+    "quickLinks": "Liens utiles"
   },
   "nav": {
     "home": "Accueil",
@@ -70,21 +89,21 @@
       "s1": { "title": "Inscrivez-vous", "desc": "Créez un compte gratuit et recevez votre adresse US." },
       "s2": { "title": "Achetez", "desc": "Utilisez votre adresse US sur n'importe quel site américain." },
       "s3": { "title": "Nous recevons", "desc": "Nous récupérons, pesons et préparons vos colis à Miami." },
-      "s4": { "title": "Récupérez en Haïti", "desc": "Récupérez à Port-au-Prince, Cap-Haïtien ou Les Cayes." }
+      "s4": { "title": "Récupérez en Haïti", "desc": "Récupérez à Port-au-Prince (PAP) ou Cap-Haïtien (CAP)." }
     },
     "stats": {
       "eyebrow": "Livraison sécurisée",
       "title": "Livraison entre les États-Unis et Haïti",
       "subtitle": "Que ce soit par avion ou par bateau, nous sommes là pour vous.",
-      "branchesValue": "3+",
+      "branchesValue": "2",
       "branchesLabel": "Succursales en Haïti",
-      "branchesDesc": "Port-au-Prince, Cap-Haïtien, Les Cayes.",
+      "branchesDesc": "Port-au-Prince (PAP) et Cap-Haïtien (CAP).",
       "languagesValue": "4",
       "languagesLabel": "Langues",
       "languagesDesc": "English, Français, Kreyòl, Español.",
       "servicesValue": "2",
       "servicesLabel": "Types de service",
-      "servicesDesc": "Avion (4–7 jours) et Bateau (3–4 semaines).",
+      "servicesDesc": "Avion (7–15 jours) et Bateau (30–45 jours).",
       "trackingValue": "24/7",
       "trackingLabel": "Suivi",
       "trackingDesc": "Mises à jour en temps réel et alertes email."
@@ -107,7 +126,7 @@
       "q3": "Quels modes de paiement acceptez-vous ?",
       "a3": "Nous acceptons MonCash, NatCash, PayMon, virement bancaire et cartes cadeaux. Une fois votre portefeuille crédité, payez vos envois en un clic.",
       "q4": "Combien de temps prend la livraison ?",
-      "a4": "Les envois aériens arrivent généralement en 4–7 jours après réception aux États-Unis. Les envois maritimes prennent 3–4 semaines. Des options express sont disponibles sur demande.",
+      "a4": "Les envois aériens arrivent généralement en 7–15 jours après réception aux États-Unis. Les envois maritimes prennent 30–45 jours. Des options express sont disponibles sur demande.",
       "q5": "Mon colis est-il assuré ?",
       "a5": "Votre colis est automatiquement protégé jusqu'à la valeur FOB déclarée, selon nos conditions. Pour une couverture supérieure, contactez le support avant l'expédition.",
       "q6": "Comment le tarif est-il calculé ?",
@@ -149,8 +168,8 @@
     "step3": "Valeur",
     "step4": "Estimation",
     "service": {
-      "AIR": "Air (4–7 jours)",
-      "SEA": "Mer (3–4 semaines)",
+      "AIR": "Air (7–15 jours)",
+      "SEA": "Mer (30–45 jours)",
       "EXPRESS": "Express (1–3 jours)"
     },
     "weight": "Poids (lb)",
@@ -357,6 +376,7 @@
     "recipient": "Destinataire",
     "createdAt": "Créé",
     "deliveredAt": "Livré",
+    "receivedBy": "Reçu par",
     "fob": "Valeur déclarée (FOB)",
     "totalCost": "Coût total",
     "paid": "Payé",
@@ -368,6 +388,8 @@
     "pay": "Payer avec le portefeuille",
     "noEvents": "Aucun événement pour le moment.",
     "thirdParty": "Récupération par un tiers",
+    "thirdPartyAuthTitle": "Retrait autorisé par un tiers",
+    "thirdPartyRecordedAt": "Enregistré le",
     "authName": "Nom autorisé",
     "authPhone": "Téléphone",
     "authIdType": "Type de pièce",
@@ -429,7 +451,9 @@
     "seaTitle": "Pour les colis maritimes",
     "copy": "Copier",
     "copied": "Copié !",
-    "warehouse": "Entrepôt"
+    "warehouse": "Entrepôt",
+    "warehousePhone": "Téléphone",
+    "warehouseEmail": "E-mail"
   },
   "settings": {
     "title": "Paramètres",

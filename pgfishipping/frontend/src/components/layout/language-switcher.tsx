@@ -1,40 +1,81 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-import { useLocale } from 'next-intl';
-import { locales, localeLabels, type Locale } from '@/lib/i18n/config';
-import { Globe } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { locales, localeFlags, type Locale } from '@/lib/i18n/config';
+import { cn } from '@/lib/utils';
 
-export function LanguageSwitcher(): JSX.Element {
+type LanguageSwitcherProps = {
+  className?: string;
+};
+
+export function LanguageSwitcher({ className }: LanguageSwitcherProps): JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
-  const current = useLocale();
+  const current = useLocale() as Locale;
+  const tc = useTranslations('common');
 
-  function onChange(next: Locale): void {
-    const segments = pathname.split('/');
+  function buildHref(next: Locale): string {
+    const segments = (pathname || '/').split('/');
     if (locales.includes(segments[1] as Locale)) {
       segments[1] = next;
     } else {
       segments.splice(1, 0, next);
     }
-    router.push(segments.join('/') || `/${next}`);
+    const joined = segments.join('/');
+    return joined.length > 0 ? joined : `/${next}`;
+  }
+
+  function onSelect(next: Locale): void {
+    if (next === current) return;
+    router.push(buildHref(next));
+  }
+
+  function label(l: Locale): string {
+    switch (l) {
+      case 'en':
+        return tc('lang.option_en');
+      case 'fr':
+        return tc('lang.option_fr');
+      case 'ht':
+        return tc('lang.option_ht');
+      case 'es':
+        return tc('lang.option_es');
+      default:
+        return l;
+    }
   }
 
   return (
-    <div className="relative inline-flex items-center gap-1">
-      <Globe className="h-4 w-4 text-muted-foreground" />
-      <select
-        aria-label="Language"
-        className="h-9 cursor-pointer appearance-none rounded-md border border-input bg-background px-2 pr-6 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        value={current}
-        onChange={(e) => onChange(e.target.value as Locale)}
-      >
-        {locales.map((l) => (
-          <option key={l} value={l}>
-            {localeLabels[l]}
-          </option>
-        ))}
-      </select>
+    <div
+      role="group"
+      aria-label={tc('lang.aria')}
+      className={cn(
+        'inline-flex items-center gap-0.5 rounded-full border border-slate-200/90 bg-slate-100/90 p-0.5',
+        className,
+      )}
+    >
+      {locales.map((l) => {
+        const active = l === current;
+        return (
+          <button
+            key={l}
+            type="button"
+            onClick={() => onSelect(l)}
+            aria-pressed={active}
+            aria-label={label(l)}
+            title={label(l)}
+            className={cn(
+              'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[15px] leading-none transition-colors',
+              active
+                ? 'bg-white text-pg-navy shadow-sm ring-1 ring-pg-orange/40'
+                : 'text-pg-navy/75 hover:bg-white/90 hover:text-pg-navy',
+            )}
+          >
+            <span aria-hidden>{localeFlags[l]}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

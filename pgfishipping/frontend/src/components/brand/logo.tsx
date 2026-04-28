@@ -12,17 +12,17 @@ interface LogoProps {
 }
 
 const HEIGHTS: Record<NonNullable<LogoProps['size']>, number> = {
-  sm: 24,
-  md: 36,
-  lg: 56,
-  xl: 80,
+  sm: 28,
+  md: 44,
+  lg: 64,
+  xl: 96,
 };
 
 const WORDMARK_SIZES: Record<NonNullable<LogoProps['size']>, string> = {
-  sm: 'text-base',
-  md: 'text-xl',
-  lg: 'text-3xl',
-  xl: 'text-4xl',
+  sm: 'text-lg',
+  md: 'text-2xl',
+  lg: 'text-4xl',
+  xl: 'text-5xl',
 };
 
 export function Logo({

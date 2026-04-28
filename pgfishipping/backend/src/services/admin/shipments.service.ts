@@ -7,7 +7,7 @@ import {
 } from '@prisma/client';
 import { prisma } from '../../config/database';
 import { Errors } from '../../utils/response';
-import { setShipmentStatus } from '../shipment.service';
+import { setShipmentStatus, type DeliverySignerInput } from '../shipment.service';
 import { generateTrackingCode } from '../../utils/generateCode';
 import { uploadFile } from '../storage.service';
 import { notifyShipmentStatus } from '../notifications.service';
@@ -133,7 +133,22 @@ export async function adminAddTrackingEvent(
   label?: string,
   location?: string,
   source = 'admin',
+  deliverySigner?: DeliverySignerInput,
 ): Promise<unknown> {
+  if (status === 'DELIVERED') {
+    if (!deliverySigner) {
+      throw Errors.badRequest(
+        'Select who received the package when marking a shipment as delivered.',
+      );
+    }
+    return setShipmentStatus(shipmentId, {
+      status,
+      label,
+      location,
+      source,
+      deliverySigner,
+    });
+  }
   return setShipmentStatus(shipmentId, { status, label, location, source });
 }
 

@@ -27,6 +27,8 @@ import {
   getShipment,
   payShipment,
   setThirdPartyAuth,
+  downloadShipmentLabelPdf,
+  downloadShipmentInvoiceFile,
 } from '@/lib/dashboard-api';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useToastStore } from '@/lib/store/toast';
@@ -57,6 +59,8 @@ export default function ShipmentDetailPage(): JSX.Element {
   const fileInput = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [downloadingLabel, setDownloadingLabel] = useState(false);
+  const [downloadingInvoice, setDownloadingInvoice] = useState(false);
 
   async function refresh(): Promise<void> {
     try {
@@ -73,6 +77,17 @@ export default function ShipmentDetailPage(): JSX.Element {
     void refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  useEffect(() => {
+    const tp = ship?.thirdPartyAuth;
+    if (!tp) return;
+    setAuth({
+      authorizedName: tp.authorizedName,
+      idType: tp.idType || 'NIF',
+      idNumber: tp.idNumber,
+      phone: tp.phone,
+    });
+  }, [ship?.thirdPartyAuth]);
 
   async function uploadInvoice(file: File): Promise<void> {
     setUploading(true);
@@ -97,7 +112,7 @@ export default function ShipmentDetailPage(): JSX.Element {
     try {
       await setThirdPartyAuth(id, auth);
       push({ kind: 'success', text: t('authSaved') });
-      setAuth({ authorizedName: '', idType: 'NIF', idNumber: '', phone: '' });
+      await refresh();
       setShowAuthForm(false);
     } catch (err) {
       push({ kind: 'error', text: getApiErrorMessage(err) });
@@ -121,6 +136,30 @@ export default function ShipmentDetailPage(): JSX.Element {
     }
   }
 
+  async function downloadLabelPdf(): Promise<void> {
+    if (!ship) return;
+    setDownloadingLabel(true);
+    try {
+      await downloadShipmentLabelPdf(ship.id, ship.trackingCode);
+    } catch (err) {
+      push({ kind: 'error', text: getApiErrorMessage(err) });
+    } finally {
+      setDownloadingLabel(false);
+    }
+  }
+
+  async function downloadInvoiceFromServer(): Promise<void> {
+    if (!ship) return;
+    setDownloadingInvoice(true);
+    try {
+      await downloadShipmentInvoiceFile(ship.id, ship.trackingCode);
+    } catch (err) {
+      push({ kind: 'error', text: getApiErrorMessage(err) });
+    } finally {
+      setDownloadingInvoice(false);
+    }
+  }
+
   if (loading) {
     return <div className="text-sm text-muted-foreground">Loading…</div>;
   }
@@ -140,9 +179,6 @@ export default function ShipmentDetailPage(): JSX.Element {
       </div>
     );
   }
-
-  const apiBase =
-    process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
 
   const dims =
     ship.dimensionLength && ship.dimensionWidth && ship.dimensionHeight
@@ -298,6 +334,14 @@ export default function ShipmentDetailPage(): JSX.Element {
               {t('deliveredAt')}: {new Date(ship.deliveredAt).toLocaleString()}
             </div>
           ) : null}
+          {ship.deliveredSignerName ? (
+            <div className="mt-2 text-xs text-muted-foreground">
+              {t('receivedBy')}:{' '}
+              <span className="font-semibold text-foreground">
+                {ship.deliveredSignerName}
+              </span>
+            </div>
+          ) : null}
         </InfoCard>
 
         <InfoCard
@@ -336,27 +380,28 @@ export default function ShipmentDetailPage(): JSX.Element {
               {t('thirdParty')}
             </Button>
 
-            <a
-              href={`${apiBase}/shipments/${ship.id}/label`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Button
+              variant="outline"
+              size="sm"
+              type="button"
+              disabled={downloadingLabel}
+              onClick={() => void downloadLabelPdf()}
             >
-              <Button variant="outline" size="sm">
-                <Download className="mr-1.5 h-4 w-4" />
-                {t('downloadLabel')}
-              </Button>
-            </a>
+              <Download className="mr-1.5 h-4 w-4" />
+              {downloadingLabel ? '…' : t('downloadLabel')}
+            </Button>
 
             {ship.invoiceUrl ? (
-              <a
-                href={ship.invoiceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded-md border bg-secondary/30 px-3 py-1.5 text-sm font-medium hover:bg-secondary"
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={downloadingInvoice}
+                onClick={() => void downloadInvoiceFromServer()}
               >
-                <FileText className="h-4 w-4" />
-                {t('invoiceOnFile')}
-              </a>
+                <FileText className="mr-1.5 h-4 w-4" />
+                {downloadingInvoice ? '…' : t('invoiceOnFile')}
+              </Button>
             ) : null}
 
             {ship.totalCost && !ship.isPaid ? (
@@ -439,6 +484,28 @@ export default function ShipmentDetailPage(): JSX.Element {
           ) : null}
         </InfoCard>
       </div>
+
+      {ship.thirdPartyAuth ? (
+        <div className="rounded-xl border border-brand-navy/30 bg-brand-navy/5 p-4 shadow-sm">
+          <div className="mb-3 flex items-center gap-2 text-brand-navy">
+            <ShieldCheck className="h-5 w-5 shrink-0" />
+            <h2 className="text-lg font-semibold">{t('thirdPartyAuthTitle')}</h2>
+          </div>
+          <div className="grid gap-2 text-sm sm:grid-cols-2">
+            <KV
+              label={t('authName')}
+              value={ship.thirdPartyAuth.authorizedName}
+            />
+            <KV label={t('authPhone')} value={ship.thirdPartyAuth.phone} />
+            <KV label={t('authIdType')} value={ship.thirdPartyAuth.idType} />
+            <KV label={t('authIdNumber')} value={ship.thirdPartyAuth.idNumber} />
+            <KV
+              label={t('thirdPartyRecordedAt')}
+              value={new Date(ship.thirdPartyAuth.createdAt).toLocaleString()}
+            />
+          </div>
+        </div>
+      ) : null}
 
       {/* Tracking events */}
       <div className="rounded-xl border bg-card p-6 shadow-sm">

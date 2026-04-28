@@ -13,6 +13,32 @@ export type ShipmentStatus =
 export type ServiceType = 'AIR' | 'SEA' | 'EXPRESS';
 export type ContentType = 'PACKAGE' | 'DOCUMENT';
 
+export interface TrackingEventRow {
+  id: string;
+  status: string;
+  label: string | null;
+  location: string | null;
+  notes: string | null;
+  timestamp: string;
+}
+
+/** Customer-registered proxy allowed to collect the package (one per shipment). */
+export interface ThirdPartyAuthRecord {
+  id: string;
+  shipmentId?: string;
+  userId?: string;
+  authorizedName: string;
+  idType: string;
+  idNumber: string;
+  phone: string;
+  createdAt: string;
+}
+
+export type DeliveredSignerRole =
+  | 'ACCOUNT_HOLDER'
+  | 'AUTHORIZED_THIRD_PARTY'
+  | 'CUSTOM';
+
 export interface Shipment {
   id: string;
   trackingCode: string;
@@ -38,16 +64,10 @@ export interface Shipment {
   originCountry: string | null;
   createdAt: string;
   deliveredAt: string | null;
+  deliveredSignerRole?: DeliveredSignerRole | null;
+  deliveredSignerName?: string | null;
   trackingEvents?: TrackingEventRow[];
-}
-
-export interface TrackingEventRow {
-  id: string;
-  status: string;
-  label: string | null;
-  location: string | null;
-  notes: string | null;
-  timestamp: string;
+  thirdPartyAuth?: ThirdPartyAuthRecord | null;
 }
 
 export interface Transaction {
@@ -83,6 +103,8 @@ export interface UsAddress {
     name: string;
     address: string;
     city: string;
+    phone: string | null;
+    email: string | null;
   } | null;
 }
 

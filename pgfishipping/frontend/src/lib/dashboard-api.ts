@@ -1,4 +1,4 @@
-import { api, unwrap, type ApiSuccess } from './api';
+import { api, unwrap, type ApiSuccess, type ApiError } from './api';
 import type {
   MyProfile,
   Shipment,
@@ -32,6 +32,74 @@ export async function updateMyProfile(
 export async function getMyAddress(): Promise<UsAddress> {
   const r = await api.get<ApiSuccess<UsAddress>>('/user/address');
   return unwrap(r);
+}
+
+/** Download label PDF or invoice file (raw binary) with auth; triggers browser save. */
+export async function downloadShipmentBinary(
+  relativePath: string,
+  fallbackFilename: string,
+): Promise<void> {
+  const r = await api.get<ArrayBuffer>(relativePath, {
+    responseType: 'arraybuffer',
+  });
+  const ctypeRaw = String(r.headers['content-type'] ?? '');
+  const ctype = ctypeRaw.split(';')[0]?.trim() ?? '';
+
+  if (ctype.includes('application/json')) {
+    const txt = new TextDecoder().decode(new Uint8Array(r.data));
+    let msg = 'Download failed';
+    try {
+      const parsed = JSON.parse(txt) as ApiError;
+      if (!parsed.ok && parsed.error?.message) msg = parsed.error.message;
+    } catch {
+      msg = txt.slice(0, 200);
+    }
+    throw new Error(msg);
+  }
+
+  const rawCdRaw = r.headers['content-disposition'];
+  const rawCd =
+    typeof rawCdRaw === 'string'
+      ? rawCdRaw
+      : Array.isArray(rawCdRaw)
+        ? rawCdRaw[0]
+        : '';
+
+  let filename = fallbackFilename;
+  const quoted = rawCd.match(/filename="([^"]+)"/)?.[1];
+  if (quoted) filename = quoted;
+
+  const blobType = ctype || 'application/octet-stream';
+
+  const blob = new Blob([new Uint8Array(r.data)], { type: blobType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+export async function downloadShipmentLabelPdf(
+  shipmentId: string,
+  trackingCode: string,
+): Promise<void> {
+  await downloadShipmentBinary(
+    `/shipments/${shipmentId}/label`,
+    `label-${trackingCode.replace(/[^\w\-]/g, '')}.pdf`,
+  );
+}
+
+export async function downloadShipmentInvoiceFile(
+  shipmentId: string,
+  trackingCode: string,
+): Promise<void> {
+  await downloadShipmentBinary(
+    `/shipments/${shipmentId}/invoice`,
+    `invoice-${trackingCode.replace(/[^\w\-]/g, '')}.pdf`,
+  );
 }
 
 export interface ListShipmentsResponse {

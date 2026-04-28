@@ -11,6 +11,7 @@ import {
 import { prisma } from '../../config/database';
 import { Errors } from '../../utils/response';
 import { generateRandomToken } from '../../utils/generateCode';
+import { syncCustomerUsWarehouseLabelsAfterUsWarehouseUpdate } from '../customerCode.service';
 
 // ─── Pricing rules ──────────────────────────────────────────────────────────
 
@@ -79,10 +80,24 @@ export async function updateWarehouse(
 ): Promise<Warehouse> {
   const existing = await prisma.warehouse.findUnique({ where: { id } });
   if (!existing) throw Errors.notFound('Warehouse not found');
-  return prisma.warehouse.update({
+
+  const updated = await prisma.warehouse.update({
     where: { id },
     data: input as Prisma.WarehouseUpdateInput,
   });
+
+  const postalRelatedChanged =
+    input.address !== undefined ||
+    input.city !== undefined ||
+    input.state !== undefined ||
+    input.country !== undefined ||
+    input.type !== undefined;
+
+  if (postalRelatedChanged && updated.type === 'US') {
+    await syncCustomerUsWarehouseLabelsAfterUsWarehouseUpdate(updated);
+  }
+
+  return updated;
 }
 
 export async function deleteWarehouse(id: string): Promise<void> {

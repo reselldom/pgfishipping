@@ -126,7 +126,44 @@ export async function downloadInvoice(req: Request, res: Response): Promise<void
   const { id } = req.params as { id: string };
   const ship = await getShipmentForUser(req.auth.userId, id);
   if (!ship.invoiceUrl) throw Errors.notFound('No invoice on file');
-  res.redirect(ship.invoiceUrl);
+
+  let remote: Awaited<ReturnType<typeof fetch>>;
+  try {
+    remote = await fetch(ship.invoiceUrl);
+  } catch {
+    throw Errors.badRequest('Failed to retrieve invoice');
+  }
+  if (!remote.ok) {
+    throw Errors.badRequest(`Invoice storage returned HTTP ${remote.status}`);
+  }
+
+  const buf = Buffer.from(await remote.arrayBuffer());
+  const ctRaw = (remote.headers.get('content-type') ?? '').split(';')[0]?.trim().toLowerCase() ?? '';
+
+  let contentType = 'application/octet-stream';
+  let ext = 'bin';
+  if (ctRaw.includes('pdf')) {
+    contentType = 'application/pdf';
+    ext = 'pdf';
+  } else if (ctRaw.includes('jpeg') || ctRaw.includes('jpg')) {
+    contentType = 'image/jpeg';
+    ext = 'jpg';
+  } else if (ctRaw.includes('png')) {
+    contentType = 'image/png';
+    ext = 'png';
+  } else if (ctRaw.includes('webp')) {
+    contentType = 'image/webp';
+    ext = 'webp';
+  }
+
+  const filename = `invoice-${ship.trackingCode}.${ext}`.replace(/[^\w.\-()+]/g, '_');
+
+  res.setHeader('Content-Type', contentType);
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="${filename}"`,
+  );
+  res.send(buf);
 }
 
 export async function thirdPartyPost(req: Request, res: Response): Promise<void> {

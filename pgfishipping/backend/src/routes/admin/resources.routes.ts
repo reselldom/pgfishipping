@@ -187,7 +187,7 @@ router.post(
 
 const configSchema = z.object({
   key: z.string().min(1).max(100),
-  value: z.string().max(2000),
+  value: z.string().max(50000),
 });
 
 router.get('/config', asyncHandler(async (_req, res) => ok(res, await listSystemConfig())));

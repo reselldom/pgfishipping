@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildWarehouseAddress } from '../../src/services/customerCode.service';
+import {
+  buildWarehouseAddress,
+  warehouseToShipmentAddressString,
+} from '../../src/services/customerCode.service';
 
 describe('buildWarehouseAddress', () => {
   it('builds Air and Sea addresses with /A and /B suffixes', () => {
@@ -15,5 +18,18 @@ describe('buildWarehouseAddress', () => {
     expect(seaAddress).toBe(
       'Marie Joseph/HT-000123/B\n8435 NW 68TH ST, MEDLEY, FL 33166',
     );
+  });
+});
+
+describe('warehouseToShipmentAddressString', () => {
+  it('joins street, locality, country', () => {
+    expect(
+      warehouseToShipmentAddressString({
+        address: '8435 NW 68TH ST',
+        city: 'Medley',
+        state: 'FL',
+        country: 'US',
+      }),
+    ).toBe('8435 NW 68TH ST, Medley, FL, US');
   });
 });

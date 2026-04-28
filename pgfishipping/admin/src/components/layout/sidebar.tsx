@@ -14,6 +14,8 @@ import {
   Settings,
   UserCog,
   Mail,
+  Share2,
+  MapPinned,
   LogOut,
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/auth';
@@ -37,6 +39,8 @@ const ITEMS: Item[] = [
   { href: '/tickets', label: 'Support', Icon: LifeBuoy },
   { href: '/staff', label: 'Staff', Icon: UserCog },
   { href: '/broadcast', label: 'Broadcast', Icon: Mail },
+  { href: '/settings/social', label: 'Social links', Icon: Share2 },
+  { href: '/settings/footer', label: 'Footer content', Icon: MapPinned },
   { href: '/config', label: 'Config', Icon: Settings },
 ];
 
@@ -68,8 +72,10 @@ export function Sidebar(): JSX.Element {
               ? pathname === '/shipments' ||
                 (pathname.startsWith('/shipments/') &&
                   !pathname.startsWith('/shipments/intake'))
-              : pathname === href ||
-                (href !== '/' && pathname.startsWith(href));
+              : href.startsWith('/settings/')
+                ? pathname === href
+                : pathname === href ||
+                  (href !== '/' && pathname.startsWith(href));
           return (
             <Link
               key={href}

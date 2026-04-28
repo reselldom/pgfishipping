@@ -71,11 +71,33 @@ export default function MyAddressPage(): JSX.Element {
               <MapPin className="h-4 w-4" /> {t('warehouse')}
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm">
+          <CardContent className="space-y-2 text-sm">
             <p className="font-medium">{data.warehouse.name}</p>
             <p className="text-muted-foreground">
               {data.warehouse.address}, {data.warehouse.city}
             </p>
+            {data.warehouse.phone ? (
+              <p>
+                <span className="text-muted-foreground">{t('warehousePhone')} </span>
+                <a
+                  href={`tel:${data.warehouse.phone.replace(/\s/g, '')}`}
+                  className="font-medium text-pg-navy underline-offset-4 hover:underline"
+                >
+                  {data.warehouse.phone}
+                </a>
+              </p>
+            ) : null}
+            {data.warehouse.email ? (
+              <p>
+                <span className="text-muted-foreground">{t('warehouseEmail')} </span>
+                <a
+                  href={`mailto:${data.warehouse.email}`}
+                  className="break-all font-medium text-pg-navy underline-offset-4 hover:underline"
+                >
+                  {data.warehouse.email}
+                </a>
+              </p>
+            ) : null}
           </CardContent>
         </Card>
       ) : null}

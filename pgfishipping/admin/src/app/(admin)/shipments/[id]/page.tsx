@@ -57,6 +57,10 @@ export default function AdminShipmentDetailPage(): JSX.Element {
   const [evStatus, setEvStatus] = useState('IN_TRANSIT');
   const [evLabel, setEvLabel] = useState('');
   const [evLocation, setEvLocation] = useState('');
+  const [deliveredSignerRole, setDeliveredSignerRole] = useState<
+    'ACCOUNT_HOLDER' | 'AUTHORIZED_THIRD_PARTY' | 'CUSTOM'
+  >('ACCOUNT_HOLDER');
+  const [deliveredSignerCustomName, setDeliveredSignerCustomName] = useState('');
   const [addingEv, setAddingEv] = useState(false);
 
   async function refresh(): Promise<void> {
@@ -110,9 +114,36 @@ export default function AdminShipmentDetailPage(): JSX.Element {
     setAddingEv(true);
     setMsg('');
     try {
-      await addShipmentEvent(id, evStatus, evLabel || undefined, evLocation || undefined);
+      if (evStatus === 'DELIVERED') {
+        if (deliveredSignerRole === 'CUSTOM' && !deliveredSignerCustomName.trim()) {
+          setMsg('Enter the recipient name when "Other recipient" is selected.');
+          setAddingEv(false);
+          return;
+        }
+        if (
+          deliveredSignerRole === 'AUTHORIZED_THIRD_PARTY' &&
+          !data?.thirdPartyAuth
+        ) {
+          setMsg(
+            'The customer must register third-party pickup on their dashboard before you can choose that option.',
+          );
+          setAddingEv(false);
+          return;
+        }
+      }
+      await addShipmentEvent(
+        id,
+        evStatus,
+        evLabel || undefined,
+        evLocation || undefined,
+        evStatus === 'DELIVERED' ? deliveredSignerRole : undefined,
+        deliveredSignerRole === 'CUSTOM'
+          ? deliveredSignerCustomName
+          : undefined,
+      );
       setEvLabel('');
       setEvLocation('');
+      setDeliveredSignerCustomName('');
       setMsg(`Tracking event added (${evStatus}).`);
       await refresh();
     } catch (err) {
@@ -174,6 +205,56 @@ export default function AdminShipmentDetailPage(): JSX.Element {
       {msg ? (
         <div className="rounded-md border bg-secondary/30 p-3 text-sm">{msg}</div>
       ) : null}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Third-party pickup authorization</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            This shipment belongs to{' '}
+            {data.user ? (
+              <Link
+                href={`/customers/${data.user.id}`}
+                className="text-primary hover:underline"
+              >
+                {data.user.customerCode} — {data.user.firstName} {data.user.lastName}
+              </Link>
+            ) : (
+              'unknown customer'
+            )}
+            . The customer configures who may collect the package from their dashboard.
+          </p>
+        </CardHeader>
+        <CardContent>
+          {data.thirdPartyAuth ? (
+            <dl className="grid gap-3 text-sm sm:grid-cols-2">
+              <div>
+                <dt className="text-muted-foreground">Authorized pickup</dt>
+                <dd className="font-medium">{data.thirdPartyAuth.authorizedName}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Phone</dt>
+                <dd className="font-medium">{data.thirdPartyAuth.phone}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">ID type</dt>
+                <dd className="font-medium">{data.thirdPartyAuth.idType}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">ID number</dt>
+                <dd className="font-mono text-sm">{data.thirdPartyAuth.idNumber}</dd>
+              </div>
+              <div className="sm:col-span-2">
+                <dt className="text-muted-foreground">Registered</dt>
+                <dd>{formatDateTime(data.thirdPartyAuth.createdAt)}</dd>
+              </div>
+            </dl>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No third-party pickup recorded for this shipment yet.
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
@@ -278,6 +359,53 @@ export default function AdminShipmentDetailPage(): JSX.Element {
                   onChange={(e) => setEvLocation(e.target.value)}
                 />
               </div>
+              {evStatus === 'DELIVERED' ? (
+                <>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="deliveredSignerRole">Delivered — received by</Label>
+                    <Select
+                      id="deliveredSignerRole"
+                      value={deliveredSignerRole}
+                      onChange={(e) =>
+                        setDeliveredSignerRole(
+                          e.target.value as
+                            | 'ACCOUNT_HOLDER'
+                            | 'AUTHORIZED_THIRD_PARTY'
+                            | 'CUSTOM',
+                        )
+                      }
+                    >
+                      <option value="ACCOUNT_HOLDER">
+                        Customer (account holder)
+                        {data.user
+                          ? ` — ${data.user.firstName} ${data.user.lastName}`
+                          : ''}
+                      </option>
+                      <option
+                        value="AUTHORIZED_THIRD_PARTY"
+                        disabled={!data.thirdPartyAuth}
+                      >
+                        Registered third-party
+                        {!data.thirdPartyAuth ? ' (not on file)' : ''}
+                      </option>
+                      <option value="CUSTOM">Other recipient (manual name)</option>
+                    </Select>
+                  </div>
+                  {deliveredSignerRole === 'CUSTOM' ? (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="deliveredSignerCustomName">
+                        Recipient name (signature line)
+                      </Label>
+                      <Input
+                        id="deliveredSignerCustomName"
+                        value={deliveredSignerCustomName}
+                        onChange={(e) => setDeliveredSignerCustomName(e.target.value)}
+                        placeholder="Full name shown on POD"
+                      />
+                    </div>
+                  ) : null}
+                </>
+              ) : null}
               <Button type="submit" size="sm" className="w-full" disabled={addingEv}>
                 {addingEv ? 'Adding…' : 'Add event'}
               </Button>
@@ -308,6 +436,14 @@ export default function AdminShipmentDetailPage(): JSX.Element {
                       : '—'}
                   </span>
                 </div>
+                {data.deliveredSignerName ? (
+                  <div className="flex justify-between border-t pt-2">
+                    <span className="text-muted-foreground">Received by</span>
+                    <span className="max-w-[60%] text-right font-medium">
+                      {data.deliveredSignerName}
+                    </span>
+                  </div>
+                ) : null}
               </div>
             </div>
           </CardContent>
