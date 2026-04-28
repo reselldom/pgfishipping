@@ -54,7 +54,11 @@ export default function RegisterPage(): JSX.Element {
         ...values,
         language: locale.toUpperCase(),
       });
-      setSession(result.user, result.tokens.accessToken);
+      setSession(
+        result.user,
+        result.tokens.accessToken,
+        result.tokens.refreshToken,
+      );
       toast({ variant: 'success', title: t('registerTitle') });
       router.push(`/${locale}/dashboard`);
     } catch (err) {

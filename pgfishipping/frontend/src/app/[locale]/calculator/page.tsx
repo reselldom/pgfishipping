@@ -2,17 +2,20 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plane, Ship, Zap, ArrowLeft, ArrowRight, RefreshCw } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calculator as CalcIcon,
+  Plane,
+  Receipt,
+  RefreshCw,
+  Ship,
+  Zap,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { StepTileRow } from '@/components/brand/step-tile';
 import {
   estimateShipping,
   type CalculatorInput,
@@ -85,45 +88,50 @@ export default function CalculatorPage(): JSX.Element {
   }
 
   return (
-    <div className="container max-w-2xl py-12">
-      <div className="mb-6 text-center">
-        <h1 className="text-3xl font-bold sm:text-4xl">{t('title')}</h1>
-        <p className="mt-2 text-muted-foreground">{t('subtitle')}</p>
+    <div className="container max-w-3xl py-12">
+      <div className="mb-8 text-center">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-pg-red">
+          {t('title')}
+        </p>
+        <h1 className="mt-2 text-3xl font-extrabold text-pg-navy sm:text-4xl">
+          {t('subtitle')}
+        </h1>
       </div>
 
-      <div className="mb-6 grid grid-cols-4 gap-2">
-        {[1, 2, 3, 4].map((s) => (
-          <div
-            key={s}
-            className={cn(
-              'flex flex-col items-center gap-1 text-xs font-medium',
-              step >= s ? 'text-primary' : 'text-muted-foreground',
-            )}
-          >
-            <div
-              className={cn(
-                'h-1.5 w-full rounded-full',
-                step >= s ? 'bg-primary' : 'bg-border',
-              )}
-            />
-            {s === 1 && t('step1')}
-            {s === 2 && t('step2')}
-            {s === 3 && t('step3')}
-            {s === 4 && t('step4')}
-          </div>
-        ))}
-      </div>
+      {/* Liberty 3-step header (combine 1+2 = "Mi Paquete" UX into the 3 phases) */}
+      <StepTileRow
+        steps={[
+          {
+            n: 1,
+            label: t('step1'),
+            icon: <Plane className="h-4 w-4" />,
+          },
+          {
+            n: 2,
+            label: t('step2'),
+            icon: <CalcIcon className="h-4 w-4" />,
+          },
+          {
+            n: 3,
+            label: step === 4 ? t('step4') : t('step3'),
+            icon: <Receipt className="h-4 w-4" />,
+          },
+        ]}
+        current={step >= 4 ? 3 : Math.min(step, 3)}
+        className="mb-6"
+      />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-card shadow-card">
+        <div className="border-b border-slate-200 bg-slate-50 px-6 py-3">
+          <h2 className="text-base font-bold uppercase tracking-wide text-pg-navy">
             {step === 1 && t('step1')}
             {step === 2 && t('step2')}
             {step === 3 && t('step3')}
             {step === 4 && t('step4')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </h2>
+        </div>
+
+        <div className="space-y-5 p-6">
           {step === 1 && (
             <div className="grid gap-3">
               {(['AIR', 'EXPRESS', 'SEA'] as ServiceType[]).map((s) => {
@@ -135,19 +143,32 @@ export default function CalculatorPage(): JSX.Element {
                     type="button"
                     onClick={() => setServiceType(s)}
                     className={cn(
-                      'flex items-center gap-3 rounded-md border p-4 text-left transition-colors',
+                      'group relative flex items-center gap-4 overflow-hidden rounded-xl border bg-white p-4 text-left transition-all',
                       active
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:bg-accent',
+                        ? 'border-pg-navy bg-pg-navy-50 shadow-card-lg'
+                        : 'border-slate-200 hover:border-pg-navy/40 hover:bg-slate-50',
                     )}
                   >
-                    <Icon
+                    <div
                       className={cn(
-                        'h-6 w-6',
-                        active ? 'text-primary' : 'text-muted-foreground',
+                        'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg',
+                        active ? 'bg-pg-navy text-white' : 'bg-slate-100 text-pg-muted',
+                      )}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1">
+                      <span className="block font-bold text-pg-navy">
+                        {t(`service.${s}`)}
+                      </span>
+                    </div>
+                    {/* Liberty-style red right-edge accent */}
+                    <span
+                      className={cn(
+                        'absolute inset-y-0 right-0 w-1.5',
+                        active ? 'bg-pg-red' : 'bg-transparent',
                       )}
                     />
-                    <span className="font-medium">{t(`service.${s}`)}</span>
                   </button>
                 );
               })}
@@ -165,6 +186,7 @@ export default function CalculatorPage(): JSX.Element {
                   min="0"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
+                  className="num"
                 />
               </div>
               <div className="grid grid-cols-3 gap-3">
@@ -176,6 +198,7 @@ export default function CalculatorPage(): JSX.Element {
                     min="0"
                     value={length}
                     onChange={(e) => setLength(e.target.value)}
+                    className="num"
                   />
                 </div>
                 <div className="space-y-2">
@@ -186,6 +209,7 @@ export default function CalculatorPage(): JSX.Element {
                     min="0"
                     value={width}
                     onChange={(e) => setWidth(e.target.value)}
+                    className="num"
                   />
                 </div>
                 <div className="space-y-2">
@@ -196,10 +220,11 @@ export default function CalculatorPage(): JSX.Element {
                     min="0"
                     value={height}
                     onChange={(e) => setHeight(e.target.value)}
+                    className="num"
                   />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">{t('dimsHelp')}</p>
+              <p className="text-xs text-pg-muted">{t('dimsHelp')}</p>
             </div>
           )}
 
@@ -213,6 +238,7 @@ export default function CalculatorPage(): JSX.Element {
                   min="0"
                   value={fobValue}
                   onChange={(e) => setFobValue(e.target.value)}
+                  className="num"
                 />
               </div>
               <div className="space-y-2">
@@ -224,10 +250,10 @@ export default function CalculatorPage(): JSX.Element {
                       type="button"
                       onClick={() => setFobCurrency(c)}
                       className={cn(
-                        'rounded-md border px-3 py-2 text-sm transition-colors',
+                        'rounded-lg border-2 px-4 py-2 text-sm font-bold transition-colors',
                         fobCurrency === c
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:bg-accent',
+                          ? 'border-pg-navy bg-pg-navy text-white'
+                          : 'border-slate-200 bg-white text-pg-navy hover:border-pg-navy/40',
                       )}
                     >
                       {c}
@@ -241,7 +267,7 @@ export default function CalculatorPage(): JSX.Element {
           {step === 4 && result && <EstimateResult result={result} />}
 
           {error && (
-            <div className="rounded-md border border-destructive/40 bg-red-50 p-3 text-sm text-destructive">
+            <div className="rounded-xl border border-pg-red/30 bg-pg-red-50 p-3 text-sm font-medium text-pg-red">
               {error}
             </div>
           )}
@@ -250,14 +276,16 @@ export default function CalculatorPage(): JSX.Element {
             {step > 1 && step < 4 && (
               <Button
                 variant="outline"
-                onClick={() => setStep((s) => (s > 1 ? ((s - 1) as 1 | 2 | 3 | 4) : s))}
+                onClick={() =>
+                  setStep((s) => (s > 1 ? ((s - 1) as 1 | 2 | 3 | 4) : s))
+                }
               >
                 <ArrowLeft className="mr-1 h-4 w-4" /> {tc('previous')}
               </Button>
             )}
             <div className="ml-auto flex gap-2">
               {step === 4 ? (
-                <Button onClick={reset} variant="outline">
+                <Button onClick={reset} variant="gold">
                   <RefreshCw className="mr-1 h-4 w-4" /> {t('newQuote')}
                 </Button>
               ) : step === 3 ? (
@@ -274,8 +302,8 @@ export default function CalculatorPage(): JSX.Element {
               )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
@@ -284,55 +312,59 @@ function EstimateResult({ result }: { result: CalculatorResult }): JSX.Element {
   const t = useTranslations('calculator');
   return (
     <div className="space-y-4">
-      <div className="rounded-md border bg-secondary/30 p-4">
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm text-muted-foreground">{t('total')}</span>
-          <span className="text-3xl font-bold text-primary">
-            ${result.totalUsd.toFixed(2)} USD
-          </span>
-        </div>
-        <div className="flex items-baseline justify-between text-sm">
-          <span className="text-muted-foreground">{t('totalHtg')}</span>
-          <span className="font-medium">
+      <div className="overflow-hidden rounded-xl border border-pg-navy bg-pg-navy text-white shadow-card-lg">
+        <div className="space-y-1 p-5 text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-white/70">
+            {t('total')}
+          </p>
+          <p className="num text-4xl font-extrabold sm:text-5xl">
+            ${result.totalUsd.toFixed(2)}
+            <span className="ml-1 text-base font-bold text-white/70">USD</span>
+          </p>
+          <p className="num text-sm text-white/80">
             {result.totalHtg.toLocaleString()} HTG
-          </span>
-        </div>
-        <div className="mt-1 text-xs text-muted-foreground">
-          {t('rate')}: 1 USD = {result.exchangeRate.toFixed(2)} HTG
+          </p>
+          <p className="text-[11px] text-white/60">
+            {t('rate')}: 1 USD = {result.exchangeRate.toFixed(2)} HTG
+          </p>
         </div>
       </div>
 
-      <div className="rounded-md border">
+      <div className="overflow-hidden rounded-xl border border-slate-200">
         <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-pg-navy text-left text-xs font-bold uppercase tracking-wide text-white">
+              <th className="px-4 py-2">Line</th>
+              <th className="px-4 py-2 text-right">Amount</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr className="border-b">
-              <td className="px-4 py-2 text-muted-foreground">
-                {t('billable')}
-              </td>
-              <td className="px-4 py-2 text-right font-medium">
+            <tr className="border-b border-slate-100 bg-slate-50">
+              <td className="px-4 py-2 text-pg-muted">{t('billable')}</td>
+              <td className="num px-4 py-2 text-right font-semibold">
                 {result.billableWeightLbs.toFixed(1)} lb
               </td>
             </tr>
             {result.lines.map((l) => (
-              <tr key={l.feeType} className="border-b last:border-0">
-                <td className="px-4 py-2 text-muted-foreground">{l.name}</td>
-                <td className="px-4 py-2 text-right">
+              <tr key={l.feeType} className="border-b border-slate-100 last:border-0">
+                <td className="px-4 py-2 text-pg-muted">{l.name}</td>
+                <td className="num px-4 py-2 text-right">
                   ${l.amountUsd.toFixed(2)}
                 </td>
               </tr>
             ))}
-            <tr className="bg-secondary/30">
-              <td className="px-4 py-2 font-medium">{t('subtotal')}</td>
-              <td className="px-4 py-2 text-right font-medium">
+            <tr className="border-t border-slate-200 bg-slate-50">
+              <td className="px-4 py-2 font-bold text-pg-navy">{t('subtotal')}</td>
+              <td className="num px-4 py-2 text-right font-bold text-pg-navy">
                 ${result.subtotalUsd.toFixed(2)}
               </td>
             </tr>
             {result.taxRate > 0 && (
               <tr>
-                <td className="px-4 py-2 text-muted-foreground">
+                <td className="px-4 py-2 text-pg-muted">
                   {t('tax')} ({(result.taxRate * 100).toFixed(1)}%)
                 </td>
-                <td className="px-4 py-2 text-right">
+                <td className="num px-4 py-2 text-right">
                   ${result.taxUsd.toFixed(2)}
                 </td>
               </tr>

@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
-import { Card, CardContent } from '@/components/ui/card';
+import { ColorCard } from '@/components/brand/color-card';
 
 export default function AboutPage({
   params: { locale },
@@ -10,27 +10,28 @@ export default function AboutPage({
   setRequestLocale(locale);
   const t = useTranslations('about');
   return (
-    <div className="container max-w-3xl space-y-6 py-12">
-      <h1 className="text-3xl font-bold sm:text-4xl">{t('title')}</h1>
-      <p className="text-lg text-muted-foreground">{t('intro')}</p>
+    <div className="container max-w-3xl space-y-8 py-12">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-pg-red">
+          PGFI Shipping
+        </p>
+        <h1 className="mt-2 text-3xl font-extrabold text-pg-navy sm:text-4xl">
+          {t('title')}
+        </h1>
+        <p className="mt-3 text-base text-pg-muted">{t('intro')}</p>
+      </div>
 
-      <Card>
-        <CardContent className="space-y-2 p-6">
-          <h2 className="text-xl font-semibold">{t('missionTitle')}</h2>
-          <p className="text-muted-foreground">{t('mission')}</p>
-        </CardContent>
-      </Card>
+      <ColorCard tone="navy" title={t('missionTitle')}>
+        <p className="text-sm text-pg-ink">{t('mission')}</p>
+      </ColorCard>
 
-      <Card>
-        <CardContent className="space-y-2 p-6">
-          <h2 className="text-xl font-semibold">{t('valuesTitle')}</h2>
-          <ul className="list-inside list-disc space-y-1 text-muted-foreground">
-            <li>{t('v1')}</li>
-            <li>{t('v2')}</li>
-            <li>{t('v3')}</li>
-          </ul>
-        </CardContent>
-      </Card>
+      <ColorCard tone="red" title={t('valuesTitle')}>
+        <ul className="list-inside list-disc space-y-1 text-sm text-pg-ink">
+          <li>{t('v1')}</li>
+          <li>{t('v2')}</li>
+          <li>{t('v3')}</li>
+        </ul>
+      </ColorCard>
     </div>
   );
 }

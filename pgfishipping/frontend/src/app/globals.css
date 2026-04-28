@@ -4,63 +4,95 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222.2 47.4% 11.2%;
+    /* Surfaces */
+    --background: 220 33% 97%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
-    --primary: 222 70% 22%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 354 78% 47%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 214.3 31.8% 88%;
-    --input: 214.3 31.8% 88%;
-    --ring: 222 70% 22%;
-    --radius: 0.5rem;
+    --card-foreground: 222 47% 11%;
 
-    --brand-navy: 222 70% 22%;
-    --brand-red: 354 78% 47%;
-    --brand-gold: 36 96% 52%;
+    /* Brand semantic */
+    --primary: 222 82% 22%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 33% 95%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 33% 95%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 220 33% 95%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 350 75% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 16% 88%;
+    --input: 220 16% 88%;
+    --ring: 222 82% 22%;
+    --radius: 0.75rem;
+
+    /* PGFI brand palette (Liberty + Shippex hybrid) */
+    --brand-navy: 222 82% 22%;
+    --brand-navy-700: 222 82% 16%;
+    --brand-navy-50: 222 82% 96%;
+    --brand-red: 350 75% 50%;
+    --brand-red-700: 350 75% 40%;
+    --brand-red-50: 350 75% 96%;
+    --brand-orange: 18 88% 53%;
+    --brand-orange-50: 18 88% 96%;
+    --brand-gold: 40 80% 52%;
+    --brand-mint: 152 56% 39%;
+    --brand-mint-50: 152 56% 95%;
+    --brand-ink: 222 47% 11%;
+    --brand-muted: 215 16% 47%;
   }
 
   * {
     @apply border-border;
   }
+  html,
   body {
     @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+  /* Tabular numerics for codes / prices / weights */
+  .num,
+  code,
+  kbd,
+  samp {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
   }
 }
 
 @layer components {
+  /* Liberty-inspired diagonal flag stripe — used on auth shells */
   .brand-stripe-top {
-    background:
-      linear-gradient(
-        135deg,
-        hsl(var(--brand-navy)) 0%,
-        hsl(var(--brand-navy)) 38%,
-        transparent 38%,
-        transparent 62%,
-        hsl(var(--brand-red)) 62%,
-        hsl(var(--brand-red)) 100%
-      );
+    background: linear-gradient(
+      135deg,
+      hsl(var(--brand-navy)) 0%,
+      hsl(var(--brand-navy)) 38%,
+      transparent 38%,
+      transparent 62%,
+      hsl(var(--brand-red)) 62%,
+      hsl(var(--brand-red)) 100%
+    );
   }
   .brand-stripe-bottom {
-    background:
-      linear-gradient(
-        315deg,
-        hsl(var(--brand-navy)) 0%,
-        hsl(var(--brand-navy)) 38%,
-        transparent 38%,
-        transparent 62%,
-        hsl(var(--brand-red)) 62%,
-        hsl(var(--brand-red)) 100%
-      );
+    background: linear-gradient(
+      315deg,
+      hsl(var(--brand-navy)) 0%,
+      hsl(var(--brand-navy)) 38%,
+      transparent 38%,
+      transparent 62%,
+      hsl(var(--brand-red)) 62%,
+      hsl(var(--brand-red)) 100%
+    );
   }
+
+  /* Convenience text/bg classes referenced from older code (kept for compat) */
   .text-brand-navy {
     color: hsl(var(--brand-navy));
   }

@@ -24,30 +24,35 @@ export function Header(): JSX.Element {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+      {/* Liberty-style flag accent stripe */}
+      <div className="brand-stripe-top h-1.5" aria-hidden />
       <div className="container flex h-16 items-center justify-between">
-        <Link href={`/${locale}`} aria-label={tc('appName')}>
+        <Link href={`/${locale}`} aria-label={tc('appName')} className="flex items-center">
           <Logo size="md" />
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
-          <Link href={`/${locale}/track`} className="text-sm hover:text-primary">
+          <Link
+            href={`/${locale}/track`}
+            className="text-sm font-semibold text-pg-navy/80 transition-colors hover:text-pg-orange"
+          >
             {t('track')}
           </Link>
           <Link
             href={`/${locale}/calculator`}
-            className="text-sm hover:text-primary"
+            className="text-sm font-semibold text-pg-navy/80 transition-colors hover:text-pg-orange"
           >
             {t('calculator')}
           </Link>
           <Link
             href={`/${locale}/addresses`}
-            className="text-sm hover:text-primary"
+            className="text-sm font-semibold text-pg-navy/80 transition-colors hover:text-pg-orange"
           >
             {t('addresses')}
           </Link>
           <Link
             href={`/${locale}/support`}
-            className="text-sm hover:text-primary"
+            className="text-sm font-semibold text-pg-navy/80 transition-colors hover:text-pg-orange"
           >
             {t('support')}
           </Link>

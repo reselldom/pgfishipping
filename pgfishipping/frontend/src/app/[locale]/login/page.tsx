@@ -43,7 +43,11 @@ export default function LoginPage(): JSX.Element {
     setServerError(null);
     try {
       const result = await apiLogin(values.email, values.password);
-      setSession(result.user, result.tokens.accessToken);
+      setSession(
+        result.user,
+        result.tokens.accessToken,
+        result.tokens.refreshToken,
+      );
       toast({ variant: 'success', title: t('loginTitle') });
       router.push(`/${locale}/dashboard`);
     } catch (err) {
