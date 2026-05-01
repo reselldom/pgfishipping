@@ -1,0 +1,33 @@
+/**
+ * PM2 process file — copy to your droplet as ecosystem.config.cjs next to the repo
+ * or inside backend/, then: pm2 start ecosystem.config.cjs
+ *
+ * Adjust `cwd` to where you cloned the project.
+ */
+
+const backendDir = '/var/www/pgfishipping/pgfishipping/backend';
+
+module.exports = {
+  apps: [
+    {
+      name: 'pgfi-api',
+      cwd: backendDir,
+      script: 'dist/app.js',
+      instances: 1,
+      exec_mode: 'fork',
+      env: {
+        NODE_ENV: 'production',
+      },
+    },
+    {
+      name: 'pgfi-worker',
+      cwd: backendDir,
+      script: 'dist/worker.js',
+      instances: 1,
+      exec_mode: 'fork',
+      env: {
+        NODE_ENV: 'production',
+      },
+    },
+  ],
+};

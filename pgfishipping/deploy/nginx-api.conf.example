@@ -1,0 +1,66 @@
+# Nginx reverse proxy for PGFI API (DigitalOcean Droplet)
+#
+# Install: copy to /etc/nginx/sites-available/pgfi-api
+# Replace api.example.com with api.yourdomain.com
+#
+# FIRST deploy (HTTP only — get app working):
+#   1) Use only the "listen 80" server block below (no SSL block yet).
+#   2) ln -s /etc/nginx/sites-available/pgfi-api /etc/nginx/sites-enabled/
+#   3) nginx -t && systemctl reload nginx
+#   4) Test: curl http://api.example.com/
+#
+# Then HTTPS:
+#   certbot --nginx -d api.example.com
+#   (Certbot will add SSL lines and can add HTTP→HTTPS redirect.)
+
+upstream pgfi_api {
+  server 127.0.0.1:4000;
+  keepalive 64;
+}
+
+server {
+  listen 80;
+  listen [::]:80;
+  server_name api.example.com;
+
+  client_max_body_size 25m;
+
+  location /api/ {
+    proxy_pass http://pgfi_api;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_connect_timeout 60s;
+    proxy_send_timeout 60s;
+    proxy_read_timeout 60s;
+  }
+
+  # Support chat (Socket.IO) — must allow WebSocket upgrade
+  location /socket.io/ {
+    proxy_pass http://pgfi_api;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 86400;
+  }
+
+  location /uploads/ {
+    proxy_pass http://pgfi_api;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location = / {
+    proxy_pass http://pgfi_api;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
