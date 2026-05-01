@@ -15,6 +15,27 @@ export function RequireAdmin({
   const hydrated = useAuthStore((s) => s.hydrated);
 
   useEffect(() => {
+    const api = useAuthStore as unknown as {
+      persist?: {
+        rehydrate: () => void | Promise<void>;
+        hasHydrated: () => boolean;
+      };
+    };
+    const p = api.persist;
+    if (!p?.rehydrate) {
+      useAuthStore.getState().setHydrated();
+      return;
+    }
+    void p.rehydrate();
+    const fallback = window.setTimeout(() => {
+      if (!useAuthStore.getState().hydrated) {
+        useAuthStore.getState().setHydrated();
+      }
+    }, 3000);
+    return () => window.clearTimeout(fallback);
+  }, []);
+
+  useEffect(() => {
     if (!hydrated) return;
     if (!user || !accessToken) {
       router.replace('/login');

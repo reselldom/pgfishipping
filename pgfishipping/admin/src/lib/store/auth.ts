@@ -10,6 +10,20 @@ export interface AdminUser {
   role: 'SUPER_ADMIN' | 'MANAGER' | 'STAFF' | 'CUSTOMER';
 }
 
+function ssrSafeLocalStorage(): Storage {
+  if (typeof window === 'undefined') {
+    return {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+      key: () => null,
+      length: 0,
+      clear: () => {},
+    } as unknown as Storage;
+  }
+  return window.localStorage;
+}
+
 interface AuthState {
   user: AdminUser | null;
   accessToken: string | null;
@@ -36,7 +50,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'pgfi-admin-auth',
-      storage: createJSONStorage(() => localStorage),
+      // Next.js runs this module on the server where `localStorage` does not exist.
+      // A fake Storage keeps persist from disabling itself; real localStorage is used on the client.
+      storage: createJSONStorage(() => ssrSafeLocalStorage()),
+      // Rehydrate only in the browser (see RequireAdmin) so the finish callback always runs on the client.
+      skipHydration: true,
       partialize: (s) => ({
         user: s.user,
         accessToken: s.accessToken,
