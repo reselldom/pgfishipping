@@ -119,6 +119,18 @@ enum GiftCardStatus {
   CANCELLED
 }
 
+enum SupportConversationStatus {
+  OPEN
+  WAITING
+  CLOSED
+}
+
+enum SupportSenderType {
+  CUSTOMER
+  STAFF
+  SYSTEM
+}
+
 // ─── MODELS ──────────────────────────────────────────────────────────────────
 
 model User {
@@ -161,6 +173,9 @@ model User {
   wallet             Wallet?
   notifications      NotificationLog[]
   supportTickets     SupportTicket[]
+  supportConversations         SupportConversation[]  @relation("SupportConversationCustomer")
+  supportAssignedConversations SupportConversation[]  @relation("SupportConversationAssignee")
+  supportMessages              SupportMessage[]
   thirdPartyAuths    ThirdPartyAuth[]
   loyaltyHistory     LoyaltyEvent[]
   preferredBranch    Warehouse?          @relation(fields: [preferredBranchId], references: [id])
@@ -440,6 +455,64 @@ model SupportTicket {
 
   @@index([userId])
   @@map("support_tickets")
+}
+
+model SupportConversation {
+  id                String                    @id @default(cuid())
+  customerId        String
+  assignedStaffId   String?
+  status            SupportConversationStatus @default(OPEN)
+  closedAt          DateTime?
+  closedByUserId    String?
+  lastMessageAt     DateTime                  @default(now())
+  lastAssignedOrder Int                       @default(0)
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+
+  customer      User                  @relation("SupportConversationCustomer", fields: [customerId], references: [id], onDelete: Cascade)
+  assignedStaff User?                 @relation("SupportConversationAssignee", fields: [assignedStaffId], references: [id], onDelete: SetNull)
+  messages      SupportMessage[]
+  transfers     SupportTransferEvent[]
+
+  @@index([customerId])
+  @@index([assignedStaffId, status])
+  @@index([status, updatedAt])
+  @@map("support_conversations")
+}
+
+model SupportMessage {
+  id                  String            @id @default(cuid())
+  conversationId      String
+  senderType          SupportSenderType
+  senderUserId        String?
+  body                String
+  attachmentUrl       String?
+  attachmentKey       String?
+  attachmentName      String?
+  attachmentMimeType  String?
+  attachmentSizeBytes Int?
+  createdAt           DateTime          @default(now())
+
+  conversation SupportConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderUser   User?               @relation(fields: [senderUserId], references: [id], onDelete: SetNull)
+
+  @@index([conversationId, createdAt])
+  @@index([createdAt])
+  @@map("support_messages")
+}
+
+model SupportTransferEvent {
+  id                  String   @id @default(cuid())
+  conversationId      String
+  fromStaffId         String?
+  toStaffId           String
+  transferredByUserId String
+  createdAt           DateTime @default(now())
+
+  conversation SupportConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("support_transfer_events")
 }
 
 model SystemConfig {

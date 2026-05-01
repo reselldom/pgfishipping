@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/layout/sidebar';
 import { RequireAdmin } from '@/components/auth/require-admin';
+import { SupportChatMount } from '@/components/support/support-chat-mount';
 
 export default function AdminLayout({
   children,
@@ -13,6 +14,7 @@ export default function AdminLayout({
         <main className="flex-1 overflow-x-auto bg-secondary/20">
           <div className="px-4 py-6 md:px-8 md:py-10">{children}</div>
         </main>
+        <SupportChatMount />
       </div>
     </RequireAdmin>
   );

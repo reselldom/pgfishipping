@@ -1,20 +1,58 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
-import { ArrowRight, Info, Plane, Ship, Warehouse } from 'lucide-react';
+import {
+  ArrowRight,
+  Info,
+  Mail,
+  MapPin,
+  Phone,
+  Plane,
+  Ship,
+  Warehouse,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ColorCard } from '@/components/brand/color-card';
+import {
+  fetchPublicWarehouses,
+  type PublicWarehouse,
+} from '@/lib/public-api';
 
-export default function AddressesPage({
+export const dynamic = 'force-dynamic';
+
+function formatLine(w: PublicWarehouse): string {
+  const parts = [w.address, w.city];
+  const tail = [w.state, w.country].filter((v): v is string => Boolean(v));
+  if (tail.length) parts.push(tail.join(', '));
+  return parts.join(', ');
+}
+
+export default async function AddressesPage({
   params: { locale },
 }: {
   params: { locale: string };
-}): JSX.Element {
+}): Promise<JSX.Element> {
   setRequestLocale(locale);
+  const warehouses = await fetchPublicWarehouses();
+  return <AddressesView locale={locale} warehouses={warehouses} />;
+}
+
+function AddressesView({
+  locale,
+  warehouses,
+}: {
+  locale: string;
+  warehouses: PublicWarehouse[];
+}): JSX.Element {
   const t = useTranslations('addresses');
+  const usWarehouses = warehouses.filter((w) => w.type === 'US');
+  const haitiBranches = warehouses.filter((w) => w.type === 'HT');
+
+  const primaryUs = usWarehouses[0];
+  const primaryUsLine = primaryUs ? formatLine(primaryUs) : t('miamiAddress');
+
   return (
     <div className="container max-w-4xl space-y-8 py-12">
-      {/* Header */}
       <div className="text-center">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-pg-red">
           {t('subtitle')}
@@ -24,13 +62,12 @@ export default function AddressesPage({
         </h1>
       </div>
 
-      {/* Info banner */}
       <div className="flex items-start gap-3 rounded-2xl border border-pg-mint/30 bg-pg-mint-50 p-4 text-sm text-pg-ink">
         <Info className="mt-0.5 h-5 w-5 flex-none text-pg-mint" />
         <span>{t('tip')}</span>
       </div>
 
-      {/* Plane (navy) + Boat (red) Liberty/Shippex pattern */}
+      {/* Plane (navy) + Boat (red) format demo using primary US warehouse */}
       <div className="grid gap-4 md:grid-cols-2">
         <ColorCard
           tone="navy"
@@ -42,7 +79,7 @@ export default function AddressesPage({
               {t('fmtName')}{' '}
               <span className="num text-pg-orange">/HT-XXXXXX/A</span>
             </p>
-            <p className="num text-pg-ink">{t('miamiAddress')}</p>
+            <p className="num text-pg-ink">{primaryUsLine}</p>
             <p className="text-pg-muted">{t('fmtCountry')}</p>
           </div>
         </ColorCard>
@@ -57,27 +94,44 @@ export default function AddressesPage({
               {t('fmtName')}{' '}
               <span className="num text-pg-orange">/HT-XXXXXX/B</span>
             </p>
-            <p className="num text-pg-ink">{t('miamiAddress')}</p>
+            <p className="num text-pg-ink">{primaryUsLine}</p>
             <p className="text-pg-muted">{t('fmtCountry')}</p>
           </div>
         </ColorCard>
       </div>
 
-      {/* Warehouses list */}
+      {/* Live US warehouses list (admin-controlled) */}
       <ColorCard
         tone="navy"
         icon={<Warehouse className="h-4 w-4" />}
         title={t('warehouses')}
       >
-        <div className="divide-y divide-slate-200 text-sm">
-          <div className="flex items-baseline justify-between gap-3 py-2">
-            <span className="font-bold text-pg-navy">{t('miami')}</span>
-            <span className="num text-pg-muted">{t('miamiAddress')}</span>
-          </div>
-        </div>
+        {usWarehouses.length === 0 ? (
+          <div className="py-2 text-sm text-pg-muted">{t('miamiAddress')}</div>
+        ) : (
+          <ul className="divide-y divide-slate-200 text-sm">
+            {usWarehouses.map((w) => (
+              <WarehouseRow key={w.id} w={w} />
+            ))}
+          </ul>
+        )}
       </ColorCard>
 
-      {/* CTA */}
+      {/* Haiti branches list (admin-controlled, hidden if none) */}
+      {haitiBranches.length > 0 ? (
+        <ColorCard
+          tone="red"
+          icon={<MapPin className="h-4 w-4" />}
+          title={t('haitiBranches')}
+        >
+          <ul className="divide-y divide-slate-200 text-sm">
+            {haitiBranches.map((w) => (
+              <WarehouseRow key={w.id} w={w} />
+            ))}
+          </ul>
+        </ColorCard>
+      ) : null}
+
       <div className="flex justify-center">
         <Link href={`/${locale}/register`}>
           <Button size="lg">
@@ -86,5 +140,35 @@ export default function AddressesPage({
         </Link>
       </div>
     </div>
+  );
+}
+
+function WarehouseRow({ w }: { w: PublicWarehouse }): JSX.Element {
+  return (
+    <li className="space-y-1 py-3">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <span className="font-bold text-pg-navy">{w.name}</span>
+        <span className="num text-pg-muted">{formatLine(w)}</span>
+      </div>
+      {w.phone || w.email ? (
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-pg-muted">
+          {w.phone ? (
+            <span className="inline-flex items-center gap-1">
+              <Phone className="h-3 w-3" />
+              <span className="num">{w.phone}</span>
+            </span>
+          ) : null}
+          {w.email ? (
+            <a
+              href={`mailto:${w.email}`}
+              className="inline-flex items-center gap-1 hover:text-pg-navy"
+            >
+              <Mail className="h-3 w-3" />
+              <span>{w.email}</span>
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+    </li>
   );
 }

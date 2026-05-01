@@ -1,4 +1,5 @@
 import express, { type Express } from 'express';
+import { createServer } from 'node:http';
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
@@ -10,6 +11,7 @@ import routes from './routes';
 import { logger } from './utils/logger';
 import { disconnectPrisma } from './config/database';
 import { localUploadRoot } from './services/storage.service';
+import { initSupportSocketGateway } from './services/support/socket.gateway';
 
 export function createApp(): Express {
   const app = express();
@@ -71,7 +73,9 @@ export function createApp(): Express {
 
 if (require.main === module) {
   const app = createApp();
-  const server = app.listen(env.PORT, () => {
+  const server = createServer(app);
+  initSupportSocketGateway(server);
+  server.listen(env.PORT, () => {
     logger.info(
       `🚀 ${env.APP_NAME} API listening on http://localhost:${env.PORT} (${env.NODE_ENV})`,
     );

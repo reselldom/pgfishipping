@@ -6,6 +6,7 @@ export const QUEUE_NAMES = {
   trackingPoll: 'tracking-poll',
   weeklySummary: 'weekly-summary',
   exchangeRate: 'exchange-rate-refresh',
+  supportRetention: 'support-retention',
 } as const;
 
 const DEFAULT_JOB_OPTS: JobsOptions = {
@@ -18,6 +19,7 @@ const DEFAULT_JOB_OPTS: JobsOptions = {
 let trackingPollQueue: Queue | null = null;
 let weeklySummaryQueue: Queue | null = null;
 let exchangeRateQueue: Queue | null = null;
+let supportRetentionQueue: Queue | null = null;
 
 export function getTrackingPollQueue(): Queue {
   if (!trackingPollQueue) {
@@ -49,9 +51,19 @@ export function getExchangeRateQueue(): Queue {
   return exchangeRateQueue;
 }
 
+export function getSupportRetentionQueue(): Queue {
+  if (!supportRetentionQueue) {
+    supportRetentionQueue = new Queue(QUEUE_NAMES.supportRetention, {
+      connection: getQueueConnection(),
+      defaultJobOptions: DEFAULT_JOB_OPTS,
+    });
+  }
+  return supportRetentionQueue;
+}
+
 export async function closeAllQueues(): Promise<void> {
   await Promise.all(
-    [trackingPollQueue, weeklySummaryQueue, exchangeRateQueue]
+    [trackingPollQueue, weeklySummaryQueue, exchangeRateQueue, supportRetentionQueue]
       .filter((q): q is Queue => q != null)
       .map(async (q) => {
         try {
@@ -64,6 +76,7 @@ export async function closeAllQueues(): Promise<void> {
   trackingPollQueue = null;
   weeklySummaryQueue = null;
   exchangeRateQueue = null;
+  supportRetentionQueue = null;
 }
 
 // ─── Public enqueue helpers (used by app code) ──────────────────────────────

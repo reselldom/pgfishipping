@@ -82,7 +82,22 @@
       "title": "Cómo enviar paquetes con PGFI Shipping",
       "p1": "Crea una cuenta gratuita para recibir una dirección US personalizada que puedes usar en cualquier tienda. Sigue cada paso, recibe notificaciones por email y paga en línea o en sucursal.",
       "p2": "Cuando tu paquete llegue a Haití, recógelo en la sucursal que elegiste. Tu historial, facturas y etiquetas quedan en tu panel.",
-      "cta": "Crear cuenta"
+      "cta": "Crear cuenta",
+      "tile1": "Carga aérea",
+      "tile1Sub": "Miami → Puerto Príncipe",
+      "tile2": "Nuestro hub",
+      "tile2Sub": "Clasificado con cuidado en Miami",
+      "tile3": "En la carretera",
+      "tile3Sub": "Entrega puerta a puerta en Haití"
+    },
+    "community": {
+      "eyebrow": "Clientes reales",
+      "title": "La confianza de las familias en todo Haití",
+      "subtitle": "Cada caja que enviamos es una conexión — entre seres queridos, negocios y comunidades. Únete a miles de clientes que confían en PGFI.",
+      "card1Title": "Retiro en sucursal",
+      "card1Desc": "Nuestro equipo en Puerto Príncipe y Cap-Haïtien te ayuda a retirar tus paquetes con seguridad.",
+      "card2Title": "Entrega a domicilio",
+      "card2Desc": "¿No quieres ir a la sucursal? Entregamos en tu puerta, en cualquier parte de Haití."
     },
     "steps": {
       "title": "Cómo funciona",
@@ -203,7 +218,8 @@
     "fmtLine1": "Dirección del almacén",
     "fmtLine2": "Ciudad, Estado ZIP",
     "fmtCountry": "Estados Unidos",
-    "warehouses": "Nuestros almacenes",
+    "warehouses": "Nuestros almacenes en EE. UU.",
+    "haitiBranches": "Nuestras sucursales en Haití",
     "miami": "Miami, FL",
     "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
     "tip": "No olvides incluir tu código de cliente (ej. ARI-001234) en la dirección — así enrutamos tu paquete a tu cuenta.",

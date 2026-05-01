@@ -41,3 +41,15 @@ export const labelImageUpload = multer({
   limits: { fileSize: FILE_LIMITS.LABEL_IMAGE_MAX_BYTES, files: 1 },
   fileFilter: fileFilter(FILE_LIMITS.ALLOWED_LABEL_IMAGE),
 });
+
+export const supportChatUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: FILE_LIMITS.SUPPORT_CHAT_MAX_BYTES, files: 1 },
+  fileFilter: fileFilter(FILE_LIMITS.ALLOWED_SUPPORT_CHAT),
+});
+
+export const heroImageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: FILE_LIMITS.HERO_IMAGE_MAX_BYTES, files: 1 },
+  fileFilter: fileFilter(FILE_LIMITS.ALLOWED_HERO_IMAGE),
+});

@@ -20,6 +20,17 @@ export const FILE_LIMITS = {
     'image/bmp',
   ],
   ALLOWED_LABEL_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
+  SUPPORT_CHAT_MAX_BYTES: 10 * 1024 * 1024,
+  ALLOWED_SUPPORT_CHAT: [
+    'application/pdf',
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/gif',
+    'text/plain',
+  ],
+  HERO_IMAGE_MAX_BYTES: 6 * 1024 * 1024,
+  ALLOWED_HERO_IMAGE: ['image/jpeg', 'image/png', 'image/webp'],
 } as const;
 
 export const WALLET = {

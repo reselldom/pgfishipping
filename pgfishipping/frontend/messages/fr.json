@@ -82,7 +82,22 @@
       "title": "Comment envoyer des colis avec PGFI Shipping",
       "p1": "Créez un compte gratuit pour recevoir une adresse d'expédition US personnalisée, utilisable partout en ligne. Suivez chaque étape, recevez des notifications par email et payez en ligne ou en succursale.",
       "p2": "Quand votre colis arrive en Haïti, récupérez-le à la succursale de votre choix. Votre historique, factures et étiquettes restent dans votre tableau de bord.",
-      "cta": "Créer un compte"
+      "cta": "Créer un compte",
+      "tile1": "Fret aérien",
+      "tile1Sub": "Miami → Port-au-Prince",
+      "tile2": "Notre hub",
+      "tile2Sub": "Trié avec soin à Miami",
+      "tile3": "Sur la route",
+      "tile3Sub": "Livraison à domicile partout en Haïti"
+    },
+    "community": {
+      "eyebrow": "Vrais clients",
+      "title": "La confiance des familles à travers Haïti",
+      "subtitle": "Chaque colis est un lien — entre proches, entreprises et communautés. Rejoignez des milliers de clients qui comptent sur PGFI.",
+      "card1Title": "Récupération en succursale",
+      "card1Desc": "Notre équipe à Port-au-Prince et Cap-Haïtien vous aide à retirer vos colis en toute sécurité.",
+      "card2Title": "Livraison à domicile",
+      "card2Desc": "Pas envie d'aller en succursale ? Nous livrons jusqu'à votre porte, partout en Haïti."
     },
     "steps": {
       "title": "Comment ça marche",
@@ -203,7 +218,8 @@
     "fmtLine1": "Adresse de l'entrepôt",
     "fmtLine2": "Ville, État ZIP",
     "fmtCountry": "États-Unis",
-    "warehouses": "Nos entrepôts",
+    "warehouses": "Nos entrepôts aux États-Unis",
+    "haitiBranches": "Nos succursales en Haïti",
     "miami": "Miami, FL",
     "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
     "tip": "N'oubliez pas d'inclure votre code client (ex. ARI-001234) dans l'adresse — c'est comme ça que nous associons votre colis à votre compte.",

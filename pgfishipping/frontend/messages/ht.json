@@ -82,7 +82,22 @@
       "title": "Kijan pou voye koli ak PGFI Shipping",
       "p1": "Kreye yon kont gratis pou jwenn yon adrès livrezon US pèsonèl ou ka itilize nenpòt kote sou entènèt. Swiv chak etap, jwenn imèl, peye sou liy oswa nan biwo a.",
       "p2": "Lè koli ou rive ann Ayiti, pran l nan biwo ou chwazi a. Istwa ou, fakti ak etikèt rete nan tablodbò ou.",
-      "cta": "Kreye yon kont"
+      "cta": "Kreye yon kont",
+      "tile1": "Frè avyon",
+      "tile1Sub": "Miami → Pòtoprens",
+      "tile2": "Antrepo nou",
+      "tile2Sub": "Triye avèk anpil swen Miami",
+      "tile3": "Sou wout la",
+      "tile3Sub": "Livrezon devan pòt nan tout peyi a"
+    },
+    "community": {
+      "eyebrow": "Vrè kliyan",
+      "title": "Fanmi atravè Ayiti fè konfyans nou",
+      "subtitle": "Chak bwat nou voye se yon koneksyon — ant fanmi, biznis ak kominote. Rantre nan dèmilye kliyan ki konte sou PGFI.",
+      "card1Title": "Vin chèche nan biwo a",
+      "card1Desc": "Ekip nou nan Pòtoprens ak Cap-Haïtien ap ede w pran koli ou yo san pwoblèm.",
+      "card2Title": "Livrezon devan pòt",
+      "card2Desc": "Ou pa vle vin nan biwo a? Nou livre devan pòt ou, nenpòt kote nan peyi a."
     },
     "steps": {
       "title": "Kijan li mache",
@@ -203,7 +218,8 @@
     "fmtLine1": "Adrès depo a",
     "fmtLine2": "Vil, Eta ZIP",
     "fmtCountry": "Etazini",
-    "warehouses": "Depo nou yo",
+    "warehouses": "Depo nou yo Ozetazini",
+    "haitiBranches": "Branch nou yo Ann Ayiti",
     "miami": "Miami, FL",
     "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
     "tip": "Pa bliye mete kòd kliyan w (egzanp ARI-001234) nan adrès la — se konsa nou voye koli w la nan kont ou.",

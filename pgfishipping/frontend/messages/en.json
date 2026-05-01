@@ -82,7 +82,22 @@
       "title": "How to send packages with PGFI Shipping",
       "p1": "Create a free account to receive a personalized US shipping address you can use anywhere online. Track every step of your package, get notified by email, and pay online or at the branch.",
       "p2": "When your package arrives in Haiti, pick it up at the branch you selected. Your shipping history, invoices and labels stay in your dashboard.",
-      "cta": "Create an account"
+      "cta": "Create an account",
+      "tile1": "Air freight",
+      "tile1Sub": "Miami → Port-au-Prince",
+      "tile2": "Our hub",
+      "tile2Sub": "Sorted with care in Miami",
+      "tile3": "On the road",
+      "tile3Sub": "Door-to-door across Haiti"
+    },
+    "community": {
+      "eyebrow": "Real customers",
+      "title": "Trusted by families across Haiti",
+      "subtitle": "Every box we ship is a connection — between loved ones, businesses, and communities. Join thousands of customers who count on PGFI.",
+      "card1Title": "Pick up at the branch",
+      "card1Desc": "Friendly staff at our Port-au-Prince and Cap-Haïtien branches help you collect your packages safely.",
+      "card2Title": "Door-to-door delivery",
+      "card2Desc": "Don't want to come to the branch? We deliver right to your door, anywhere in Haiti."
     },
     "steps": {
       "title": "How it works",
@@ -203,7 +218,8 @@
     "fmtLine1": "Warehouse address",
     "fmtLine2": "City, State ZIP",
     "fmtCountry": "United States",
-    "warehouses": "Our warehouses",
+    "warehouses": "Our US warehouses",
+    "haitiBranches": "Our Haiti branches",
     "miami": "Miami, FL",
     "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
     "tip": "Don't forget to include your customer code (e.g. ARI-001234) in the address — that's how we route your package to your account.",

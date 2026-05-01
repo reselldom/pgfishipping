@@ -258,3 +258,78 @@ export const STATUS_TO_TAB: Record<ShipmentStatus, 'PRE_ALERTS' | 'ACTIVE' | 'DE
   LOST: 'DELIVERED',
   CANCELLED: 'DELIVERED',
 };
+
+// ─── Support chat ───────────────────────────────────────────────────────────
+
+export type SupportConversationStatus = 'OPEN' | 'WAITING' | 'CLOSED';
+export type SupportSenderType = 'CUSTOMER' | 'STAFF' | 'SYSTEM';
+
+export interface SupportConversation {
+  id: string;
+  customerId: string;
+  assignedStaffId?: string | null;
+  status: SupportConversationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SupportMessage {
+  id: string;
+  conversationId: string;
+  senderType: SupportSenderType;
+  senderUserId?: string | null;
+  body: string;
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
+  createdAt: string;
+}
+
+export async function getActiveSupportConversation(): Promise<SupportConversation> {
+  const r = await api.get<ApiSuccess<SupportConversation>>('/support/chat/active');
+  return unwrap(r);
+}
+
+export async function listSupportMessages(
+  conversationId: string,
+  page = 1,
+  pageSize = 100,
+): Promise<{ items: SupportMessage[]; total: number; page: number; pageSize: number }> {
+  const r = await api.get<ApiSuccess<SupportMessage[]>>(
+    `/support/chat/${conversationId}/messages`,
+    { params: { page, pageSize } },
+  );
+  const data = r.data;
+  const meta = (data.meta?.pagination ?? data.meta) as
+    | { total?: number; page?: number; pageSize?: number }
+    | undefined;
+  return {
+    items: data.data,
+    total: meta?.total ?? data.data.length,
+    page: meta?.page ?? 1,
+    pageSize: meta?.pageSize ?? data.data.length,
+  };
+}
+
+export async function sendSupportMessage(
+  conversationId: string,
+  body: string,
+): Promise<SupportMessage> {
+  const r = await api.post<ApiSuccess<SupportMessage>>(
+    `/support/chat/${conversationId}/messages`,
+    { body },
+  );
+  return unwrap(r);
+}
+
+export async function uploadSupportAttachment(
+  conversationId: string,
+  file: File,
+): Promise<SupportMessage> {
+  const fd = new FormData();
+  fd.append('file', file);
+  const r = await api.post<ApiSuccess<SupportMessage>>(
+    `/support/chat/${conversationId}/attachments`,
+    fd,
+  );
+  return unwrap(r);
+}

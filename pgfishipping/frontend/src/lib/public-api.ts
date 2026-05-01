@@ -153,6 +153,97 @@ export interface PublicFooterContent {
   haitiLocations: FooterLocationBlock[];
 }
 
+// ─── Homepage branding images (Super Admin → Site images) ─────────────────
+
+export type BrandingSlot =
+  | 'hero'
+  | 'homeAir'
+  | 'homeWarehouse'
+  | 'homeTruck'
+  | 'homePickup'
+  | 'homeDoorstep';
+
+export interface BrandingImage {
+  /** URL stored by admin. Empty string ⇒ frontend should use `defaultPath`. */
+  url: string;
+  defaultPath: string;
+  label: string;
+}
+
+export type BrandingImages = Record<BrandingSlot, BrandingImage>;
+
+/** Bundled defaults — used as fallback when admin hasn't set a custom URL. */
+export const BRANDING_DEFAULTS: Record<BrandingSlot, string> = {
+  hero: '/brand/hero-default.png',
+  homeAir: '/brand/home/air-cargo.png',
+  homeWarehouse: '/brand/home/warehouse.png',
+  homeTruck: '/brand/home/truck-highway.png',
+  homePickup: '/brand/home/customer-pickup.png',
+  homeDoorstep: '/brand/home/customer-doorstep.png',
+};
+
+/** Backwards-compatible alias kept so older imports keep working. */
+export const DEFAULT_HERO_IMAGE_PATH = BRANDING_DEFAULTS.hero;
+
+/** Fetch every branding slot at once. Returns an empty object on network error. */
+export async function fetchPublicBrandingImages(): Promise<Partial<BrandingImages>> {
+  try {
+    const r = await fetch(`${API_URL}/public/branding-images`, {
+      credentials: 'omit',
+      cache: 'no-store',
+    });
+    if (!r.ok) return {};
+    const body = (await r.json()) as ApiEnvelope<BrandingImages>;
+    return body.ok && body.data ? body.data : {};
+  } catch {
+    return {};
+  }
+}
+
+/** Resolve a slot URL to either the admin override or the bundled default. */
+export function resolveBrandingUrl(
+  slot: BrandingSlot,
+  images: Partial<BrandingImages>,
+): string {
+  const u = images[slot]?.url;
+  return u && u.length > 0 ? u : BRANDING_DEFAULTS[slot];
+}
+
+/** Legacy alias used by older imports — fetches just the hero slot. */
+export async function fetchPublicHeroImage(): Promise<{ url: string }> {
+  const all = await fetchPublicBrandingImages();
+  return { url: all.hero?.url ?? '' };
+}
+
+// ─── Warehouses & branches (Super Admin → Warehouses & branches) ───────────
+
+export interface PublicWarehouse {
+  id: string;
+  name: string;
+  type: 'US' | 'HT' | string;
+  address: string;
+  city: string;
+  state: string | null;
+  country: string;
+  phone: string | null;
+  email: string | null;
+  sortOrder: number;
+}
+
+export async function fetchPublicWarehouses(): Promise<PublicWarehouse[]> {
+  try {
+    const r = await fetch(`${API_URL}/public/warehouses`, {
+      credentials: 'omit',
+      cache: 'no-store',
+    });
+    if (!r.ok) return [];
+    const body = (await r.json()) as ApiEnvelope<PublicWarehouse[]>;
+    return body.ok && Array.isArray(body.data) ? body.data : [];
+  } catch {
+    return [];
+  }
+}
+
 export async function fetchPublicFooterContent(): Promise<PublicFooterContent> {
   const empty = (): PublicFooterContent => ({
     phones: [],

@@ -6,6 +6,8 @@ import resources from './resources.routes';
 import staff from './staff.routes';
 import analytics from './analytics.routes';
 import broadcast from './broadcast.routes';
+import supportChat from './support-chat.routes';
+import branding from './branding.routes';
 
 const router = Router();
 
@@ -17,6 +19,8 @@ router.use('/shipments', shipments);
 router.use('/staff', staff);
 router.use('/analytics', analytics);
 router.use('/broadcast', broadcast);
+router.use('/support', supportChat);
+router.use('/', branding);
 router.use('/', resources);
 
 export default router;

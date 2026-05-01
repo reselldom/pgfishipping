@@ -16,6 +16,7 @@ import {
   Mail,
   Share2,
   MapPinned,
+  Image as ImageIcon,
   LogOut,
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/auth';
@@ -39,6 +40,7 @@ const ITEMS: Item[] = [
   { href: '/tickets', label: 'Support', Icon: LifeBuoy },
   { href: '/staff', label: 'Staff', Icon: UserCog },
   { href: '/broadcast', label: 'Broadcast', Icon: Mail },
+  { href: '/settings/site-images', label: 'Site images', Icon: ImageIcon },
   { href: '/settings/social', label: 'Social links', Icon: Share2 },
   { href: '/settings/footer', label: 'Footer content', Icon: MapPinned },
   { href: '/config', label: 'Config', Icon: Settings },

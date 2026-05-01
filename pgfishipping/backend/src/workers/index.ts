@@ -8,6 +8,10 @@ import {
   createExchangeRateWorker,
   scheduleExchangeRate,
 } from './exchangeRate.worker';
+import {
+  createSupportRetentionWorker,
+  scheduleSupportRetention,
+} from './chatRetention.worker';
 import { isRedisAvailable, closeQueueConnection } from '../queues/connection';
 import { closeAllQueues } from '../queues/queues';
 import { logger } from '../utils/logger';
@@ -30,12 +34,14 @@ export async function startWorkers(): Promise<{ started: boolean; reason?: strin
     createTrackingWorker(),
     createWeeklySummaryWorker(),
     createExchangeRateWorker(),
+    createSupportRetentionWorker(),
   ];
 
   await Promise.all([
     scheduleTrackingPoll(),
     scheduleWeeklySummary(),
     scheduleExchangeRate(),
+    scheduleSupportRetention(),
   ]);
 
   started = true;

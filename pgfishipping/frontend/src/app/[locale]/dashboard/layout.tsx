@@ -2,6 +2,7 @@
 
 import { RequireAuth } from '@/components/auth/require-auth';
 import { Sidebar } from '@/components/dashboard/sidebar';
+import { SupportChatMount } from '@/components/support/support-chat-mount';
 
 export default function DashboardLayout({
   children,
@@ -16,6 +17,7 @@ export default function DashboardLayout({
           <main className="min-w-0 flex-1 space-y-6">{children}</main>
         </div>
       </div>
+      <SupportChatMount />
     </RequireAuth>
   );
 }

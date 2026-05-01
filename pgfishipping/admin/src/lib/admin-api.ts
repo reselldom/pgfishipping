@@ -675,3 +675,177 @@ export async function sendBroadcast(
   );
   return unwrap(r);
 }
+
+// ─── Branding images (homepage hero + photo tiles) ─────────────────────────
+
+export type BrandingSlot =
+  | 'hero'
+  | 'homeAir'
+  | 'homeWarehouse'
+  | 'homeTruck'
+  | 'homePickup'
+  | 'homeDoorstep';
+
+export interface BrandingImage {
+  /** Empty string means the public site uses the bundled default image. */
+  url: string;
+  /** Public path of the bundled default served by the frontend. */
+  defaultPath: string;
+  /** Human-readable label (used in the admin UI). */
+  label: string;
+}
+
+export type BrandingImages = Record<BrandingSlot, BrandingImage>;
+
+/** Ordered list of all slots so the admin UI iterates in a stable order. */
+export const BRANDING_SLOT_ORDER: BrandingSlot[] = [
+  'hero',
+  'homeAir',
+  'homeWarehouse',
+  'homeTruck',
+  'homePickup',
+  'homeDoorstep',
+];
+
+export async function getBrandingImages(): Promise<BrandingImages> {
+  const r = await api.get<ApiSuccess<BrandingImages>>('/admin/branding-images');
+  return unwrap(r);
+}
+
+export async function setBrandingImageUrl(
+  slot: BrandingSlot,
+  url: string,
+): Promise<BrandingImage> {
+  const r = await api.put<ApiSuccess<BrandingImage>>(
+    `/admin/branding-images/${slot}`,
+    { url },
+  );
+  return unwrap(r);
+}
+
+export async function uploadBrandingImage(
+  slot: BrandingSlot,
+  file: File,
+): Promise<BrandingImage> {
+  const fd = new FormData();
+  fd.append('file', file);
+  const r = await api.post<ApiSuccess<BrandingImage>>(
+    `/admin/branding-images/${slot}/upload`,
+    fd,
+  );
+  return unwrap(r);
+}
+
+export async function resetBrandingImage(slot: BrandingSlot): Promise<BrandingImage> {
+  const r = await api.delete<ApiSuccess<BrandingImage>>(
+    `/admin/branding-images/${slot}`,
+  );
+  return unwrap(r);
+}
+
+// ─── Support chat ────────────────────────────────────────────────────────────
+
+export type SupportConversationStatus = 'OPEN' | 'WAITING' | 'CLOSED';
+export type SupportSenderType = 'CUSTOMER' | 'STAFF' | 'SYSTEM';
+
+export interface SupportConversationCustomer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  customerCode: string;
+}
+
+export interface SupportConversationStaff {
+  id: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+}
+
+export interface SupportConversation {
+  id: string;
+  customerId: string;
+  assignedStaffId?: string | null;
+  status: SupportConversationStatus;
+  createdAt: string;
+  updatedAt: string;
+  customer?: SupportConversationCustomer;
+  assignedStaff?: SupportConversationStaff | null;
+}
+
+export interface SupportMessage {
+  id: string;
+  conversationId: string;
+  senderType: SupportSenderType;
+  senderUserId?: string | null;
+  body: string;
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
+  createdAt: string;
+}
+
+export async function listSupportChats(params: {
+  status?: SupportConversationStatus;
+  page?: number;
+  pageSize?: number;
+}): Promise<PaginatedListResult<SupportConversation>> {
+  const r = await api.get<ApiSuccess<SupportConversation[]>>(
+    '/admin/support/chats',
+    { params },
+  );
+  return parsePagination(r);
+}
+
+export async function listSupportChatMessages(
+  conversationId: string,
+): Promise<PaginatedListResult<SupportMessage>> {
+  const r = await api.get<ApiSuccess<SupportMessage[]>>(
+    `/admin/support/chats/${conversationId}/messages`,
+  );
+  return parsePagination(r);
+}
+
+export async function sendSupportChatMessage(
+  conversationId: string,
+  body: string,
+): Promise<SupportMessage> {
+  const r = await api.post<ApiSuccess<SupportMessage>>(
+    `/admin/support/chats/${conversationId}/messages`,
+    { body },
+  );
+  return unwrap(r);
+}
+
+export async function uploadSupportChatAttachment(
+  conversationId: string,
+  file: File,
+): Promise<SupportMessage> {
+  const fd = new FormData();
+  fd.append('file', file);
+  const r = await api.post<ApiSuccess<SupportMessage>>(
+    `/admin/support/chats/${conversationId}/attachments`,
+    fd,
+  );
+  return unwrap(r);
+}
+
+export async function transferSupportChat(
+  conversationId: string,
+  toStaffId: string,
+): Promise<SupportConversation> {
+  const r = await api.post<ApiSuccess<SupportConversation>>(
+    `/admin/support/chats/${conversationId}/transfer`,
+    { toStaffId },
+  );
+  return unwrap(r);
+}
+
+export async function closeSupportChat(
+  conversationId: string,
+): Promise<SupportConversation> {
+  const r = await api.post<ApiSuccess<SupportConversation>>(
+    `/admin/support/chats/${conversationId}/close`,
+  );
+  return unwrap(r);
+}

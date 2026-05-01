@@ -9,6 +9,7 @@ import walletRoutes from './wallet.routes';
 import webhookRoutes from './webhook.routes';
 import adminRoutes from './admin';
 import publicRoutes from './public.routes';
+import supportRoutes from './support.routes';
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.use('/track', trackingRoutes);
 router.use('/calculator', calculatorRoutes);
 router.use('/wallet', walletRoutes);
 router.use('/webhooks', webhookRoutes);
+router.use('/support', supportRoutes);
 router.use('/admin', adminRoutes);
 
 export default router;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
@@ -23,11 +23,33 @@ import {
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/brand/logo';
 import { cn } from '@/lib/utils';
+import {
+  fetchPublicBrandingImages,
+  resolveBrandingUrl,
+  type BrandingImages,
+  type BrandingSlot,
+} from '@/lib/public-api';
 
 export default function HomePage(): JSX.Element {
   const locale = useLocale();
   const t = useTranslations('home');
   const tc = useTranslations('common');
+  const [branding, setBranding] = useState<Partial<BrandingImages>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const result = await fetchPublicBrandingImages();
+      if (!cancelled) setBranding(result);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function imageFor(slot: BrandingSlot): string {
+    return resolveBrandingUrl(slot, branding);
+  }
 
   return (
     <>
@@ -36,6 +58,7 @@ export default function HomePage(): JSX.Element {
       <HowSection locale={locale} />
       <StepsSection />
       <StatsSection />
+      <CommunitySection />
       <AppSection />
       <FaqSection />
       <FinalCtaSection locale={locale} />
@@ -46,6 +69,7 @@ export default function HomePage(): JSX.Element {
     const router = useRouter();
     const [code, setCode] = useState('');
     const [, startTransition] = useTransition();
+    const heroImage = imageFor('hero');
 
     function onSubmit(e: React.FormEvent): void {
       e.preventDefault();
@@ -58,22 +82,24 @@ export default function HomePage(): JSX.Element {
 
     return (
       <section className="relative z-0 overflow-hidden bg-brand-navy text-white">
-        {/* Diagonal red accent on the right edge */}
+        {/* Hero photo background (admin-controlled, falls back to bundled default) */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] md:block"
-          style={{
-            background:
-              'linear-gradient(115deg, transparent 0%, transparent 38%, hsl(var(--brand-red)) 38%, hsl(var(--brand-red)) 62%, transparent 62%, transparent 100%)',
-            opacity: 0.95,
-          }}
+          className="pointer-events-none absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${heroImage})` }}
         />
+        {/* Soft dark overlay for text readability */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-brand-navy/85 via-brand-navy/60 to-brand-navy/30"
+        />
+        {/* Subtle red diagonal accent layered on top of the image */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] md:block"
           style={{
             background:
-              'linear-gradient(115deg, transparent 0%, transparent 60%, hsl(var(--brand-navy) / 0.6) 60%, hsl(var(--brand-navy) / 0.6) 80%, transparent 80%, transparent 100%)',
+              'linear-gradient(115deg, transparent 0%, transparent 60%, hsl(var(--brand-red) / 0.55) 60%, hsl(var(--brand-red) / 0.55) 70%, transparent 70%, transparent 100%)',
           }}
         />
 
@@ -235,49 +261,38 @@ export default function HomePage(): JSX.Element {
   function HowSection({ locale }: { locale: string }): JSX.Element {
     return (
       <section className="border-y bg-white py-16 lg:py-20">
-        <div className="container grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="relative mx-auto w-full max-w-md">
+        <div className="container grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          {/* Photo journey collage: plane → warehouse → truck */}
+          <div className="relative mx-auto w-full max-w-xl">
             <div className="absolute -inset-3 -z-10 rounded-3xl bg-brand-red/10" />
-            <div className="overflow-hidden rounded-2xl bg-brand-navy text-white shadow-xl">
-              <div className="brand-stripe-top h-12" />
-              <div className="space-y-5 px-6 py-8">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-red">
-                    <Plane className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-wider text-white/60">
-                      Air freight
-                    </p>
-                    <p className="text-lg font-bold">7–15 days</p>
-                  </div>
-                </div>
-                <div className="h-px bg-white/10" />
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10">
-                    <Ship className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-wider text-white/60">
-                      Sea freight
-                    </p>
-                    <p className="text-lg font-bold">30–45 days</p>
-                  </div>
-                </div>
-                <div className="h-px bg-white/10" />
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10">
-                    <MapPin className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-wider text-white/60">
-                      Pickup branches
-                    </p>
-                    <p className="text-lg font-bold">PAP · CAP</p>
-                  </div>
-                </div>
-              </div>
-              <div className="brand-stripe-bottom h-12" />
+            <div className="grid grid-cols-2 gap-3">
+              <PhotoTile
+                src={imageFor('homeAir')}
+                alt={t('how.tile1')}
+                title={t('how.tile1')}
+                subtitle={t('how.tile1Sub')}
+                tone="navy"
+                icon={<Plane className="h-4 w-4" />}
+                className="col-span-2 aspect-[16/9]"
+              />
+              <PhotoTile
+                src={imageFor('homeWarehouse')}
+                alt={t('how.tile2')}
+                title={t('how.tile2')}
+                subtitle={t('how.tile2Sub')}
+                tone="amber"
+                icon={<Warehouse className="h-4 w-4" />}
+                className="aspect-square"
+              />
+              <PhotoTile
+                src={imageFor('homeTruck')}
+                alt={t('how.tile3')}
+                title={t('how.tile3')}
+                subtitle={t('how.tile3Sub')}
+                tone="red"
+                icon={<MapPin className="h-4 w-4" />}
+                className="aspect-square"
+              />
             </div>
           </div>
 
@@ -294,7 +309,14 @@ export default function HomePage(): JSX.Element {
             <p className="mt-3 text-base leading-relaxed text-muted-foreground">
               {t('how.p2')}
             </p>
-            <div className="mt-6">
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <FactPill icon={<Plane className="h-4 w-4" />} label="Air" value="7–15 days" />
+              <FactPill icon={<Ship className="h-4 w-4" />} label="Sea" value="30–45 days" />
+              <FactPill icon={<MapPin className="h-4 w-4" />} label="Branches" value="PAP · CAP" />
+            </div>
+
+            <div className="mt-7">
               <Link href={`/${locale}/register`}>
                 <Button className="h-12 bg-brand-red px-6 text-base font-semibold text-white hover:bg-brand-red/90">
                   {t('how.cta')}
@@ -302,6 +324,43 @@ export default function HomePage(): JSX.Element {
                 </Button>
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  function CommunitySection(): JSX.Element {
+    return (
+      <section className="bg-secondary/40 py-16 lg:py-20">
+        <div className="container">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-red">
+              {t('community.eyebrow')}
+            </p>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-brand-navy sm:text-4xl">
+              {t('community.title')}
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground">
+              {t('community.subtitle')}
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            <CommunityCard
+              src={imageFor('homePickup')}
+              title={t('community.card1Title')}
+              desc={t('community.card1Desc')}
+              tone="navy"
+              icon={<PackageCheck className="h-4 w-4" />}
+            />
+            <CommunityCard
+              src={imageFor('homeDoorstep')}
+              title={t('community.card2Title')}
+              desc={t('community.card2Desc')}
+              tone="red"
+              icon={<MapPin className="h-4 w-4" />}
+            />
           </div>
         </div>
       </section>
@@ -703,6 +762,140 @@ function StoreBadge({
           {hint}
         </p>
         <p className="text-sm font-bold">{name}</p>
+      </div>
+    </div>
+  );
+}
+
+function PhotoTile({
+  src,
+  alt,
+  title,
+  subtitle,
+  tone,
+  icon,
+  className,
+}: {
+  src: string;
+  alt: string;
+  title: string;
+  subtitle: string;
+  tone: 'navy' | 'red' | 'amber';
+  icon: React.ReactNode;
+  className?: string;
+}): JSX.Element {
+  const badgeBg =
+    tone === 'red'
+      ? 'bg-brand-red'
+      : tone === 'amber'
+        ? 'bg-amber-500'
+        : 'bg-brand-navy';
+  return (
+    <div
+      className={cn(
+        'group relative overflow-hidden rounded-2xl ring-1 ring-black/5 shadow-lg',
+        className,
+      )}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-navy/85 via-brand-navy/15 to-transparent"
+      />
+      <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 p-3 text-white">
+        <div
+          className={cn(
+            'flex h-8 w-8 flex-none items-center justify-center rounded-lg text-white shadow',
+            badgeBg,
+          )}
+          aria-hidden
+        >
+          {icon}
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-bold leading-tight">{title}</p>
+          <p className="truncate text-[11px] text-white/80">{subtitle}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FactPill({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}): JSX.Element {
+  return (
+    <div className="flex items-center gap-2 rounded-xl border border-border bg-secondary/50 px-3 py-2">
+      <div className="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-brand-navy text-white">
+        {icon}
+      </div>
+      <div className="min-w-0 leading-tight">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          {label}
+        </p>
+        <p className="truncate text-sm font-bold text-brand-navy">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function CommunityCard({
+  src,
+  title,
+  desc,
+  tone,
+  icon,
+}: {
+  src: string;
+  title: string;
+  desc: string;
+  tone: 'navy' | 'red';
+  icon: React.ReactNode;
+}): JSX.Element {
+  const badgeBg = tone === 'red' ? 'bg-brand-red' : 'bg-brand-navy';
+  return (
+    <div className="group overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-border">
+      <div className="relative aspect-[16/10] overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={title}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 to-transparent"
+        />
+      </div>
+      <div className="flex items-start gap-3 p-5">
+        <div
+          className={cn(
+            'flex h-10 w-10 flex-none items-center justify-center rounded-xl text-white shadow',
+            badgeBg,
+          )}
+          aria-hidden
+        >
+          {icon}
+        </div>
+        <div className="min-w-0">
+          <h3 className="text-lg font-bold text-brand-navy">{title}</h3>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+            {desc}
+          </p>
+        </div>
       </div>
     </div>
   );
