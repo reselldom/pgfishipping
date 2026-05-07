@@ -8,8 +8,16 @@ import {
   getPublicSocialLinks,
   getPublicWarehouses,
 } from '../services/public/site.service';
+import { getPublicHaitiDeliveryOptions } from '../services/public/haiti-delivery.service';
 
 const router = Router();
+
+router.get(
+  '/haiti-delivery',
+  asyncHandler(async (_req, res) => {
+    ok(res, await getPublicHaitiDeliveryOptions());
+  }),
+);
 
 router.get(
   '/social-links',

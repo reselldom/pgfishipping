@@ -137,6 +137,7 @@ async function seedSystemConfig() {
     { key: 'maintenance_mode', value: 'false' },
     { key: 'min_deposit_usd', value: '5' },
     { key: 'public_social_links', value: '{}' },
+    { key: 'haiti_delivery_disabled_cities', value: '{"keys":[]}' },
     { key: 'public_footer_content', value: FALLBACK_PUBLIC_FOOTER_JSON },
   ];
   for (const cfg of defaults) {

@@ -19,6 +19,7 @@ import {
   Image as ImageIcon,
   LogOut,
   KeyRound,
+  Globe2,
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/auth';
 import { adminLogout } from '@/lib/admin-api';
@@ -43,6 +44,7 @@ const ITEMS: Item[] = [
   { href: '/broadcast', label: 'Broadcast', Icon: Mail },
   { href: '/settings/site-images', label: 'Site images', Icon: ImageIcon },
   { href: '/settings/social', label: 'Social links', Icon: Share2 },
+  { href: '/settings/haiti-delivery', label: 'Haiti cities', Icon: Globe2 },
   { href: '/settings/footer', label: 'Footer content', Icon: MapPinned },
   { href: '/config', label: 'Config', Icon: Settings },
 ];

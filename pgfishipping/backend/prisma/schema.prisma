@@ -252,6 +252,8 @@ model Shipment {
   destinationBranchId String?
   recipientName       String?
   recipientPhone      String?
+  haitiDepartmentKey  String?
+  haitiDeliveryCity   String?
   totalCost           Float?
   costBreakdown       Json?
   paidAt              DateTime?

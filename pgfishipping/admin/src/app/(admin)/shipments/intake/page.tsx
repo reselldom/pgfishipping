@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PackagePlus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,12 +12,14 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import {
   getCustomerByCodeForIntake,
+  getAdminHaitiDeliverySettings,
   listWarehouses,
   searchCustomersForIntake,
   submitAdminIntake,
   type IntakeCustomerDetail,
   type IntakeCustomerSummary,
   type Warehouse,
+  type AdminHaitiDeptOption,
 } from '@/lib/admin-api';
 import { getApiErrorMessage } from '@/lib/api';
 
@@ -67,11 +69,40 @@ export default function ReceivePackagePage(): JSX.Element {
   const [flags, setFlags] = useState<Set<string>>(new Set());
   const [labelFile, setLabelFile] = useState<File | null>(null);
 
+  const [haitiCatalog, setHaitiCatalog] = useState<AdminHaitiDeptOption[]>([]);
+  const [haitiDeptKey, setHaitiDeptKey] = useState('');
+  const [haitiCity, setHaitiCity] = useState('');
+
   const suggestRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     void listWarehouses().then(setWarehouses).catch(() => setWarehouses([]));
   }, []);
+
+  useEffect(() => {
+    void getAdminHaitiDeliverySettings()
+      .then((d) => {
+        setHaitiCatalog(d.departments);
+        const first = d.departments[0];
+        if (first) {
+          setHaitiDeptKey(first.key);
+          setHaitiCity(first.cities[0] ?? '');
+        }
+      })
+      .catch(() => setHaitiCatalog([]));
+  }, []);
+
+  const haitiCities = useMemo(
+    () => haitiCatalog.find((d) => d.key === haitiDeptKey)?.cities ?? [],
+    [haitiCatalog, haitiDeptKey],
+  );
+
+  useEffect(() => {
+    if (haitiCities.length === 0) return;
+    if (!haitiCities.includes(haitiCity)) {
+      setHaitiCity(haitiCities[0]);
+    }
+  }, [haitiCities, haitiCity]);
 
   const usWarehouses = warehouses.filter((w) => w.type === 'US' && w.isActive);
   const htBranches = warehouses.filter((w) => w.type === 'HAITI' && w.isActive);
@@ -183,6 +214,8 @@ export default function ReceivePackagePage(): JSX.Element {
         recipientPhone: recipientPhone.trim() || undefined,
         originWarehouseId: originWarehouseId || undefined,
         destinationBranchId: destinationBranchId || undefined,
+        haitiDepartmentKey: haitiDeptKey,
+        haitiDeliveryCity: haitiCity,
         additionalNotes: additionalNotes.trim() || undefined,
         initialStatus,
         location: locationNote.trim() || undefined,
@@ -473,6 +506,39 @@ export default function ReceivePackagePage(): JSX.Element {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2">
+                <Label>Haiti — department</Label>
+                <Select
+                  value={haitiDeptKey}
+                  onChange={(e) => setHaitiDeptKey(e.target.value)}
+                  disabled={haitiCatalog.length === 0}
+                >
+                  <option value="">—</option>
+                  {haitiCatalog.map((d) => (
+                    <option key={d.key} value={d.key}>
+                      {d.nameFr} ({d.capital})
+                    </option>
+                  ))}
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Customer-visible list is filtered in Settings → Haiti cities; staff can always pick
+                  any city here.
+                </p>
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label>Haiti — city / commune</Label>
+                <Select
+                  value={haitiCity}
+                  onChange={(e) => setHaitiCity(e.target.value)}
+                  disabled={haitiCities.length === 0}
+                >
+                  {haitiCities.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label>Origin warehouse (US)</Label>
                 <Select
@@ -573,7 +639,7 @@ export default function ReceivePackagePage(): JSX.Element {
               </p>
             ) : null}
 
-            <Button type="submit" disabled={busy || !customer} className="w-full sm:w-auto">
+            <Button type="submit" disabled={busy || !customer || haitiCatalog.length === 0}>
               {busy ? 'Creating…' : 'Create shipment & notify customer'}
             </Button>
           </CardContent>

@@ -416,11 +416,17 @@
     "payConfirmTitle": "Pay this shipment from your wallet?",
     "payConfirmDesc": "Amount: ${amount} USD will be debited.",
     "payNow": "Pay now",
-    "paySuccess": "Payment successful."
+    "paySuccess": "Payment successful.",
+    "haitiPickup": "Pickup in Haiti"
   },
   "preAlertForm": {
     "title": "New pre-alert",
     "subtitle": "Tell us a package is coming so we can match it when it arrives.",
+    "haitiSectionTitle": "Where you receive in Haiti",
+    "haitiSectionHint": "Choose the department, then the city or commune where you want delivery.",
+    "haitiDepartment": "Department",
+    "haitiCity": "City / commune",
+    "haitiNoneAvailable": "No delivery cities are available right now. Please contact support.",
     "service": "Service type",
     "tracking": "Carrier tracking number",
     "carrier": "Carrier",

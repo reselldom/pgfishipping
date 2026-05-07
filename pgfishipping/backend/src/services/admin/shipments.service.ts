@@ -12,6 +12,7 @@ import { generateTrackingCode } from '../../utils/generateCode';
 import { uploadFile } from '../storage.service';
 import { notifyShipmentStatus } from '../notifications.service';
 import { logger } from '../../utils/logger';
+import { assertHaitiDeliveryAllowed } from '../public/haiti-delivery.service';
 
 export interface AdminListShipmentsInput {
   search?: string;
@@ -175,6 +176,8 @@ export interface AdminIntakeInput {
   additionalNotes?: string;
   initialStatus?: 'WAITING' | 'RECEIVED';
   location?: string;
+  haitiDepartmentKey?: string;
+  haitiDeliveryCity?: string;
 }
 
 const STATUS_LABEL_INTAKE: Record<'WAITING' | 'RECEIVED', string> = {
@@ -259,6 +262,11 @@ export async function adminIntakeShipment(
     labelImageUrl = result.url;
   }
 
+  const haiti = await assertHaitiDeliveryAllowed(
+    input.haitiDepartmentKey,
+    input.haitiDeliveryCity,
+  );
+
   const shipment = await prisma.shipment.create({
     data: {
       trackingCode,
@@ -283,6 +291,8 @@ export async function adminIntakeShipment(
       recipientName: input.recipientName?.trim() || customer.firstName + ' ' + customer.lastName,
       recipientPhone: input.recipientPhone?.trim() || customer.phoneCell || null,
       labelImageUrl,
+      haitiDepartmentKey: haiti.deptKey,
+      haitiDeliveryCity: haiti.city,
     },
     include: {
       user: {

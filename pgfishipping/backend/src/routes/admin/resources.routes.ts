@@ -24,6 +24,10 @@ import {
   setSystemConfig,
   deleteSystemConfig,
 } from '../../services/admin/resources.service';
+import {
+  getAdminHaitiDeliveryPayload,
+  setDisabledHaitiCityKeys,
+} from '../../services/public/haiti-delivery.service';
 
 const router = Router();
 
@@ -180,6 +184,28 @@ router.post(
   '/tickets/:id/close',
   asyncHandler(async (req: Request, res: Response) => {
     ok(res, await closeTicket(req.params.id));
+  }),
+);
+
+// ─── Haiti delivery (department + city for customer intake) ────────────────
+
+router.get(
+  '/haiti-delivery',
+  asyncHandler(async (_req, res) => {
+    ok(res, await getAdminHaitiDeliveryPayload());
+  }),
+);
+
+const haitiDeliveryPutSchema = z.object({
+  disabledKeys: z.array(z.string().max(120)),
+});
+
+router.put(
+  '/haiti-delivery',
+  validate({ body: haitiDeliveryPutSchema }),
+  asyncHandler(async (req: Request, res: Response) => {
+    await setDisabledHaitiCityKeys(req.body.disabledKeys);
+    ok(res, await getAdminHaitiDeliveryPayload());
   }),
 );
 

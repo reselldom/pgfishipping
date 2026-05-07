@@ -46,7 +46,12 @@ export function SocialFooterLinks({
 
   useEffect(() => {
     void (async () => {
-      setLinks(await fetchPublicSocialLinks());
+      let data = await fetchPublicSocialLinks();
+      const fallback = process.env.NEXT_PUBLIC_WHATSAPP_FALLBACK?.trim();
+      if (fallback && !data.whatsapp?.trim()) {
+        data = { ...data, whatsapp: fallback };
+      }
+      setLinks(data);
     })();
   }, []);
 
@@ -105,7 +110,7 @@ export function SocialFooterLinks({
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
       {items.map((item) => (
         <a
-          key={item.label}
+          key={`${item.label}-${item.href}`}
           href={item.href}
           target="_blank"
           rel="noopener noreferrer"

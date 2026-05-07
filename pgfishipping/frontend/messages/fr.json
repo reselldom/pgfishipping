@@ -415,11 +415,17 @@
     "payConfirmTitle": "Payer ce colis depuis votre portefeuille ?",
     "payConfirmDesc": "Montant : {amount} USD seront débités.",
     "payNow": "Payer",
-    "paySuccess": "Paiement effectué."
+    "paySuccess": "Paiement effectué.",
+    "haitiPickup": "Retrait en Haïti"
   },
   "preAlertForm": {
     "title": "Nouvelle pré-alerte",
     "subtitle": "Annoncez-nous l'arrivée d'un colis pour qu'on l'identifie rapidement.",
+    "haitiSectionTitle": "Retrait du colis en Haïti",
+    "haitiSectionHint": "Choisissez le département, puis la commune ou ville de livraison.",
+    "haitiDepartment": "Département",
+    "haitiCity": "Commune / ville",
+    "haitiNoneAvailable": "Aucune commune n'est disponible pour le moment. Merci de contacter le support.",
     "service": "Type de service",
     "tracking": "N° de suivi du transporteur",
     "carrier": "Transporteur",

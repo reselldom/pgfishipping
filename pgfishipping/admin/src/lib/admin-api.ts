@@ -216,6 +216,8 @@ export interface AdminShipment {
   contentsDescription?: string | null;
   labelImageUrl?: string | null;
   createdAt: string;
+  haitiDepartmentKey?: string | null;
+  haitiDeliveryCity?: string | null;
   user?: {
     id: string;
     customerCode: string;
@@ -249,6 +251,8 @@ export interface AdminIntakePayload {
   additionalNotes?: string;
   initialStatus?: 'WAITING' | 'RECEIVED';
   location?: string;
+  haitiDepartmentKey: string;
+  haitiDeliveryCity: string;
 }
 
 export async function submitAdminIntake(
@@ -549,6 +553,39 @@ export async function setConfig(
 }
 export async function deleteConfig(key: string): Promise<void> {
   await api.delete(`/admin/config/${encodeURIComponent(key)}`);
+}
+
+// ─── Haiti delivery (department + city) ──────────────────────────────────
+
+export interface AdminHaitiDeptOption {
+  key: string;
+  nameFr: string;
+  capital: string;
+  cities: string[];
+}
+
+export async function getAdminHaitiDeliverySettings(): Promise<{
+  departments: AdminHaitiDeptOption[];
+  disabledKeys: string[];
+}> {
+  const r = await api.get<ApiSuccess<{
+    departments: AdminHaitiDeptOption[];
+    disabledKeys: string[];
+  }>>('/admin/haiti-delivery');
+  return unwrap(r);
+}
+
+export async function updateAdminHaitiDeliverySettings(
+  disabledKeys: string[],
+): Promise<{
+  departments: AdminHaitiDeptOption[];
+  disabledKeys: string[];
+}> {
+  const r = await api.put<ApiSuccess<{
+    departments: AdminHaitiDeptOption[];
+    disabledKeys: string[];
+  }>>('/admin/haiti-delivery', { disabledKeys });
+  return unwrap(r);
 }
 
 // ─── Staff ───────────────────────────────────────────────────────────────────

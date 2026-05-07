@@ -18,6 +18,7 @@ import {
 } from '@/lib/admin-api';
 import { getApiErrorMessage } from '@/lib/api';
 import { formatCurrency, formatDateTime } from '@/lib/utils';
+import { formatHaitiDeliveryLabel } from '@/lib/haiti-delivery-meta';
 
 const STATUSES = [
   'WAITING',
@@ -204,6 +205,17 @@ export default function AdminShipmentDetailPage(): JSX.Element {
 
       {msg ? (
         <div className="rounded-md border bg-secondary/30 p-3 text-sm">{msg}</div>
+      ) : null}
+
+      {formatHaitiDeliveryLabel(data.haitiDepartmentKey, data.haitiDeliveryCity) ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Haiti pickup</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm">
+            {formatHaitiDeliveryLabel(data.haitiDepartmentKey, data.haitiDeliveryCity)}
+          </CardContent>
+        </Card>
       ) : null}
 
       <Card>

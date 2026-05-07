@@ -415,11 +415,17 @@
     "payConfirmTitle": "Peye koli sa ak bous ou ?",
     "payConfirmDesc": "Montan : {amount} USD ap debite.",
     "payNow": "Peye",
-    "paySuccess": "Peman fèt."
+    "paySuccess": "Peman fèt.",
+    "haitiPickup": "Rantre koli an Ayiti"
   },
   "preAlertForm": {
     "title": "Nouvo pre-alèt",
     "subtitle": "Di nou ki koli k ap rive pou nou idantifye l vit.",
+    "haitiSectionTitle": "Kote pou w resevwa koli an Ayiti",
+    "haitiSectionHint": "Chwazi depatman an, epi vil oswa komin kote w vle koli a rive.",
+    "haitiDepartment": "Depatman",
+    "haitiCity": "Vil / komin",
+    "haitiNoneAvailable": "Pa gen okenn vil disponib kounye a. Tanpri kontakte sipò a.",
     "service": "Tip sèvis",
     "tracking": "N° swivi transpòtè",
     "carrier": "Transpòtè",

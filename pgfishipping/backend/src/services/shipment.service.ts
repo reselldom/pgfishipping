@@ -17,6 +17,7 @@ import {
   notifyThirdPartyAuth,
 } from './notifications.service';
 import { logger } from '../utils/logger';
+import { assertHaitiDeliveryAllowed } from './public/haiti-delivery.service';
 
 export interface PreAlertInput {
   externalTracking?: string;
@@ -36,6 +37,8 @@ export interface PreAlertInput {
   destinationBranchId?: string;
   recipientName?: string;
   recipientPhone?: string;
+  haitiDepartmentKey?: string;
+  haitiDeliveryCity?: string;
 }
 
 export async function createPreAlert(
@@ -43,6 +46,11 @@ export async function createPreAlert(
   input: PreAlertInput,
 ): Promise<Shipment> {
   const trackingCode = await allocateUniqueTrackingCode();
+
+  const haiti = await assertHaitiDeliveryAllowed(
+    input.haitiDepartmentKey,
+    input.haitiDeliveryCity,
+  );
 
   const shipment = await prisma.shipment.create({
     data: {
@@ -66,6 +74,8 @@ export async function createPreAlert(
       destinationBranchId: input.destinationBranchId ?? null,
       recipientName: input.recipientName ?? null,
       recipientPhone: input.recipientPhone ?? null,
+      haitiDepartmentKey: haiti.deptKey,
+      haitiDeliveryCity: haiti.city,
     },
   });
 

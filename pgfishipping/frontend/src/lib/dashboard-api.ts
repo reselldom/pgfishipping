@@ -149,6 +149,8 @@ export interface PreAlertPayload {
   recipientName?: string;
   recipientPhone?: string;
   additionalNotes?: string;
+  haitiDepartmentKey: string;
+  haitiDeliveryCity: string;
 }
 
 export async function createPreAlert(

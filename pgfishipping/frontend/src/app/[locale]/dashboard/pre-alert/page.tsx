@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -13,11 +13,14 @@ import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { createPreAlert } from '@/lib/dashboard-api';
+import { fetchPublicHaitiDeliveryOptions, type PublicHaitiDeptOption } from '@/lib/public-api';
 import { getApiErrorMessage } from '@/lib/api';
 import { useToastStore } from '@/lib/store/toast';
 
 const schema = z.object({
   serviceType: z.enum(['AIR', 'SEA', 'EXPRESS']),
+  haitiDepartmentKey: z.string().min(2).max(40),
+  haitiDeliveryCity: z.string().min(1).max(80),
   externalTracking: z.string().max(80).optional(),
   externalCarrier: z.string().max(40).optional(),
   vendor: z.string().max(80).optional(),
@@ -38,15 +41,57 @@ export default function PreAlertPage(): JSX.Element {
   const router = useRouter();
   const push = useToastStore((s) => s.push);
   const [serverError, setServerError] = useState<string>('');
+  const [depts, setDepts] = useState<PublicHaitiDeptOption[]>([]);
+  const [geoError, setGeoError] = useState<string>('');
+  const didInit = useRef(false);
 
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { serviceType: 'AIR', fobCurrency: 'USD' },
+    defaultValues: {
+      serviceType: 'AIR',
+      fobCurrency: 'USD',
+      haitiDepartmentKey: '',
+      haitiDeliveryCity: '',
+    },
   });
+
+  const deptKey = watch('haitiDepartmentKey');
+  const cityVal = watch('haitiDeliveryCity');
+
+  useEffect(() => {
+    if (didInit.current) return;
+    didInit.current = true;
+    void (async () => {
+      setGeoError('');
+      const rows = await fetchPublicHaitiDeliveryOptions();
+      setDepts(rows);
+      if (rows.length === 0) {
+        setGeoError(t('haitiNoneAvailable'));
+        return;
+      }
+      const firstDept = rows[0];
+      setValue('haitiDepartmentKey', firstDept.key);
+      setValue('haitiDeliveryCity', firstDept.cities[0] ?? '');
+    })();
+  }, [setValue]);
+
+  const cities = useMemo(() => {
+    const d = depts.find((x) => x.key === deptKey);
+    return d?.cities ?? [];
+  }, [depts, deptKey]);
+
+  useEffect(() => {
+    if (cities.length === 0) return;
+    if (!cityVal || !cities.includes(cityVal)) {
+      setValue('haitiDeliveryCity', cities[0]);
+    }
+  }, [cities, cityVal, setValue]);
 
   async function onSubmit(values: FormData): Promise<void> {
     setServerError('');
@@ -65,6 +110,57 @@ export default function PreAlertPage(): JSX.Element {
         <h1 className="text-3xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('haitiSectionTitle')}</CardTitle>
+          <p className="text-sm text-muted-foreground">{t('haitiSectionHint')}</p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {geoError ? (
+            <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+              {geoError}
+            </div>
+          ) : null}
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="haitiDepartmentKey">{t('haitiDepartment')}</Label>
+              <Select
+                id="haitiDepartmentKey"
+                disabled={depts.length === 0}
+                {...register('haitiDepartmentKey')}
+              >
+                {depts.map((d) => (
+                  <option key={d.key} value={d.key}>
+                    {d.nameFr} ({d.capital})
+                  </option>
+                ))}
+              </Select>
+              {errors.haitiDepartmentKey ? (
+                <p className="text-xs text-destructive">{errors.haitiDepartmentKey.message}</p>
+              ) : null}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="haitiDeliveryCity">{t('haitiCity')}</Label>
+              <Select
+                id="haitiDeliveryCity"
+                disabled={cities.length === 0}
+                {...register('haitiDeliveryCity')}
+              >
+                {cities.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </Select>
+              {errors.haitiDeliveryCity ? (
+                <p className="text-xs text-destructive">{errors.haitiDeliveryCity.message}</p>
+              ) : null}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="pt-6">
@@ -123,12 +219,7 @@ export default function PreAlertPage(): JSX.Element {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="fobValue">{t('fobValue')}</Label>
-                <Input
-                  id="fobValue"
-                  type="number"
-                  step="0.01"
-                  {...register('fobValue')}
-                />
+                <Input id="fobValue" type="number" step="0.01" {...register('fobValue')} />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="fobCurrency">{t('fobCurrency')}</Label>
@@ -147,11 +238,7 @@ export default function PreAlertPage(): JSX.Element {
               </div>
               <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="additionalNotes">{t('notes')}</Label>
-                <Textarea
-                  id="additionalNotes"
-                  rows={3}
-                  {...register('additionalNotes')}
-                />
+                <Textarea id="additionalNotes" rows={3} {...register('additionalNotes')} />
               </div>
             </div>
 
@@ -161,7 +248,7 @@ export default function PreAlertPage(): JSX.Element {
               </p>
             ) : null}
 
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting || depts.length === 0}>
               {isSubmitting ? '…' : t('submit')}
             </Button>
           </form>

@@ -34,6 +34,7 @@ import { api, getApiErrorMessage } from '@/lib/api';
 import { useToastStore } from '@/lib/store/toast';
 import type { Shipment } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { formatHaitiDeliveryLabel } from '@/lib/haiti-delivery-meta';
 
 export default function ShipmentDetailPage(): JSX.Element {
   const t = useTranslations('shipmentDetail');
@@ -254,6 +255,18 @@ export default function ShipmentDetailPage(): JSX.Element {
           <div className="mt-1 text-xs text-muted-foreground">
             {ship.destinationCountry || 'Haiti'}
           </div>
+          {formatHaitiDeliveryLabel(
+            ship.haitiDepartmentKey,
+            ship.haitiDeliveryCity,
+          ) ? (
+            <div className="mt-2 rounded-md border border-border bg-muted/40 px-2 py-1.5 text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">{t('haitiPickup')}:</span>{' '}
+              {formatHaitiDeliveryLabel(
+                ship.haitiDepartmentKey,
+                ship.haitiDeliveryCity,
+              )}
+            </div>
+          ) : null}
           {ship.recipientPhone ? (
             <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
               <Phone className="h-3 w-3" />

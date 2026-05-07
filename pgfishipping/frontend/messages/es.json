@@ -415,11 +415,17 @@
     "payConfirmTitle": "¿Pagar este envío con tu billetera?",
     "payConfirmDesc": "Monto: {amount} USD serán debitados.",
     "payNow": "Pagar",
-    "paySuccess": "Pago realizado."
+    "paySuccess": "Pago realizado.",
+    "haitiPickup": "Retiro en Haití"
   },
   "preAlertForm": {
     "title": "Nueva pre-alerta",
     "subtitle": "Avísanos de un paquete entrante para identificarlo rápido.",
+    "haitiSectionTitle": "Donde recibir en Haití",
+    "haitiSectionHint": "Elige el departamento y luego la ciudad o comunidad de entrega.",
+    "haitiDepartment": "Departamento",
+    "haitiCity": "Ciudad / municipio",
+    "haitiNoneAvailable": "No hay ciudades de entrega disponibles. Contacta a soporte.",
     "service": "Tipo de servicio",
     "tracking": "N° de rastreo del transportista",
     "carrier": "Transportista",

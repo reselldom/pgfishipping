@@ -60,6 +60,8 @@ export interface Shipment {
   isPaid: boolean;
   recipientName: string | null;
   recipientPhone: string | null;
+  haitiDepartmentKey?: string | null;
+  haitiDeliveryCity?: string | null;
   destinationCountry: string | null;
   originCountry: string | null;
   createdAt: string;

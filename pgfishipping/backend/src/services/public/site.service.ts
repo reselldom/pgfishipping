@@ -162,13 +162,23 @@ const optionalUrl = z
   .union([z.string().url(), z.literal('')])
   .optional();
 
+/** WhatsApp is often digits-only; strict `.url()` rejected valid saves and cleared every icon. */
+const optionalWhatsApp = z.preprocess(
+  (v) => {
+    if (v === undefined || v === null) return undefined;
+    const s = String(v).trim();
+    return s === '' ? undefined : s;
+  },
+  z.string().max(500).optional(),
+);
+
 const socialLinksSchema = z.object({
   facebook: optionalUrl,
   instagram: optionalUrl,
   twitter: optionalUrl,
   youtube: optionalUrl,
   tiktok: optionalUrl,
-  whatsapp: optionalUrl,
+  whatsapp: optionalWhatsApp,
 });
 
 export type PublicSocialLinks = z.infer<typeof socialLinksSchema>;

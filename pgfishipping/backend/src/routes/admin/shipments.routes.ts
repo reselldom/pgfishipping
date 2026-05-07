@@ -152,6 +152,8 @@ const intakeSchema = z
     additionalNotes: z.string().trim().max(2000).optional(),
     initialStatus: z.enum(['WAITING', 'RECEIVED']).optional(),
     location: z.string().trim().max(200).optional(),
+    haitiDepartmentKey: z.string().trim().min(2).max(40),
+    haitiDeliveryCity: z.string().trim().min(1).max(80),
   })
   .refine((v) => v.customerCode || v.userId, {
     message: 'customerCode or userId is required',

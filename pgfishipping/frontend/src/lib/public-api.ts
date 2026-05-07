@@ -133,6 +133,28 @@ export async function fetchPublicSocialLinks(): Promise<PublicSocialLinks> {
   }
 }
 
+export interface PublicHaitiDeptOption {
+  key: string;
+  nameFr: string;
+  capital: string;
+  cities: string[];
+}
+
+export async function fetchPublicHaitiDeliveryOptions(): Promise<PublicHaitiDeptOption[]> {
+  try {
+    const r = await fetch(`${API_URL}/public/haiti-delivery`, {
+      credentials: 'omit',
+      cache: 'no-store',
+    });
+    if (!r.ok) return [];
+    const body = (await r.json()) as ApiEnvelope<{ departments: PublicHaitiDeptOption[] }>;
+    if (!body.ok || !body.data?.departments) return [];
+    return body.data.departments;
+  } catch {
+    return [];
+  }
+}
+
 // ─── Footer addresses + contacts (Super Admin → Footer content) ────────────
 
 export interface FooterLocationBlock {

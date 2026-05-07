@@ -39,6 +39,9 @@ export const preAlertSchema = z.object({
   destinationBranchId: z.string().optional(),
   recipientName: z.string().max(120).optional(),
   recipientPhone: z.string().max(40).optional(),
+  /** Haiti pickup — customer must choose department + city before creating a pre-alert. */
+  haitiDepartmentKey: z.string().trim().min(2).max(40),
+  haitiDeliveryCity: z.string().trim().min(1).max(80),
 });
 
 export const listSchema = z.object({
