@@ -48,11 +48,24 @@
     "hero": {
       "eyebrow": "Soti Etazini rive ann Ayiti — vit, sekirize, klè.",
       "title": "Swiv yon koli",
-      "subtitle": "Antre nimewo PGFI ou oswa nimewo transpòtè magazen kote ou te achte a.",
+      "subtitle": "Avyon: an jeneral 5–8 jou ouvrab apre koli rive nan depo Etazini nou an. Swiv ak nimewo PGFI ou oswa nimewo magazen an.",
       "placeholder": "PG-123456 oswa 1Z…",
       "search": "Swiv",
       "ctaPrimary": "Pran adrès US gratis",
       "ctaSecondary": "Ouvè yon kont gratis"
+    },
+    "band": {
+      "eyebrow": "Kouvèti ak biwo",
+      "title": "Kote nou delivre, adrès Etazini, tan ak peman",
+      "deliveryTitle": "Livrezon ann Ayiti",
+      "delivery": "Nou delivre Cap-Haïtien, Ouanaminthe, Port-au-Prince, Les Cayes, ak lot kote. Pou Pò-de-Pa ak Fòlibète, rantre chèche nan Okap.",
+      "addressTitle": "Adrès depo Etazini",
+      "address": "341 S State Road 7, Plantation, Florida 33317, Etazini",
+      "timingTitle": "Tan transpò",
+      "timing": "Pa lè: 5–8 jou ouvrab apre koli rive nan depo Etazini. Pa mè: 30–45 jou.",
+      "paymentTitle": "Peman",
+      "payment": "Peye nan biwo an lajan kach, kat debi, oswa Zelle.",
+      "zelle": "PGFIFLORIDA@GMAIL.COM"
     },
     "actions": {
       "title": "Ki sa nou ka fè pou ou?",
@@ -88,7 +101,13 @@
       "tile2": "Antrepo nou",
       "tile2Sub": "Triye avèk anpil swen Miami",
       "tile3": "Sou wout la",
-      "tile3Sub": "Livrezon devan pòt nan tout peyi a"
+      "tile3Sub": "Livrezon devan pòt nan tout peyi a",
+      "factAirLabel": "Lè",
+      "factAirValue": "5–8 jou ouvrab",
+      "factSeaLabel": "Mè",
+      "factSeaValue": "30–45 jou",
+      "factBranchLabel": "Ayiti",
+      "factBranchValue": "Cap · PAP · Cayes + plis"
     },
     "community": {
       "eyebrow": "Vrè kliyan",
@@ -118,7 +137,7 @@
       "languagesDesc": "English, Français, Kreyòl, Español.",
       "servicesValue": "2",
       "servicesLabel": "Tip sèvis",
-      "servicesDesc": "Avyon (7–15 jou) ak Bato (30–45 jou).",
+      "servicesDesc": "Avyon (5–8 jou ouvrab) ak Bato (30–45 jou).",
       "trackingValue": "24/7",
       "trackingLabel": "Swivi",
       "trackingDesc": "Mizajou an tan reyèl ak alèt imèl."
@@ -139,9 +158,9 @@
       "q2": "Kijan pou m kreye yon kont?",
       "a2": "Klike sou « Enskri » anlè a dwat epi kreye yon kont gratis. W ap resevwa yon adrès US ou ka itilize touswit sou tout magazen.",
       "q3": "Ki mòd peman nou aksepte?",
-      "a3": "Nou aksepte MonCash, NatCash, PayMon, viman bankè ak kat kado. Lè bous ou kredite, peye nenpòt koli nan yon klik.",
+      "a3": "Nan biwo nou, ou ka peye lajan kach, kat debi, oswa Zelle (PGFIFLORIDA@GMAIL.COM). Sou entènèt, bous la ka itilize MonCash, NatCash, PayMon, oswa bank selon konfigirasyon an.",
       "q4": "Konbyen tan livrezon an pran?",
-      "a4": "Voyaj pa avyon pran 7–15 jou apre yo rive nan depo US la. Voyaj pa bato pran 30–45 jou. Opsyon express disponib si w mande.",
+      "a4": "Avyon: souvan 5–8 jou ouvrab apre depo US fin resevwa koli a. Mè: 30–45 jou. Sa ka varye ak konsoma ak peryòd pik.",
       "q5": "Èske koli mwen asire?",
       "a5": "Koli ou pwoteje otomatikman jiska valè FOB ou deklare a, dapre kondisyon nou yo. Pou plis kouvèti, kontakte sipò avan koli a kite Etazini.",
       "q6": "Kijan tarif la kalkile?",
@@ -221,7 +240,9 @@
     "warehouses": "Depo nou yo Ozetazini",
     "haitiBranches": "Branch nou yo Ann Ayiti",
     "miami": "Miami, FL",
-    "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
+    "miamiAddress": "341 S State Road 7, Plantation, Florida 33317, Etazini",
+    "contactSameAsFooter": "Kontak (menm jan ak pye paj la)",
+    "footerContactHint": "Nimewo yo ak imèl la jere nan Admin → Kontni pye.",
     "tip": "Pa bliye mete kòd kliyan w (egzanp ARI-001234) nan adrès la — se konsa nou voye koli w la nan kont ou.",
     "ctaSignup": "Enskri pou jwenn kòd ou"
   },
@@ -268,7 +289,9 @@
     "message": "Mesaj",
     "send": "Voye mesaj",
     "sent": "Mèsi — mesaj ou voye.",
-    "fallback": "Oswa voye nou imèl dirèkteman:",
+    "fallback": "Kontakte nou (menm jan ak pye a)",
+    "phonesFromFooter": "Nimewo yo ak imèl la menm ak pye — soti nan Admin.",
+    "noPhones": "Pa gen nimewo publik ankò. Imèl nou oswa mande admin mete nimewo nan Kontni pye.",
     "phone": "Telefòn"
   },
   "auth": {

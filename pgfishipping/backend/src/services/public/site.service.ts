@@ -245,13 +245,13 @@ export type PublicFooterContent = {
 
 /** Shown when a section has not been set in Admin → Footer content (marketing fallback). */
 const FOOTER_FALLBACK: PublicFooterContent = {
-  phones: [{ number: '+1 305 000 0000' }],
+  phones: [],
   email: 'support@pgfishipping.com',
   businessHours: 'Monday–Saturday · 9:00 AM – 5:00 PM',
   usaLocations: [
     {
-      title: 'Miami (US hub)',
-      detail: '8435 NW 68TH ST\nMedley, FL 33166, USA',
+      title: 'US warehouse (Plantation, FL)',
+      detail: '341 S State Road 7\nPlantation, Florida 33317, USA',
     },
   ],
   haitiLocations: [

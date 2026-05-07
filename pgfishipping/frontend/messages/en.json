@@ -48,11 +48,24 @@
     "hero": {
       "eyebrow": "From the US to Haiti — fast, safe, transparent.",
       "title": "Track a package",
-      "subtitle": "Enter the PGFI tracking number or the carrier number from the store where the package came from.",
+      "subtitle": "Air: typically 5–8 business days after your package reaches our US warehouse. Track with your PGFI number or the store’s carrier tracking.",
       "placeholder": "PG-123456 or 1Z…",
       "search": "Track",
       "ctaPrimary": "Get your free US address",
       "ctaSecondary": "Open a free account"
+    },
+    "band": {
+      "eyebrow": "Coverage & office",
+      "title": "Where we deliver, our US address, timing & payments",
+      "deliveryTitle": "Delivery in Haiti",
+      "delivery": "We deliver to Cap-Haïtien, Ouanaminthe, Port-au-Prince, Les Cayes, and surrounding areas. For Port-de-Paix and Fort-Liberté, pickup is available at our Cap-Haïtien (Okap) branch.",
+      "addressTitle": "US warehouse address",
+      "address": "341 S State Road 7, Plantation, Florida 33317, United States",
+      "timingTitle": "Transit times",
+      "timing": "By air: 5–8 business days after your package reaches our US warehouse. By sea: 30–45 days.",
+      "paymentTitle": "Payment options",
+      "payment": "Pay at our office with cash, debit cards, or Zelle.",
+      "zelle": "PGFIFLORIDA@GMAIL.COM"
     },
     "actions": {
       "title": "What can we help you with?",
@@ -88,7 +101,13 @@
       "tile2": "Our hub",
       "tile2Sub": "Sorted with care in Miami",
       "tile3": "On the road",
-      "tile3Sub": "Door-to-door across Haiti"
+      "tile3Sub": "Door-to-door across Haiti",
+      "factAirLabel": "Air",
+      "factAirValue": "5–8 business days",
+      "factSeaLabel": "Sea",
+      "factSeaValue": "30–45 days",
+      "factBranchLabel": "Haiti coverage",
+      "factBranchValue": "Cap · PAP · Cayes + more"
     },
     "community": {
       "eyebrow": "Real customers",
@@ -118,7 +137,7 @@
       "languagesDesc": "English, Français, Kreyòl, Español.",
       "servicesValue": "2",
       "servicesLabel": "Service types",
-      "servicesDesc": "Air (7–15 days) and Sea (30–45 days).",
+      "servicesDesc": "Air (5–8 business days) and Sea (30–45 days).",
       "trackingValue": "24/7",
       "trackingLabel": "Tracking",
       "trackingDesc": "Real-time updates and email alerts."
@@ -139,9 +158,9 @@
       "q2": "How do I create an account?",
       "a2": "Click \"Sign up\" on the top right and create a free personal account. You'll instantly get a US shipping address you can use anywhere online.",
       "q3": "What forms of payment do you accept?",
-      "a3": "We accept MonCash, NatCash, PayMon, bank transfers and gift cards. Once funds are credited to your wallet, you can pay any shipment in one click.",
+      "a3": "At our office you can pay with cash, debit cards, or Zelle (PGFIFLORIDA@GMAIL.COM). Wallet top-ups on the site may also use MonCash, NatCash, PayMon, or bank transfer depending on configuration.",
       "q4": "How long does delivery take?",
-      "a4": "Air shipments typically arrive in 7–15 days after they reach our US warehouse. Sea shipments take 30–45 days. Express options are available on request.",
+      "a4": "Air: usually 5–8 business days after your package is received at our US warehouse. Sea: about 30–45 days. Times can vary with customs and peak season.",
       "q5": "Is my package insured?",
       "a5": "Your package is automatically protected up to the declared FOB value, within our terms. For higher coverage, contact support before the package leaves the US warehouse.",
       "q6": "How is the shipping rate calculated?",
@@ -221,7 +240,9 @@
     "warehouses": "Our US warehouses",
     "haitiBranches": "Our Haiti branches",
     "miami": "Miami, FL",
-    "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
+    "miamiAddress": "341 S State Road 7, Plantation, Florida 33317, United States",
+    "contactSameAsFooter": "Contact (same as site footer)",
+    "footerContactHint": "You can change these phone lines and email under Admin → Footer content.",
     "tip": "Don't forget to include your customer code (e.g. ARI-001234) in the address — that's how we route your package to your account.",
     "ctaSignup": "Sign up to get your code"
   },
@@ -268,7 +289,9 @@
     "message": "Message",
     "send": "Send message",
     "sent": "Thanks — your message has been sent.",
-    "fallback": "Or email us directly:",
+    "fallback": "Contact us (same as footer)",
+    "phonesFromFooter": "Phone numbers and email are managed in Admin — they match the site footer on every page.",
+    "noPhones": "No phone numbers are published yet. Please email us or ask an admin to add numbers under Footer content.",
     "phone": "Phone"
   },
   "auth": {

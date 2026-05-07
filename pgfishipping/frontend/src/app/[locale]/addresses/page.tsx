@@ -14,9 +14,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { ColorCard } from '@/components/brand/color-card';
 import {
+  fetchPublicFooterContent,
   fetchPublicWarehouses,
+  type FooterPhoneLine,
+  type PublicFooterContent,
   type PublicWarehouse,
 } from '@/lib/public-api';
+import { phoneForWarehouseRow, telHref } from '@/lib/contact-display';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,29 +31,46 @@ function formatLine(w: PublicWarehouse): string {
   return parts.join(', ');
 }
 
+/** Prefer Super Admin → Footer → USA block for the address line in A/B format cards. */
+function usLineForCards(warehouseLine: string, footer: PublicFooterContent): string {
+  const detail = footer.usaLocations[0]?.detail?.trim();
+  if (detail) {
+    return detail.split(/\n/).map((s) => s.trim()).filter(Boolean).join(', ');
+  }
+  return warehouseLine;
+}
+
 export default async function AddressesPage({
   params: { locale },
 }: {
   params: { locale: string };
 }): Promise<JSX.Element> {
   setRequestLocale(locale);
-  const warehouses = await fetchPublicWarehouses();
-  return <AddressesView locale={locale} warehouses={warehouses} />;
+  const [warehouses, footer] = await Promise.all([
+    fetchPublicWarehouses(),
+    fetchPublicFooterContent(),
+  ]);
+  return (
+    <AddressesView locale={locale} warehouses={warehouses} footer={footer} />
+  );
 }
 
 function AddressesView({
   locale,
   warehouses,
+  footer,
 }: {
   locale: string;
   warehouses: PublicWarehouse[];
+  footer: PublicFooterContent;
 }): JSX.Element {
   const t = useTranslations('addresses');
   const usWarehouses = warehouses.filter((w) => w.type === 'US');
   const haitiBranches = warehouses.filter((w) => w.type === 'HT');
 
   const primaryUs = usWarehouses[0];
-  const primaryUsLine = primaryUs ? formatLine(primaryUs) : t('miamiAddress');
+  const warehousePrimaryLine = primaryUs ? formatLine(primaryUs) : t('miamiAddress');
+  const primaryUsLine = usLineForCards(warehousePrimaryLine, footer);
 
   return (
     <div className="container max-w-4xl space-y-8 py-12">
@@ -67,7 +88,45 @@ function AddressesView({
         <span>{t('tip')}</span>
       </div>
 
-      {/* Plane (navy) + Boat (red) format demo using primary US warehouse */}
+      {footer.phones.length > 0 || footer.email ? (
+        <ColorCard
+          tone="red"
+          icon={<Phone className="h-4 w-4" />}
+          title={t('contactSameAsFooter')}
+        >
+          <ul className="space-y-2 text-sm">
+            {footer.phones.map((line, idx) => (
+              <li key={`${line.number}-${idx}`}>
+                <a
+                  href={telHref(line.number)}
+                  className="inline-flex items-center gap-2 font-semibold text-pg-ink hover:text-pg-orange"
+                >
+                  <Phone className="h-4 w-4 text-pg-navy" />
+                  <span>
+                    {line.label ? (
+                      <span className="mr-1 text-xs text-pg-muted">{line.label}: </span>
+                    ) : null}
+                    <span className="num">{line.number}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+            {footer.email ? (
+              <li>
+                <a
+                  href={`mailto:${footer.email}`}
+                  className="inline-flex items-center gap-2 font-semibold text-pg-ink hover:text-pg-orange"
+                >
+                  <Mail className="h-4 w-4 text-pg-navy" />
+                  {footer.email}
+                </a>
+              </li>
+            ) : null}
+          </ul>
+          <p className="mt-2 text-xs text-pg-muted">{t('footerContactHint')}</p>
+        </ColorCard>
+      ) : null}
+
       <div className="grid gap-4 md:grid-cols-2">
         <ColorCard
           tone="navy"
@@ -100,24 +159,22 @@ function AddressesView({
         </ColorCard>
       </div>
 
-      {/* Live US warehouses list (admin-controlled) */}
       <ColorCard
         tone="navy"
         icon={<Warehouse className="h-4 w-4" />}
         title={t('warehouses')}
       >
         {usWarehouses.length === 0 ? (
-          <div className="py-2 text-sm text-pg-muted">{t('miamiAddress')}</div>
+          <div className="py-2 text-sm text-pg-muted">{primaryUsLine}</div>
         ) : (
           <ul className="divide-y divide-slate-200 text-sm">
             {usWarehouses.map((w) => (
-              <WarehouseRow key={w.id} w={w} />
+              <WarehouseRow key={w.id} w={w} footerPhones={footer.phones} />
             ))}
           </ul>
         )}
       </ColorCard>
 
-      {/* Haiti branches list (admin-controlled, hidden if none) */}
       {haitiBranches.length > 0 ? (
         <ColorCard
           tone="red"
@@ -126,7 +183,7 @@ function AddressesView({
         >
           <ul className="divide-y divide-slate-200 text-sm">
             {haitiBranches.map((w) => (
-              <WarehouseRow key={w.id} w={w} />
+              <WarehouseRow key={w.id} w={w} footerPhones={footer.phones} />
             ))}
           </ul>
         </ColorCard>
@@ -143,20 +200,30 @@ function AddressesView({
   );
 }
 
-function WarehouseRow({ w }: { w: PublicWarehouse }): JSX.Element {
+function WarehouseRow({
+  w,
+  footerPhones,
+}: {
+  w: PublicWarehouse;
+  footerPhones: FooterPhoneLine[];
+}): JSX.Element {
+  const displayPhone = phoneForWarehouseRow(w.phone, footerPhones);
   return (
     <li className="space-y-1 py-3">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <span className="font-bold text-pg-navy">{w.name}</span>
         <span className="num text-pg-muted">{formatLine(w)}</span>
       </div>
-      {w.phone || w.email ? (
+      {displayPhone || w.email ? (
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-pg-muted">
-          {w.phone ? (
-            <span className="inline-flex items-center gap-1">
+          {displayPhone ? (
+            <a
+              href={telHref(displayPhone)}
+              className="inline-flex items-center gap-1 text-pg-ink hover:text-pg-orange"
+            >
               <Phone className="h-3 w-3" />
-              <span className="num">{w.phone}</span>
-            </span>
+              <span className="num">{displayPhone}</span>
+            </a>
           ) : null}
           {w.email ? (
             <a

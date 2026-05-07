@@ -48,11 +48,24 @@
     "hero": {
       "eyebrow": "Des États-Unis vers Haïti — rapide, sûr, transparent.",
       "title": "Suivre un colis",
-      "subtitle": "Entrez votre code PGFI ou le numéro du transporteur du magasin où vous avez commandé.",
+      "subtitle": "Aérien : en général 5–8 jours ouvrables après réception du colis à notre entrepôt US. Suivez avec votre code PGFI ou le n° du transporteur.",
       "placeholder": "PG-123456 ou 1Z…",
       "search": "Suivre",
       "ctaPrimary": "Obtenir mon adresse US gratuite",
       "ctaSecondary": "Ouvrir un compte gratuit"
+    },
+    "band": {
+      "eyebrow": "Zone desservie & bureau",
+      "title": "Livraison en Haïti, adresse US, délais & paiements",
+      "deliveryTitle": "Livraison en Haïti",
+      "delivery": "Nous livrons à Cap-Haïtien, Ouanaminthe, Port-au-Prince, aux Cayes et environs. Pour Port-de-Paix et Fort-Liberté, le retrait se fait à Cap-Haïtien (Okap).",
+      "addressTitle": "Adresse entrepôt US",
+      "address": "341 S State Road 7, Plantation, Florida 33317, États-Unis",
+      "timingTitle": "Délais",
+      "timing": "Par avion : 5–8 jours ouvrables après réception du colis à notre entrepôt US. Par mer : 30–45 jours.",
+      "paymentTitle": "Paiements",
+      "payment": "Au bureau : espèces, cartes de débit, ou Zelle.",
+      "zelle": "PGFIFLORIDA@GMAIL.COM"
     },
     "actions": {
       "title": "Comment pouvons-nous vous aider ?",
@@ -88,7 +101,13 @@
       "tile2": "Notre hub",
       "tile2Sub": "Trié avec soin à Miami",
       "tile3": "Sur la route",
-      "tile3Sub": "Livraison à domicile partout en Haïti"
+      "tile3Sub": "Livraison à domicile partout en Haïti",
+      "factAirLabel": "Avion",
+      "factAirValue": "5–8 jours ouvrables",
+      "factSeaLabel": "Bateau",
+      "factSeaValue": "30–45 jours",
+      "factBranchLabel": "Zones HT",
+      "factBranchValue": "Cap · PAP · Cayes +"
     },
     "community": {
       "eyebrow": "Vrais clients",
@@ -118,7 +137,7 @@
       "languagesDesc": "English, Français, Kreyòl, Español.",
       "servicesValue": "2",
       "servicesLabel": "Types de service",
-      "servicesDesc": "Avion (7–15 jours) et Bateau (30–45 jours).",
+      "servicesDesc": "Avion (5–8 jours ouvrables) et Bateau (30–45 jours).",
       "trackingValue": "24/7",
       "trackingLabel": "Suivi",
       "trackingDesc": "Mises à jour en temps réel et alertes email."
@@ -139,9 +158,9 @@
       "q2": "Comment créer un compte ?",
       "a2": "Cliquez sur « S'inscrire » en haut à droite et créez un compte gratuit. Vous recevez instantanément une adresse US utilisable partout en ligne.",
       "q3": "Quels modes de paiement acceptez-vous ?",
-      "a3": "Nous acceptons MonCash, NatCash, PayMon, virement bancaire et cartes cadeaux. Une fois votre portefeuille crédité, payez vos envois en un clic.",
+      "a3": "Au bureau : espèces, cartes de débit ou Zelle (PGFIFLORIDA@GMAIL.COM). En ligne, le portefeuille peut utiliser MonCash, NatCash, PayMon ou virement selon la configuration.",
       "q4": "Combien de temps prend la livraison ?",
-      "a4": "Les envois aériens arrivent généralement en 7–15 jours après réception aux États-Unis. Les envois maritimes prennent 30–45 jours. Des options express sont disponibles sur demande.",
+      "a4": "Avion : souvent 5–8 jours ouvrables après réception à notre entrepôt US. Mer : 30–45 jours. Les délais peuvent varier (douanes, pics d’activité).",
       "q5": "Mon colis est-il assuré ?",
       "a5": "Votre colis est automatiquement protégé jusqu'à la valeur FOB déclarée, selon nos conditions. Pour une couverture supérieure, contactez le support avant l'expédition.",
       "q6": "Comment le tarif est-il calculé ?",
@@ -221,7 +240,9 @@
     "warehouses": "Nos entrepôts aux États-Unis",
     "haitiBranches": "Nos succursales en Haïti",
     "miami": "Miami, FL",
-    "miamiAddress": "8400 NW 25th St, Doral, FL 33122, USA",
+    "miamiAddress": "341 S State Road 7, Plantation, Florida 33317, États-Unis",
+    "contactSameAsFooter": "Contact (identique au bas de page)",
+    "footerContactHint": "Modifiez numéros et email dans Admin → Contenu du pied de page.",
     "tip": "N'oubliez pas d'inclure votre code client (ex. ARI-001234) dans l'adresse — c'est comme ça que nous associons votre colis à votre compte.",
     "ctaSignup": "Inscrivez-vous pour obtenir votre code"
   },
@@ -268,7 +289,9 @@
     "message": "Message",
     "send": "Envoyer le message",
     "sent": "Merci — votre message a été envoyé.",
-    "fallback": "Ou écrivez-nous directement :",
+    "fallback": "Nous contacter (même coordonnées que le pied de page)",
+    "phonesFromFooter": "Les numéros suivent le pied de page du site (réglages Admin).",
+    "noPhones": "Aucun numéro publié pour l’instant — écrivez-nous par email ou complétez le pied de page.",
     "phone": "Téléphone"
   },
   "auth": {

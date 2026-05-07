@@ -55,6 +55,7 @@ export default function HomePage(): JSX.Element {
     <>
       <HeroSection locale={locale} />
       <ActionsSection locale={locale} />
+      <DeliveryHighlightSection />
       <HowSection locale={locale} />
       <StepsSection />
       <StatsSection />
@@ -258,6 +259,54 @@ export default function HomePage(): JSX.Element {
     );
   }
 
+  function DeliveryHighlightSection(): JSX.Element {
+    return (
+      <section className="border-y bg-slate-50 py-12 lg:py-14">
+        <div className="container max-w-5xl">
+          <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-brand-red">
+            {t('band.eyebrow')}
+          </p>
+          <h2 className="mt-2 text-center text-2xl font-extrabold tracking-tight text-brand-navy sm:text-3xl">
+            {t('band.title')}
+          </h2>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-wide text-brand-red">
+                {t('band.deliveryTitle')}
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {t('band.delivery')}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-wide text-brand-red">
+                {t('band.addressTitle')}
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground num">
+                {t('band.address')}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-white p-5 shadow-sm md:col-span-2">
+              <p className="text-xs font-bold uppercase tracking-wide text-brand-red">
+                {t('band.timingTitle')}
+              </p>
+              <p className="mt-3 text-sm font-medium text-brand-navy">{t('band.timing')}</p>
+              <p className="mt-4 text-xs font-bold uppercase tracking-wide text-brand-red">
+                {t('band.paymentTitle')}
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {t('band.payment')}
+              </p>
+              <p className="mt-2 font-mono text-sm font-semibold text-brand-navy">
+                {t('band.zelle')}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   function HowSection({ locale }: { locale: string }): JSX.Element {
     return (
       <section className="border-y bg-white py-16 lg:py-20">
@@ -311,9 +360,21 @@ export default function HomePage(): JSX.Element {
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              <FactPill icon={<Plane className="h-4 w-4" />} label="Air" value="7–15 days" />
-              <FactPill icon={<Ship className="h-4 w-4" />} label="Sea" value="30–45 days" />
-              <FactPill icon={<MapPin className="h-4 w-4" />} label="Branches" value="PAP · CAP" />
+              <FactPill
+                icon={<Plane className="h-4 w-4" />}
+                label={t('how.factAirLabel')}
+                value={t('how.factAirValue')}
+              />
+              <FactPill
+                icon={<Ship className="h-4 w-4" />}
+                label={t('how.factSeaLabel')}
+                value={t('how.factSeaValue')}
+              />
+              <FactPill
+                icon={<MapPin className="h-4 w-4" />}
+                label={t('how.factBranchLabel')}
+                value={t('how.factBranchValue')}
+              />
             </div>
 
             <div className="mt-7">
