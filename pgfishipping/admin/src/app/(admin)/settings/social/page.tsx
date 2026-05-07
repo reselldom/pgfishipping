@@ -16,6 +16,7 @@ interface FormState {
   twitter: string;
   youtube: string;
   tiktok: string;
+  whatsapp: string;
 }
 
 const emptyForm: FormState = {
@@ -24,6 +25,7 @@ const emptyForm: FormState = {
   twitter: '',
   youtube: '',
   tiktok: '',
+  whatsapp: '',
 };
 
 function normalizeUrl(raw: string): string {
@@ -31,6 +33,21 @@ function normalizeUrl(raw: string): string {
   if (!t) return '';
   if (/^https?:\/\//i.test(t)) return t;
   return `https://${t}`;
+}
+
+/**
+ * WhatsApp accepts a wa.me URL or a bare phone number (e.g. "+509 1234 5678"
+ * or "15551234567"). For phone-only input we build the canonical wa.me URL so
+ * the storefront `<a href>` opens WhatsApp directly.
+ */
+function normalizeWhatsApp(raw: string): string {
+  const t = raw.trim();
+  if (!t) return '';
+  if (/^https?:\/\//i.test(t)) return t;
+  if (/^tel:/i.test(t)) return t;
+  const digits = t.replace(/[^\d+]/g, '').replace(/^\+/, '');
+  if (!digits) return '';
+  return `https://wa.me/${digits}`;
 }
 
 export default function SocialSettingsPage(): JSX.Element {
@@ -52,6 +69,7 @@ export default function SocialSettingsPage(): JSX.Element {
             twitter: parsed.twitter ?? '',
             youtube: parsed.youtube ?? '',
             tiktok: parsed.tiktok ?? '',
+            whatsapp: parsed.whatsapp ?? '',
           });
         }
       } catch {
@@ -73,6 +91,7 @@ export default function SocialSettingsPage(): JSX.Element {
       twitter: normalizeUrl(form.twitter),
       youtube: normalizeUrl(form.youtube),
       tiktok: normalizeUrl(form.tiktok),
+      whatsapp: normalizeWhatsApp(form.whatsapp),
     };
     const json = JSON.stringify(payload);
     try {
@@ -86,6 +105,7 @@ export default function SocialSettingsPage(): JSX.Element {
         twitter: payload.twitter,
         youtube: payload.youtube,
         tiktok: payload.tiktok,
+        whatsapp: payload.whatsapp,
       });
     } catch (err) {
       setMsg(getApiErrorMessage(err));
@@ -100,12 +120,28 @@ export default function SocialSettingsPage(): JSX.Element {
     );
   }
 
-  const fields = [
-    { key: 'facebook' as const, label: 'Facebook', placeholder: 'https://facebook.com/...' },
-    { key: 'instagram' as const, label: 'Instagram', placeholder: 'https://instagram.com/...' },
-    { key: 'twitter' as const, label: 'X (Twitter)', placeholder: 'https://x.com/...' },
-    { key: 'youtube' as const, label: 'YouTube', placeholder: 'https://youtube.com/...' },
-    { key: 'tiktok' as const, label: 'TikTok', placeholder: 'https://tiktok.com/@...' },
+  type FieldDef = {
+    key: keyof FormState;
+    label: string;
+    placeholder: string;
+    /** WhatsApp accepts a phone number too, so we relax the URL input type. */
+    type?: 'url' | 'text';
+    hint?: string;
+  };
+
+  const fields: FieldDef[] = [
+    { key: 'facebook', label: 'Facebook', placeholder: 'https://facebook.com/...' },
+    { key: 'instagram', label: 'Instagram', placeholder: 'https://instagram.com/...' },
+    { key: 'twitter', label: 'X (Twitter)', placeholder: 'https://x.com/...' },
+    { key: 'youtube', label: 'YouTube', placeholder: 'https://youtube.com/...' },
+    { key: 'tiktok', label: 'TikTok', placeholder: 'https://tiktok.com/@...' },
+    {
+      key: 'whatsapp',
+      label: 'WhatsApp',
+      placeholder: '+509 1234 5678  or  https://wa.me/15551234567',
+      type: 'text',
+      hint: 'Paste a wa.me link or just a phone number — we’ll build the link.',
+    },
   ];
 
   return (
@@ -127,13 +163,13 @@ export default function SocialSettingsPage(): JSX.Element {
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
-            {fields.map(({ key, label, placeholder }) => (
+            {fields.map(({ key, label, placeholder, type, hint }) => (
               <div key={key} className="space-y-1.5">
                 <Label htmlFor={key}>{label}</Label>
                 <Input
                   id={key}
-                  type="url"
-                  inputMode="url"
+                  type={type ?? 'url'}
+                  inputMode={type === 'text' ? 'text' : 'url'}
                   autoComplete="off"
                   placeholder={placeholder}
                   value={form[key]}
@@ -141,6 +177,9 @@ export default function SocialSettingsPage(): JSX.Element {
                     setForm((f) => ({ ...f, [key]: e.target.value }))
                   }
                 />
+                {hint ? (
+                  <p className="text-xs text-muted-foreground">{hint}</p>
+                ) : null}
               </div>
             ))}
             <Button type="submit" disabled={busy}>

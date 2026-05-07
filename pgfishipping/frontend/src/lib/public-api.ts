@@ -115,6 +115,8 @@ export interface PublicSocialLinks {
   twitter?: string;
   youtube?: string;
   tiktok?: string;
+  /** Either a wa.me URL or a tel: link — the storefront treats it as href. */
+  whatsapp?: string;
 }
 
 export async function fetchPublicSocialLinks(): Promise<PublicSocialLinks> {

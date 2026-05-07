@@ -168,6 +168,7 @@ const socialLinksSchema = z.object({
   twitter: optionalUrl,
   youtube: optionalUrl,
   tiktok: optionalUrl,
+  whatsapp: optionalUrl,
 });
 
 export type PublicSocialLinks = z.infer<typeof socialLinksSchema>;
