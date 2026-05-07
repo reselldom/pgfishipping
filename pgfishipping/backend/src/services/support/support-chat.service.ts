@@ -78,6 +78,38 @@ function emitConversationEvent(
   io.to(`conversation:${conversationId}`).emit(event, payload);
 }
 
+// Notify the "other side" of a chat (customer ↔ staff) so closed widgets can
+// show an unread badge. Listeners on the conversation room already get the
+// raw message; this is the directed pulse for sockets that haven't joined.
+function emitSupportNotify(payload: {
+  conversationId: string;
+  customerId: string;
+  assignedStaffId: string | null;
+  senderType: SupportSenderType;
+  message: SupportMessage;
+}): void {
+  const io = getSupportSocket();
+  if (!io) return;
+  if (payload.senderType === 'CUSTOMER') {
+    if (payload.assignedStaffId) {
+      io.to(`user:${payload.assignedStaffId}`).emit('support:notify', {
+        conversationId: payload.conversationId,
+        message: payload.message,
+      });
+    } else {
+      io.to('staff').emit('support:notify', {
+        conversationId: payload.conversationId,
+        message: payload.message,
+      });
+    }
+  } else if (payload.senderType === 'STAFF') {
+    io.to(`user:${payload.customerId}`).emit('support:notify', {
+      conversationId: payload.conversationId,
+      message: payload.message,
+    });
+  }
+}
+
 async function createSystemMessage(
   conversationId: string,
   body: string,
@@ -123,7 +155,25 @@ export async function createOrGetCustomerConversation(
     where: { customerId, status: { in: ['OPEN', 'WAITING'] } },
     orderBy: { updatedAt: 'desc' },
   });
-  if (existing) return existing;
+  if (existing) {
+    // Backfill the welcome message for conversations that were created before
+    // this code path existed, or where a transient error skipped seed messages.
+    // Without this, returning customers see an empty thread on chat open.
+    const messageCount = await prisma.supportMessage.count({
+      where: { conversationId: existing.id },
+    });
+    if (messageCount === 0) {
+      const customer = await prisma.user.findUnique({
+        where: { id: customerId },
+        select: { firstName: true },
+      });
+      await createSystemMessage(existing.id, welcomeMessage(customer?.firstName));
+      if (!existing.assignedStaffId) {
+        await createSystemMessage(existing.id, SYSTEM_MESSAGES.waiting);
+      }
+    }
+    return existing;
+  }
 
   const [assignee, customer] = await Promise.all([
     nextAssignee(),
@@ -228,6 +278,13 @@ export async function sendMessage(params: {
     },
   });
   emitConversationEvent(params.conversationId, 'support:message', message);
+  emitSupportNotify({
+    conversationId: params.conversationId,
+    customerId: conversation.customerId,
+    assignedStaffId: conversation.assignedStaffId,
+    senderType: params.senderType,
+    message,
+  });
   return message;
 }
 

@@ -19,14 +19,24 @@ function SupportChatWidgetInner(): JSX.Element | null {
   const accessToken = useAuthStore((s) => s.accessToken);
   const user = useAuthStore((s) => s.user);
   const [open, setOpen] = useState(false);
+  const openRef = useRef(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<SupportMessage[]>([]);
+  const [unread, setUnread] = useState(0);
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const socketRef = useRef<unknown>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
+  // Track `open` in a ref so socket handlers (registered once) read live state.
+  useEffect(() => {
+    openRef.current = open;
+    if (open) setUnread(0);
+  }, [open]);
+
+  // Lazily start the conversation only when the user first opens the widget,
+  // so we don't create empty WAITING tickets for visitors who never click.
   useEffect(() => {
     if (!open || !user || !accessToken || conversationId) return;
     let cancelled = false;
@@ -51,8 +61,10 @@ function SupportChatWidgetInner(): JSX.Element | null {
     };
   }, [open, user, accessToken, conversationId]);
 
+  // Persistent socket: stays connected even when the widget is closed so the
+  // unread badge can update from `support:notify` pulses sent by the API.
   useEffect(() => {
-    if (!conversationId || !accessToken) return;
+    if (!user || !accessToken) return;
     let cancelled = false;
     (async () => {
       try {
@@ -64,11 +76,16 @@ function SupportChatWidgetInner(): JSX.Element | null {
           transports: ['websocket', 'polling'],
         });
         socketRef.current = socket;
-        socket.emit('support:join', conversationId);
         socket.on('support:message', (msg: SupportMessage) => {
           setMessages((prev) =>
             prev.some((m) => m.id === msg.id) ? prev : [...prev, msg],
           );
+        });
+        socket.on('support:notify', (payload: { conversationId: string }) => {
+          if (!openRef.current) setUnread((n) => n + 1);
+          if (payload?.conversationId && !conversationId) {
+            setConversationId(payload.conversationId);
+          }
         });
       } catch (err) {
         // eslint-disable-next-line no-console
@@ -81,7 +98,18 @@ function SupportChatWidgetInner(): JSX.Element | null {
       if (s?.disconnect) s.disconnect();
       socketRef.current = null;
     };
-  }, [conversationId, accessToken]);
+  }, [user, accessToken, conversationId]);
+
+  // Once we know our conversation id, ask the socket to also join its room so
+  // we receive the inline `support:message` events (badge can still update via
+  // `support:notify` even before this fires).
+  useEffect(() => {
+    if (!conversationId) return;
+    const s = socketRef.current as
+      | { emit?: (e: string, ...args: unknown[]) => void }
+      | null;
+    s?.emit?.('support:join', conversationId);
+  }, [conversationId]);
 
   useEffect(() => {
     if (listRef.current) {
@@ -136,11 +164,20 @@ function SupportChatWidgetInner(): JSX.Element | null {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex items-center gap-2 rounded-full bg-[hsl(var(--brand-navy))] px-4 py-3 text-white shadow-lg hover:opacity-90"
-          aria-label="Open support chat"
+          className="relative flex items-center gap-2 rounded-full bg-[hsl(var(--brand-navy))] px-4 py-3 text-white shadow-lg hover:opacity-90"
+          aria-label={
+            unread > 0
+              ? `Open support chat (${unread} new message${unread === 1 ? '' : 's'})`
+              : 'Open support chat'
+          }
         >
           <MessageCircle className="h-4 w-4" />
           <span className="text-sm font-medium">Support</span>
+          {unread > 0 ? (
+            <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-bold leading-none text-white shadow ring-2 ring-white">
+              {unread > 9 ? '9+' : unread}
+            </span>
+          ) : null}
         </button>
       ) : (
         <div className="flex h-[480px] w-[340px] flex-col rounded-xl border bg-white shadow-2xl sm:w-[360px]">

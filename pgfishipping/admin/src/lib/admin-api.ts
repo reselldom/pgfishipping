@@ -45,6 +45,16 @@ export async function adminLogout(): Promise<void> {
   }
 }
 
+export async function changeAdminPassword(
+  currentPassword: string,
+  newPassword: string,
+): Promise<void> {
+  await api.put<ApiSuccess<{ message: string }>>('/auth/change-password', {
+    currentPassword,
+    newPassword,
+  });
+}
+
 // ─── Customers ───────────────────────────────────────────────────────────────
 
 export interface AdminCustomer {

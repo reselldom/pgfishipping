@@ -23,15 +23,32 @@ function SupportChatWidgetInner(): JSX.Element | null {
   const accessToken = useAuthStore((s) => s.accessToken);
   const user = useAuthStore((s) => s.user);
   const [open, setOpen] = useState(false);
+  const openRef = useRef(false);
   const [conversations, setConversations] = useState<SupportConversation[]>([]);
   const [active, setActive] = useState<SupportConversation | null>(null);
+  const activeIdRef = useRef<string | null>(null);
   const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [unread, setUnread] = useState<Record<string, number>>({});
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const socketRef = useRef<unknown>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  // Mirror state into refs so socket handlers (registered once) see latest values.
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+  useEffect(() => {
+    activeIdRef.current = active?.id ?? null;
+  }, [active]);
+
+  // Clear unread badges for the conversation a staff member is actively viewing.
+  useEffect(() => {
+    if (!open || !active) return;
+    setUnread((u) => (u[active.id] ? { ...u, [active.id]: 0 } : u));
+  }, [open, active]);
 
   useEffect(() => {
     if (!open || !user || !accessToken) return;
@@ -75,8 +92,11 @@ function SupportChatWidgetInner(): JSX.Element | null {
     };
   }, [active]);
 
+  // Persistent socket — connect once on mount so the unread badge keeps
+  // updating even while the widget is closed or the staff member is browsing
+  // other admin pages. Per-conversation joins are issued lazily below.
   useEffect(() => {
-    if (!active || !accessToken) return;
+    if (!user || !accessToken) return;
     let cancelled = false;
     (async () => {
       try {
@@ -88,24 +108,36 @@ function SupportChatWidgetInner(): JSX.Element | null {
           transports: ['websocket', 'polling'],
         });
         socketRef.current = socket;
-        socket.emit('support:join', active.id);
         socket.on('support:message', (msg: SupportMessage) => {
-          if (msg.conversationId !== active.id) return;
-          setMessages((prev) =>
-            prev.some((m) => m.id === msg.id) ? prev : [...prev, msg],
-          );
+          if (msg.conversationId === activeIdRef.current) {
+            setMessages((prev) =>
+              prev.some((m) => m.id === msg.id) ? prev : [...prev, msg],
+            );
+          }
         });
+        socket.on(
+          'support:notify',
+          (payload: { conversationId: string; message?: SupportMessage }) => {
+            const cid = payload?.conversationId;
+            if (!cid) return;
+            // Don't badge a conversation we're already looking at while open.
+            const isViewing = openRef.current && cid === activeIdRef.current;
+            if (!isViewing) {
+              setUnread((u) => ({ ...u, [cid]: (u[cid] ?? 0) + 1 }));
+            }
+          },
+        );
         socket.on('support:transfer', (updated: SupportConversation) => {
           setConversations((prev) =>
             prev.map((c) => (c.id === updated.id ? updated : c)),
           );
-          if (active.id === updated.id) setActive(updated);
+          if (activeIdRef.current === updated.id) setActive(updated);
         });
         socket.on('support:closed', (updated: SupportConversation) => {
           setConversations((prev) =>
             prev.map((c) => (c.id === updated.id ? updated : c)),
           );
-          if (active.id === updated.id) setActive(updated);
+          if (activeIdRef.current === updated.id) setActive(updated);
         });
       } catch (err) {
         // eslint-disable-next-line no-console
@@ -118,13 +150,25 @@ function SupportChatWidgetInner(): JSX.Element | null {
       if (s?.disconnect) s.disconnect();
       socketRef.current = null;
     };
-  }, [active, accessToken]);
+  }, [user, accessToken]);
+
+  // Join the room of whichever conversation is currently being viewed so we
+  // get inline `support:message` events for it.
+  useEffect(() => {
+    if (!active) return;
+    const s = socketRef.current as
+      | { emit?: (e: string, ...args: unknown[]) => void }
+      | null;
+    s?.emit?.('support:join', active.id);
+  }, [active]);
 
   useEffect(() => {
     if (listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
     }
   }, [messages]);
+
+  const totalUnread = Object.values(unread).reduce((a, b) => a + b, 0);
 
   if (!user || !accessToken) return null;
 
@@ -152,10 +196,20 @@ function SupportChatWidgetInner(): JSX.Element | null {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-primary-foreground shadow-lg hover:opacity-90"
+          className="relative flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-primary-foreground shadow-lg hover:opacity-90"
+          aria-label={
+            totalUnread > 0
+              ? `Open live support (${totalUnread} new message${totalUnread === 1 ? '' : 's'})`
+              : 'Open live support'
+          }
         >
           <MessageCircle className="h-4 w-4" />
           <span className="text-sm font-medium">Live support</span>
+          {totalUnread > 0 ? (
+            <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-bold leading-none text-white shadow ring-2 ring-white">
+              {totalUnread > 9 ? '9+' : totalUnread}
+            </span>
+          ) : null}
         </button>
       ) : (
         <div className="flex h-[520px] w-[760px] max-w-[95vw] rounded-xl border bg-white shadow-2xl">
@@ -173,16 +227,29 @@ function SupportChatWidgetInner(): JSX.Element | null {
                     c.customer.email
                   : c.id.slice(0, 10);
                 const code = c.customer?.customerCode ?? '';
+                const cUnread = unread[c.id] ?? 0;
                 return (
                   <button
                     type="button"
                     key={c.id}
-                    onClick={() => setActive(c)}
+                    onClick={() => {
+                      setActive(c);
+                      setUnread((u) =>
+                        u[c.id] ? { ...u, [c.id]: 0 } : u,
+                      );
+                    }}
                     className={`block w-full rounded border px-2 py-1 text-left text-xs ${
                       active?.id === c.id ? 'border-primary bg-primary/5' : ''
                     }`}
                   >
-                    <div className="truncate font-medium">{name}</div>
+                    <div className="flex items-center justify-between gap-1">
+                      <div className="truncate font-medium">{name}</div>
+                      {cUnread > 0 ? (
+                        <span className="ml-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold leading-none text-white">
+                          {cUnread > 9 ? '9+' : cUnread}
+                        </span>
+                      ) : null}
+                    </div>
                     <div className="flex items-center justify-between gap-1 text-[10px] uppercase text-gray-500">
                       {code ? (
                         <span className="font-mono">{code}</span>

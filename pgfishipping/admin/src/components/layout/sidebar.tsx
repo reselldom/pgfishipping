@@ -18,6 +18,7 @@ import {
   MapPinned,
   Image as ImageIcon,
   LogOut,
+  KeyRound,
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/auth';
 import { adminLogout } from '@/lib/admin-api';
@@ -108,10 +109,21 @@ export function Sidebar(): JSX.Element {
             </div>
           </div>
         ) : null}
+        <Link
+          href="/account"
+          className={cn(
+            'flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
+            pathname === '/account'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+          )}
+        >
+          <KeyRound className="h-4 w-4" /> Account & password
+        </Link>
         <button
           type="button"
           onClick={logout}
-          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
+          className="mt-1 flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
         >
           <LogOut className="h-4 w-4" /> Sign out
         </button>

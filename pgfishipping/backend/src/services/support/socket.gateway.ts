@@ -40,6 +40,16 @@ export function initSupportSocketGateway(server: HttpServer): Server | null {
 
     io.on('connection', (socket) => {
       socket.join(`user:${socket.data.userId}`);
+      // Staff users also join a global staff room so unassigned (WAITING)
+      // conversations can broadcast a "new message" pulse to anyone who can pick
+      // it up, instead of only the assigned-staff socket.
+      if (
+        socket.data.role === 'SUPER_ADMIN' ||
+        socket.data.role === 'MANAGER' ||
+        socket.data.role === 'SUPPORT'
+      ) {
+        socket.join('staff');
+      }
 
       socket.on('support:join', (conversationId: unknown) => {
         if (typeof conversationId === 'string' && conversationId.length > 0) {
