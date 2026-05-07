@@ -12,6 +12,7 @@ import { logger } from './utils/logger';
 import { disconnectPrisma } from './config/database';
 import { localUploadRoot } from './services/storage.service';
 import { initSupportSocketGateway } from './services/support/socket.gateway';
+import { logEmailTransportStatus } from './services/email.service';
 
 export function createApp(): Express {
   const app = express();
@@ -79,6 +80,7 @@ if (require.main === module) {
     logger.info(
       `🚀 ${env.APP_NAME} API listening on http://localhost:${env.PORT} (${env.NODE_ENV})`,
     );
+    logEmailTransportStatus();
   });
 
   const shutdown = async (signal: string): Promise<void> => {

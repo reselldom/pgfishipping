@@ -11,17 +11,25 @@ import { packageReceivedEmail } from '../emails/templates/packageReceived';
 import { packageInTransitEmail } from '../emails/templates/packageInTransit';
 import { packageAvailableEmail } from '../emails/templates/packageAvailable';
 import { packageDeliveredEmail } from '../emails/templates/packageDelivered';
+import { packageStatusAlertEmail } from '../emails/templates/packageStatusAlert';
 import { walletDepositEmail } from '../emails/templates/walletDeposit';
 import { thirdPartyAuthEmail } from '../emails/templates/thirdPartyAuth';
+import { passwordChangedEmail } from '../emails/templates/passwordChanged';
+import { passwordResetSuccessEmail } from '../emails/templates/passwordResetSuccess';
+import { emailVerifiedEmail } from '../emails/templates/emailVerified';
 
 export type NotificationTemplate =
   | 'welcome'
   | 'password_reset'
   | 'verify_email'
+  | 'password_changed'
+  | 'password_reset_success'
+  | 'email_verified'
   | 'package_received'
   | 'package_in_transit'
   | 'package_available'
   | 'package_delivered'
+  | 'package_status_alert'
   | 'wallet_deposit'
   | 'third_party_auth';
 
@@ -97,6 +105,39 @@ const SHIPMENT_STATUS_TEMPLATE: Partial<Record<ShipmentStatus, NotificationTempl
   IN_TRANSIT_B: 'package_in_transit',
   AVAILABLE: 'package_available',
   DELIVERED: 'package_delivered',
+  INVENTORY: 'package_status_alert',
+  RETURNED: 'package_status_alert',
+  LOST: 'package_status_alert',
+  CANCELLED: 'package_status_alert',
+};
+
+/** Statuses that use the generic package_status_alert template. */
+const STATUS_ALERT_COPY: Partial<
+  Record<
+    ShipmentStatus,
+    { statusTitle: string; message: string }
+  >
+> = {
+  INVENTORY: {
+    statusTitle: 'In inventory',
+    message:
+      'Your package has arrived at our destination facility and is in inventory. We will notify you when it is ready for pickup or out for delivery.',
+  },
+  RETURNED: {
+    statusTitle: 'Returned',
+    message:
+      'Your shipment was returned. If you have questions, please contact support.',
+  },
+  LOST: {
+    statusTitle: 'Shipment issue',
+    message:
+      'We are sorry — your shipment was marked as lost. Our team will contact you regarding next steps.',
+  },
+  CANCELLED: {
+    statusTitle: 'Cancelled',
+    message:
+      'Your shipment was cancelled. If this was unexpected, please contact support.',
+  },
 };
 
 export async function notifyShipmentStatus(
@@ -145,6 +186,15 @@ export async function notifyShipmentStatus(
       totalDueUsd: totalUsd,
       totalDueHtg: totalUsd ? Math.round(totalUsd * rate) : null,
     });
+  } else if (template === 'package_status_alert') {
+    const copy = STATUS_ALERT_COPY[status];
+    if (!copy) return null;
+    rendered = packageStatusAlertEmail({
+      firstName,
+      trackingCode: shipment.trackingCode,
+      statusTitle: copy.statusTitle,
+      message: copy.message,
+    });
   } else {
     rendered = packageDeliveredEmail({
       firstName,
@@ -154,6 +204,43 @@ export async function notifyShipmentStatus(
   }
 
   return dispatch(shipment.userId, shipment.user.email, template, rendered);
+}
+
+export async function notifyPasswordChanged(userId: string): Promise<DispatchResult | null> {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) return null;
+  return dispatch(
+    userId,
+    user.email,
+    'password_changed',
+    passwordChangedEmail({ firstName: user.firstName }),
+  );
+}
+
+export async function notifyPasswordResetSuccess(
+  userId: string,
+): Promise<DispatchResult | null> {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) return null;
+  return dispatch(
+    userId,
+    user.email,
+    'password_reset_success',
+    passwordResetSuccessEmail({ firstName: user.firstName }),
+  );
+}
+
+export async function notifyEmailAddressVerified(
+  userId: string,
+): Promise<DispatchResult | null> {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) return null;
+  return dispatch(
+    userId,
+    user.email,
+    'email_verified',
+    emailVerifiedEmail({ firstName: user.firstName }),
+  );
 }
 
 export async function notifyDepositConfirmed(

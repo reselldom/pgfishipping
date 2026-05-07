@@ -13,10 +13,15 @@ import {
   refreshUsWarehouseAddressStringsForUserId,
 } from './customerCode.service';
 import { signAccessToken, signRefreshToken } from '../middleware/auth';
-import { sendEmail } from './email.service';
+import { sendEmail, type SendEmailResult } from './email.service';
 import { welcomeEmail } from '../emails/templates/welcome';
 import { passwordResetEmail } from '../emails/templates/passwordReset';
 import { verifyEmailTemplate } from '../emails/templates/verifyEmail';
+import {
+  notifyEmailAddressVerified,
+  notifyPasswordChanged,
+  notifyPasswordResetSuccess,
+} from './notifications.service';
 import type { Language, User } from '@prisma/client';
 import { logger } from '../utils/logger';
 
@@ -163,66 +168,87 @@ export async function registerCustomer(input: RegisterInput): Promise<AuthResult
     return created;
   });
 
-  // Send welcome email + verification email (non-blocking failure).
-  void sendWelcomeAndVerification(user).catch((err) =>
-    logger.error({ err, userId: user.id }, 'Failed to send welcome email'),
-  );
+  try {
+    await sendWelcomeAndVerification(user);
+  } catch (err) {
+    logger.error({ err, userId: user.id }, 'Failed to send welcome / verification email');
+  }
 
   const tokens = issueTokens(user);
   return { user: toPublicUser(user), tokens };
 }
 
 async function sendWelcomeAndVerification(user: User): Promise<void> {
-  const usAddress = await prisma.usWarehouseAddress.findUnique({
-    where: { userId: user.id },
-  });
-  if (!usAddress) return;
-  const welcome = welcomeEmail({
-    firstName: user.firstName,
-    customerCode: user.customerCode,
-    airAddress: usAddress.airAddress,
-    seaAddress: usAddress.seaAddress,
-  });
-  await sendEmail({
-    to: user.email,
-    subject: welcome.subject,
-    html: welcome.html,
-    text: welcome.text,
-    template: 'welcome',
-  });
-  await persistNotificationLog(user.id, 'welcome', user.email, welcome.subject);
-
+  // Verification first — users must receive the link even if the welcome template fails.
   if (user.emailVerifyToken) {
     const verifyUrl = `${env.APP_URL}/verify-email?token=${user.emailVerifyToken}`;
     const verify = verifyEmailTemplate({
       firstName: user.firstName,
       verifyUrl,
     });
-    await sendEmail({
+    const verifyResult = await sendEmail({
       to: user.email,
       subject: verify.subject,
       html: verify.html,
       text: verify.text,
-      template: 'verifyEmail',
+      template: 'verify_email',
     });
-    await persistNotificationLog(
+    await logAuthNotification(
       user.id,
-      'verifyEmail',
+      'verify_email',
       user.email,
       verify.subject,
+      verifyResult,
     );
   }
+
+  const usAddress = await prisma.usWarehouseAddress.findUnique({
+    where: { userId: user.id },
+  });
+  if (!usAddress) {
+    logger.warn({ userId: user.id }, 'sendWelcomeAndVerification: no US address row; welcome email skipped');
+    return;
+  }
+
+  const welcome = welcomeEmail({
+    firstName: user.firstName,
+    customerCode: user.customerCode,
+    airAddress: usAddress.airAddress,
+    seaAddress: usAddress.seaAddress,
+  });
+  const welcomeResult = await sendEmail({
+    to: user.email,
+    subject: welcome.subject,
+    html: welcome.html,
+    text: welcome.text,
+    template: 'welcome',
+  });
+  await logAuthNotification(
+    user.id,
+    'welcome',
+    user.email,
+    welcome.subject,
+    welcomeResult,
+  );
 }
 
-async function persistNotificationLog(
+async function logAuthNotification(
   userId: string,
   template: string,
   toEmail: string,
   subject: string,
+  result: SendEmailResult,
 ): Promise<void> {
   try {
     await prisma.notificationLog.create({
-      data: { userId, channel: 'EMAIL', template, toEmail, subject },
+      data: {
+        userId,
+        channel: 'EMAIL',
+        template,
+        toEmail,
+        subject,
+        status: result.ok ? 'sent' : `failed:${result.error ?? 'unknown'}`,
+      },
     });
   } catch (err) {
     logger.warn({ err }, 'Failed to write notification log');
@@ -311,14 +337,20 @@ export async function requestPasswordReset(email: string): Promise<void> {
     resetUrl,
     expiresInMinutes: 60,
   });
-  await sendEmail({
+  const mailResult = await sendEmail({
     to: user.email,
     subject: tpl.subject,
     html: tpl.html,
     text: tpl.text,
-    template: 'passwordReset',
+    template: 'password_reset',
   });
-  await persistNotificationLog(user.id, 'passwordReset', user.email, tpl.subject);
+  await logAuthNotification(
+    user.id,
+    'password_reset',
+    user.email,
+    tpl.subject,
+    mailResult,
+  );
 }
 
 export async function resetPasswordWithToken(
@@ -339,6 +371,9 @@ export async function resetPasswordWithToken(
       resetTokenExpiry: null,
     },
   });
+  void notifyPasswordResetSuccess(user.id).catch((err) =>
+    logger.warn({ err, userId: user.id }, 'notifyPasswordResetSuccess failed'),
+  );
 }
 
 export async function verifyEmail(token: string): Promise<void> {
@@ -352,6 +387,9 @@ export async function verifyEmail(token: string): Promise<void> {
       status: user.status === 'PENDING_VERIFICATION' ? 'ACTIVE' : user.status,
     },
   });
+  void notifyEmailAddressVerified(user.id).catch((err) =>
+    logger.warn({ err, userId: user.id }, 'notifyEmailAddressVerified failed'),
+  );
 }
 
 export async function resendVerificationEmail(email: string): Promise<void> {
@@ -369,14 +407,20 @@ export async function resendVerificationEmail(email: string): Promise<void> {
   }
   const verifyUrl = `${env.APP_URL}/verify-email?token=${token}`;
   const tpl = verifyEmailTemplate({ firstName: user.firstName, verifyUrl });
-  await sendEmail({
+  const mailResult = await sendEmail({
     to: user.email,
     subject: tpl.subject,
     html: tpl.html,
     text: tpl.text,
-    template: 'verifyEmail',
+    template: 'verify_email',
   });
-  await persistNotificationLog(user.id, 'verifyEmail', user.email, tpl.subject);
+  await logAuthNotification(
+    user.id,
+    'verify_email',
+    user.email,
+    tpl.subject,
+    mailResult,
+  );
 }
 
 export async function changePassword(
@@ -394,4 +438,7 @@ export async function changePassword(
     where: { id: userId },
     data: { passwordHash: hash },
   });
+  void notifyPasswordChanged(userId).catch((err) =>
+    logger.warn({ err, userId }, 'notifyPasswordChanged failed'),
+  );
 }

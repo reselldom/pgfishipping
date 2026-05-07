@@ -1,4 +1,4 @@
-import { env } from '../config/env';
+import { env, isProd } from '../config/env';
 import { logger } from '../utils/logger';
 
 export interface SendEmailArgs {
@@ -18,9 +18,37 @@ export interface SendEmailResult {
   error?: string;
 }
 
+/** True when Resend is configured; otherwise emails only go to server logs (console transport). */
+export function isEmailDeliveryConfigured(): boolean {
+  return Boolean(env.RESEND_API_KEY?.trim());
+}
+
+/**
+ * Call once at process startup (API and worker) so operators see a clear message
+ * when transactional email cannot reach customers.
+ */
+export function logEmailTransportStatus(): void {
+  if (!isEmailDeliveryConfigured()) {
+    if (isProd) {
+      logger.error(
+        'RESEND_API_KEY is not set — transactional email (signup, password, shipments, wallet) is NOT delivered to users. Set RESEND_API_KEY and verify your sending domain in Resend.',
+      );
+    } else {
+      logger.warn(
+        'RESEND_API_KEY is not set — emails are printed to the console only (dev).',
+      );
+    }
+    return;
+  }
+  logger.info(
+    { from: env.EMAIL_FROM },
+    'Transactional email enabled (Resend).',
+  );
+}
+
 let resendInstance: import('resend').Resend | null = null;
 async function getResend(): Promise<import('resend').Resend | null> {
-  if (!env.RESEND_API_KEY) return null;
+  if (!isEmailDeliveryConfigured()) return null;
   if (resendInstance) return resendInstance;
   try {
     const mod = await import('resend');

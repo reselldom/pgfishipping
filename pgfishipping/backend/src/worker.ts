@@ -1,5 +1,6 @@
 import { startWorkers, stopWorkers } from './workers';
 import { logger } from './utils/logger';
+import { logEmailTransportStatus } from './services/email.service';
 
 async function main(): Promise<void> {
   const result = await startWorkers();
@@ -8,6 +9,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   logger.info('Worker process running. Ctrl+C to stop.');
+  logEmailTransportStatus();
 }
 
 async function shutdown(signal: string): Promise<void> {

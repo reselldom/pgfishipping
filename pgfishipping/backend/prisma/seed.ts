@@ -130,6 +130,43 @@ async function seedPricingRules() {
   console.log(`✓ Seeded ${rows.length} pricing rules.`);
 }
 
+/** Reference list of transactional email templates (code lives in `src/emails/templates/`). */
+const NOTIFICATION_EMAIL_CATALOG = {
+  version: 1,
+  templates: [
+    { key: 'welcome', when: 'Customer registers (with US address block)' },
+    { key: 'verify_email', when: 'Registration and resend-verification' },
+    { key: 'password_reset', when: 'Forgot-password link' },
+    { key: 'password_reset_success', when: 'Password reset via email link completed' },
+    { key: 'password_changed', when: 'Customer changes password while logged in' },
+    { key: 'email_verified', when: 'Email verification link used successfully' },
+    { key: 'package_received', when: 'Shipment status → received at US warehouse' },
+    { key: 'package_in_transit', when: 'Shipment status → in transit (air/sea/branch)' },
+    { key: 'package_available', when: 'Shipment ready for pickup / payment' },
+    { key: 'package_delivered', when: 'Shipment marked delivered' },
+    { key: 'package_status_alert', when: 'Inventory, returned, lost, or cancelled' },
+    { key: 'wallet_deposit', when: 'Wallet deposit confirmed' },
+    { key: 'third_party_auth', when: 'Third-party pickup authorization set' },
+  ],
+} as const;
+
+async function seedNotificationEmailCatalog() {
+  const existing = await prisma.systemConfig.findUnique({
+    where: { key: 'notification_email_catalog' },
+  });
+  if (existing) {
+    console.log('✓ notification_email_catalog already present.');
+    return;
+  }
+  await prisma.systemConfig.create({
+    data: {
+      key: 'notification_email_catalog',
+      value: JSON.stringify(NOTIFICATION_EMAIL_CATALOG),
+    },
+  });
+  console.log('✓ Seeded notification_email_catalog (email template index).');
+}
+
 async function seedSystemConfig() {
   const defaults: Array<{ key: string; value: string }> = [
     { key: 'usd_to_htg_rate', value: '132.5' },
@@ -156,6 +193,7 @@ async function main() {
   await seedWarehouses();
   await seedPricingRules();
   await seedSystemConfig();
+  await seedNotificationEmailCatalog();
   console.log('— Done. —');
 }
 
