@@ -135,6 +135,8 @@ Exact steps: after you create Vercel projects, add custom domains **www.example.
    |------|--------|
    | `NEXT_PUBLIC_API_URL` | `https://api.yourdomain.com/api` |
 
+   **Important:** `NEXT_PUBLIC_API_URL` **must not be empty**. An empty string is still injected into the bundle and breaks `??` fallbacks (`""` only replaces `null` / `undefined`). If signup, login, or email links misbehave, check this variable in **all** Production / Preview scopes and redeploy after fixing.
+
 5. **Deploy**. Add domain **www.yourdomain.com** (and optionally **apex** redirect to www in Vercel).
 
 ### Project 2 — Admin
@@ -147,10 +149,20 @@ Exact steps: after you create Vercel projects, add custom domains **www.example.
    | Name | Value |
    |------|--------|
    | `NEXT_PUBLIC_API_URL` | `https://api.yourdomain.com/api` |
+   | `NEXT_PUBLIC_APP_URL` (optional) | `https://www.yourdomain.com` — used under **Site images** for public image preview URLs |
+
+   Non-empty `NEXT_PUBLIC_API_URL` is required (same as customer site).
 
 4. **Deploy**. Add domain **admin.yourdomain.com**.
 
-5. After first deploy, set **`ADMIN_URL`** or any mail links — already covered if API `ADMIN_URL` env matches `https://admin.yourdomain.com`.
+5. After first deploy, **`ADMIN_URL`** in `backend/.env` should match `https://admin.yourdomain.com` (used in email/server context where needed).
+
+---
+
+## Part C1 — Resend (transactional email): **Droplet API only**
+
+- **Do not** put `RESEND_API_KEY` on Vercel — the Next.js sites do not send mail; the **Node API** (`pgfishipping/backend`) does.
+- On the Droplet `backend/.env`, set **`RESEND_API_KEY`**, **`EMAIL_FROM`** (verified domain in Resend), **`EMAIL_REPLY_TO`**, and **`APP_URL`** to your **live customer URL** (`https://www.yourdomain.com`) so verification and password-reset links are correct.
 
 ---
 

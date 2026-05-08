@@ -67,3 +67,6 @@ Claude.pdf
 *.pem
 .cache/
 .turbo/
+
+# Local Vercel env pull scraps (may contain tokens)
+**/deploy/.gitignored-vercel-*
