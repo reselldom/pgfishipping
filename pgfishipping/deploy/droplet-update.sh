@@ -27,16 +27,28 @@ die() {
   exit 1
 }
 
-[[ -d "$REPO_ROOT/.git" ]] || die "Not a git repo: $REPO_ROOT (set REPO_ROOT)"
-[[ -d "$BACKEND_DIR" ]] || die "Backend dir missing: $BACKEND_DIR"
 command -v git >/dev/null || die "'git' not found"
 command -v npm >/dev/null || die "'npm' not found"
 command -v pm2 >/dev/null || die "'pm2' not found (npm i -g pm2)"
 
+[[ -d "$BACKEND_DIR" ]] || die "Backend dir missing: $BACKEND_DIR"
+[[ -d "$DEPLOY_DIR" ]] || die "Deploy dir missing: $DEPLOY_DIR"
 [[ -f "$BACKEND_DIR/.env" ]] || die "Missing $BACKEND_DIR/.env — copy from deploy/backend.env.production.example and fill secrets"
 
-echo "==> Repo: $REPO_ROOT"
-cd "$REPO_ROOT"
+# Auto-detect the actual git work tree. Handles nested layouts where the
+# git toplevel is one level above the app folder (e.g. the repo is named
+# 'pgfishipping' and clones to /var/www/pgfishipping/ with the app code
+# at /var/www/pgfishipping/pgfishipping/).
+if [[ -d "$REPO_ROOT/.git" ]]; then
+  GIT_ROOT="$REPO_ROOT"
+else
+  GIT_ROOT="$(git -C "$REPO_ROOT" rev-parse --show-toplevel 2>/dev/null || true)"
+  [[ -n "$GIT_ROOT" ]] || die "Not a git repo at or above $REPO_ROOT (set REPO_ROOT)"
+  echo "==> Detected git toplevel: $GIT_ROOT (REPO_ROOT app folder: $REPO_ROOT)"
+fi
+
+echo "==> Repo: $GIT_ROOT  (branch: $GIT_BRANCH)"
+cd "$GIT_ROOT"
 
 echo "==> Pull origin/$GIT_BRANCH"
 git fetch origin "$GIT_BRANCH"
