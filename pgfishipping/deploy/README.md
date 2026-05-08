@@ -89,6 +89,15 @@ Exact steps: after you create Vercel projects, add custom domains **www.example.
    # run the command it prints so PM2 restarts after reboot
    ```
 
+   **Rolling updates:** after `backend/.env` exists on the server, from the repo root run:
+
+   ```bash
+   chmod +x deploy/droplet-update.sh
+   ./deploy/droplet-update.sh
+   ```
+
+   Optionally: `REPO_ROOT=/path/to/pgfishipping GIT_BRANCH=main ./deploy/droplet-update.sh`
+
 9. **Nginx:** Copy `deploy/nginx-api.conf.example` to `/etc/nginx/sites-available/pgfi-api`, replace `api.example.com` with **api.yourdomain.com**, symlink:
 
    ```bash
