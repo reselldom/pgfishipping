@@ -89,6 +89,8 @@ describe('Shipment API', () => {
         weightLbs: 4.5,
         fobValue: 1200,
         vendor: 'Amazon',
+        haitiDepartmentKey: 'OUEST',
+        haitiDeliveryCity: 'Port-au-Prince',
       });
     expect(res.status).toBe(201);
     expect(res.body.data.trackingCode).toMatch(/^PG-[A-Z0-9]{10}$/);
@@ -188,7 +190,12 @@ describe('Shipment API', () => {
     const r = await request(app)
       .post('/api/shipments/pre-alert')
       .set('Authorization', `Bearer ${token}`)
-      .send({ serviceType: 'SEA', contentsDescription: 'Tires' });
+      .send({
+        serviceType: 'SEA',
+        contentsDescription: 'Tires',
+        haitiDepartmentKey: 'OUEST',
+        haitiDeliveryCity: 'Port-au-Prince',
+      });
     const secondId = r.body.data.id;
 
     const merged = await request(app)

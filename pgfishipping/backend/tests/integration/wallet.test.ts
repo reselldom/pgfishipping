@@ -35,7 +35,12 @@ beforeAll(async () => {
   const ship = await request(app)
     .post('/api/shipments/pre-alert')
     .set('Authorization', `Bearer ${token}`)
-    .send({ serviceType: 'AIR', weightLbs: 5 });
+    .send({
+      serviceType: 'AIR',
+      weightLbs: 5,
+      haitiDepartmentKey: 'OUEST',
+      haitiDeliveryCity: 'Port-au-Prince',
+    });
   shipmentId = ship.body.data.id;
 });
 
@@ -148,7 +153,12 @@ describe('Wallet API', () => {
     const ship = await request(app)
       .post('/api/shipments/pre-alert')
       .set('Authorization', `Bearer ${token}`)
-      .send({ serviceType: 'SEA', weightLbs: 1 });
+      .send({
+        serviceType: 'SEA',
+        weightLbs: 1,
+        haitiDepartmentKey: 'OUEST',
+        haitiDeliveryCity: 'Port-au-Prince',
+      });
     const sid = ship.body.data.id;
     const res = await request(app)
       .post('/api/wallet/pay-shipment')

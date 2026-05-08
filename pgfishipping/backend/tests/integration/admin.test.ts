@@ -67,6 +67,8 @@ beforeAll(async () => {
       serviceType: 'AIR',
       weightLbs: 4,
       contentsDescription: 'Test contents for admin',
+      haitiDepartmentKey: 'OUEST',
+      haitiDeliveryCity: 'Port-au-Prince',
     });
   shipmentId = ship.body.data.id;
 });
