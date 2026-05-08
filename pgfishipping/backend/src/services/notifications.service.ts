@@ -78,7 +78,12 @@ export async function notifyWelcome(
 ): Promise<DispatchResult | null> {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return null;
-  return dispatch(userId, user.email, 'welcome', welcomeEmail(args));
+  return dispatch(
+    userId,
+    user.email,
+    'welcome',
+    welcomeEmail({ ...args, language: user.language }),
+  );
 }
 
 export async function notifyPasswordReset(
@@ -87,7 +92,12 @@ export async function notifyPasswordReset(
 ): Promise<DispatchResult | null> {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return null;
-  return dispatch(userId, user.email, 'password_reset', passwordResetEmail(args));
+  return dispatch(
+    userId,
+    user.email,
+    'password_reset',
+    passwordResetEmail({ ...args, language: user.language }),
+  );
 }
 
 export async function notifyVerifyEmail(
@@ -157,6 +167,7 @@ export async function notifyShipmentStatus(
   if (!shipment || !shipment.user) return null;
 
   const firstName = shipment.user.firstName;
+  const language = shipment.user.language;
   let rendered;
   if (template === 'package_received') {
     rendered = packageReceivedEmail({
@@ -165,6 +176,7 @@ export async function notifyShipmentStatus(
       weightLbs: shipment.weightLbs,
       contents: shipment.contentsDescription,
       warehouseName: shipment.destinationBranch?.name ?? null,
+      language,
     });
   } else if (template === 'package_in_transit') {
     rendered = packageInTransitEmail({
@@ -172,6 +184,7 @@ export async function notifyShipmentStatus(
       trackingCode: shipment.trackingCode,
       serviceType: shipment.serviceType,
       estimatedArrival: null,
+      language,
     });
   } else if (template === 'package_available') {
     const totalUsd = shipment.totalCost ?? null;
@@ -185,6 +198,7 @@ export async function notifyShipmentStatus(
       branchHours: null,
       totalDueUsd: totalUsd,
       totalDueHtg: totalUsd ? Math.round(totalUsd * rate) : null,
+      language,
     });
   } else if (template === 'package_status_alert') {
     const copy = STATUS_ALERT_COPY[status];
@@ -194,12 +208,14 @@ export async function notifyShipmentStatus(
       trackingCode: shipment.trackingCode,
       statusTitle: copy.statusTitle,
       message: copy.message,
+      language,
     });
   } else {
     rendered = packageDeliveredEmail({
       firstName,
       trackingCode: shipment.trackingCode,
       pickedUpAt: shipment.deliveredAt ?? new Date(),
+      language,
     });
   }
 
@@ -213,7 +229,7 @@ export async function notifyPasswordChanged(userId: string): Promise<DispatchRes
     userId,
     user.email,
     'password_changed',
-    passwordChangedEmail({ firstName: user.firstName }),
+    passwordChangedEmail({ firstName: user.firstName, language: user.language }),
   );
 }
 
@@ -226,7 +242,7 @@ export async function notifyPasswordResetSuccess(
     userId,
     user.email,
     'password_reset_success',
-    passwordResetSuccessEmail({ firstName: user.firstName }),
+    passwordResetSuccessEmail({ firstName: user.firstName, language: user.language }),
   );
 }
 
@@ -239,7 +255,7 @@ export async function notifyEmailAddressVerified(
     userId,
     user.email,
     'email_verified',
-    emailVerifiedEmail({ firstName: user.firstName }),
+    emailVerifiedEmail({ firstName: user.firstName, language: user.language }),
   );
 }
 
@@ -259,6 +275,7 @@ export async function notifyDepositConfirmed(
     newBalanceUsd: tx.wallet.balanceUsd,
     paymentMethod: tx.paymentMethod ?? 'Unknown',
     reference: tx.reference ?? tx.id,
+    language: user.language,
   }));
 }
 
@@ -280,5 +297,6 @@ export async function notifyThirdPartyAuth(
     authorizedName: auth.authorizedName,
     idType: auth.idType,
     idNumber: auth.idNumber,
+    language: user.language,
   }));
 }

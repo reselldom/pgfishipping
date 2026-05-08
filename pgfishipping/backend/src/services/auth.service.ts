@@ -24,6 +24,7 @@ import {
 } from './notifications.service';
 import type { Language, User } from '@prisma/client';
 import { logger } from '../utils/logger';
+import { publicWebUrl } from '../utils/publicWebUrl';
 
 export interface RegisterInput {
   email: string;
@@ -181,7 +182,10 @@ export async function registerCustomer(input: RegisterInput): Promise<AuthResult
 async function sendWelcomeAndVerification(user: User): Promise<void> {
   // Verification first — users must receive the link even if the welcome template fails.
   if (user.emailVerifyToken) {
-    const verifyUrl = `${env.APP_URL}/verify-email?token=${user.emailVerifyToken}`;
+    const verifyUrl = publicWebUrl(
+      `/verify-email?token=${encodeURIComponent(user.emailVerifyToken)}`,
+      user.language,
+    );
     const verify = verifyEmailTemplate({
       firstName: user.firstName,
       verifyUrl,
@@ -215,6 +219,7 @@ async function sendWelcomeAndVerification(user: User): Promise<void> {
     customerCode: user.customerCode,
     airAddress: usAddress.airAddress,
     seaAddress: usAddress.seaAddress,
+    language: user.language,
   });
   const welcomeResult = await sendEmail({
     to: user.email,
@@ -331,11 +336,15 @@ export async function requestPasswordReset(email: string): Promise<void> {
     data: { resetToken: token, resetTokenExpiry: expires },
   });
 
-  const resetUrl = `${env.APP_URL}/reset-password?token=${token}`;
+  const resetUrl = publicWebUrl(
+    `/reset-password?token=${encodeURIComponent(token)}`,
+    user.language,
+  );
   const tpl = passwordResetEmail({
     firstName: user.firstName,
     resetUrl,
     expiresInMinutes: 60,
+    language: user.language,
   });
   const mailResult = await sendEmail({
     to: user.email,
@@ -405,7 +414,10 @@ export async function resendVerificationEmail(email: string): Promise<void> {
       data: { emailVerifyToken: token },
     });
   }
-  const verifyUrl = `${env.APP_URL}/verify-email?token=${token}`;
+  const verifyUrl = publicWebUrl(
+    `/verify-email?token=${encodeURIComponent(token)}`,
+    user.language,
+  );
   const tpl = verifyEmailTemplate({ firstName: user.firstName, verifyUrl });
   const mailResult = await sendEmail({
     to: user.email,

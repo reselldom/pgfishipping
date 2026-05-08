@@ -66,7 +66,7 @@ Exact steps: after you create Vercel projects, add custom domains **www.example.
 
 6. **`backend/.env`:** Copy from `deploy/backend.env.production.example` in this repo, fill real values:
 
-   - `DATABASE_URL`, `JWT_SECRET` (32+ chars), `CORS_ORIGINS` (**both** `https://www.example.com` and `https://admin.example.com`), `API_URL`, `APP_URL`, `ADMIN_URL`, `SUPER_ADMIN_*`, optional `R2_*` / `RESEND_API_KEY`.
+   - `DATABASE_URL`, `JWT_SECRET` (32+ chars), `CORS_ORIGINS` (**both** `https://www.example.com` and `https://admin.example.com`), **`APP_URL`** (customer site HTTPS), **`PUBLIC_WEB_DEFAULT_LOCALE`** (typically `ht` — must match storefront defaultLocale), `API_URL`, `ADMIN_URL`, `SUPER_ADMIN_*`, optional `R2_*` / `RESEND_API_KEY`.
 
 7. **Build & migrate:**
 
@@ -135,7 +135,7 @@ Exact steps: after you create Vercel projects, add custom domains **www.example.
    |------|--------|
    | `NEXT_PUBLIC_API_URL` | `https://api.yourdomain.com/api` |
 
-   **Important:** `NEXT_PUBLIC_API_URL` **must not be empty**. An empty string is still injected into the bundle and breaks `??` fallbacks (`""` only replaces `null` / `undefined`). If signup, login, or email links misbehave, check this variable in **all** Production / Preview scopes and redeploy after fixing.
+   **Important:** Set **`NEXT_PUBLIC_API_URL`** to your HTTPS API `/api` base in production (the storefront also falls back cleanly if mis-set; localhost is wrong in prod).
 
 5. **Deploy**. Add domain **www.yourdomain.com** (and optionally **apex** redirect to www in Vercel).
 
@@ -162,7 +162,7 @@ Exact steps: after you create Vercel projects, add custom domains **www.example.
 ## Part C1 — Resend (transactional email): **Droplet API only**
 
 - **Do not** put `RESEND_API_KEY` on Vercel — the Next.js sites do not send mail; the **Node API** (`pgfishipping/backend`) does.
-- On the Droplet `backend/.env`, set **`RESEND_API_KEY`**, **`EMAIL_FROM`** (verified domain in Resend), **`EMAIL_REPLY_TO`**, and **`APP_URL`** to your **live customer URL** (`https://www.yourdomain.com`) so verification and password-reset links are correct.
+- On the Droplet `backend/.env`, set **`RESEND_API_KEY`**, **`EMAIL_FROM`** (verified domain in Resend), **`EMAIL_REPLY_TO`**, **`APP_URL`** (`https://www.yourdomain.com`, no trailing slash), and **`PUBLIC_WEB_DEFAULT_LOCALE`** (match storefront default locale, usually `ht`). Email links embed `/{locale}/…` using the customer account **`language`** (`EN→en`, …) with **`PUBLIC_WEB_DEFAULT_LOCALE`** as fallback.
 
 ---
 

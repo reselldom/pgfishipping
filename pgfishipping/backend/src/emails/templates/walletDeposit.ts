@@ -1,5 +1,6 @@
-import { env } from '../../config/env';
+import type { Language } from '@prisma/client';
 import { esc, layout } from './_helpers';
+import { publicWebUrl } from '../../utils/publicWebUrl';
 
 export interface WalletDepositArgs {
   firstName: string;
@@ -7,6 +8,7 @@ export interface WalletDepositArgs {
   newBalanceUsd: number;
   paymentMethod: string;
   reference: string;
+  language?: Language | null;
 }
 
 export function walletDepositEmail(args: WalletDepositArgs): {
@@ -24,7 +26,7 @@ Method: ${args.paymentMethod}
 Reference: ${args.reference}
 New balance: $${args.newBalanceUsd.toFixed(2)} USD
 
-View wallet: ${env.APP_URL}/wallet`;
+View wallet: ${publicWebUrl('/dashboard/wallet', args.language)}`;
 
   const html = layout({
     title: 'Wallet deposit confirmed',
@@ -39,7 +41,7 @@ View wallet: ${env.APP_URL}/wallet`;
         <tr><td style="padding:6px 0;color:#666;border-top:1px solid #e0e6ee"><strong>New balance</strong></td><td style="padding:6px 0;text-align:right;border-top:1px solid #e0e6ee"><strong>$${args.newBalanceUsd.toFixed(2)} USD</strong></td></tr>
       </table>
     `,
-    ctaUrl: `${env.APP_URL}/wallet`,
+    ctaUrl: publicWebUrl('/dashboard/wallet', args.language),
     ctaLabel: 'View wallet',
   });
   return { subject, html, text };

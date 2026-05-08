@@ -1,5 +1,6 @@
-import { env } from '../../config/env';
+import type { Language } from '@prisma/client';
 import { esc, layout } from './_helpers';
+import { publicWebUrl } from '../../utils/publicWebUrl';
 
 export interface PackageAvailableArgs {
   firstName: string;
@@ -10,6 +11,7 @@ export interface PackageAvailableArgs {
   branchHours?: string | null;
   totalDueUsd?: number | null;
   totalDueHtg?: number | null;
+  language?: Language | null;
 }
 
 export function packageAvailableEmail(args: PackageAvailableArgs): {
@@ -18,7 +20,10 @@ export function packageAvailableEmail(args: PackageAvailableArgs): {
   text: string;
 } {
   const subject = `🎉 Your package is ready for pickup — ${args.trackingCode}`;
-  const trackUrl = `${env.APP_URL}/track/${args.trackingCode}`;
+  const trackUrl = publicWebUrl(
+    `/track/${encodeURIComponent(args.trackingCode)}`,
+    args.language,
+  );
   const due =
     args.totalDueUsd != null
       ? `Total due: $${args.totalDueUsd.toFixed(2)} USD${args.totalDueHtg ? ` (${args.totalDueHtg.toFixed(0)} HTG)` : ''}`

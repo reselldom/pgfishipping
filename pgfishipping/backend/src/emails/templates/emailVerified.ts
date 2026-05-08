@@ -1,7 +1,12 @@
 import { env } from '../../config/env';
 import { esc, layout } from './_helpers';
+import { publicWebUrl } from '../../utils/publicWebUrl';
+import type { Language } from '@prisma/client';
 
-export function emailVerifiedEmail(args: { firstName: string }): {
+export function emailVerifiedEmail(args: {
+  firstName: string;
+  language?: Language | null;
+}): {
   subject: string;
   html: string;
   text: string;
@@ -11,7 +16,7 @@ export function emailVerifiedEmail(args: { firstName: string }): {
 
 Thanks — your email address is now verified for your PGFI Shipping account.
 
-Open your dashboard: ${env.APP_URL}/dashboard
+Open your dashboard: ${publicWebUrl('/dashboard', args.language)}
 
 — PGFI Shipping`;
   const html = layout({
@@ -20,7 +25,7 @@ Open your dashboard: ${env.APP_URL}/dashboard
     bodyHtml: `
       <p>Hello ${esc(args.firstName)},</p>
       <p>Thanks — your email address is now verified.</p>`,
-    ctaUrl: `${env.APP_URL}/dashboard`,
+    ctaUrl: publicWebUrl('/dashboard', args.language),
     ctaLabel: 'Go to dashboard',
   });
   return { subject, html, text };

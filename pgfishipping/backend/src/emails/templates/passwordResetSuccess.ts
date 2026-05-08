@@ -1,7 +1,12 @@
 import { env } from '../../config/env';
 import { esc, layout } from './_helpers';
+import { publicWebUrl } from '../../utils/publicWebUrl';
+import type { Language } from '@prisma/client';
 
-export function passwordResetSuccessEmail(args: { firstName: string }): {
+export function passwordResetSuccessEmail(args: {
+  firstName: string;
+  language?: Language | null;
+}): {
   subject: string;
   html: string;
   text: string;
@@ -9,7 +14,7 @@ export function passwordResetSuccessEmail(args: { firstName: string }): {
   const subject = 'Your PGFI Shipping password was reset';
   const text = `Hello ${args.firstName},
 
-Your password was successfully reset. You can now sign in: ${env.APP_URL}/login
+Your password was successfully reset. You can now sign in: ${publicWebUrl('/login', args.language)}
 
 If you did not reset your password, contact support immediately: ${env.EMAIL_REPLY_TO}
 
@@ -21,7 +26,7 @@ If you did not reset your password, contact support immediately: ${env.EMAIL_REP
       <p>Hello ${esc(args.firstName)},</p>
       <p>Your password was successfully reset.</p>
       <p>If you did not request this change, contact support immediately at ${esc(env.EMAIL_REPLY_TO)}.</p>`,
-    ctaUrl: `${env.APP_URL}/login`,
+    ctaUrl: publicWebUrl('/login', args.language),
     ctaLabel: 'Sign in',
   });
   return { subject, html, text };

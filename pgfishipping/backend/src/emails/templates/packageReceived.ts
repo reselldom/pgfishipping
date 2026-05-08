@@ -1,5 +1,6 @@
-import { env } from '../../config/env';
+import type { Language } from '@prisma/client';
 import { esc, layout } from './_helpers';
+import { publicWebUrl } from '../../utils/publicWebUrl';
 
 export interface PackageReceivedArgs {
   firstName: string;
@@ -7,6 +8,7 @@ export interface PackageReceivedArgs {
   weightLbs?: number | null;
   contents?: string | null;
   warehouseName?: string | null;
+  language?: Language | null;
 }
 
 export function packageReceivedEmail(args: PackageReceivedArgs): {
@@ -15,7 +17,10 @@ export function packageReceivedEmail(args: PackageReceivedArgs): {
   text: string;
 } {
   const subject = `📦 Package received at our US warehouse — ${args.trackingCode}`;
-  const trackUrl = `${env.APP_URL}/track/${args.trackingCode}`;
+  const trackUrl = publicWebUrl(
+    `/track/${encodeURIComponent(args.trackingCode)}`,
+    args.language,
+  );
   const text = `Hi ${args.firstName},
 
 Great news — we received your package at our US warehouse${args.warehouseName ? ` (${args.warehouseName})` : ''}.

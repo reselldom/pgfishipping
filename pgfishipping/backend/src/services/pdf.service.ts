@@ -1,6 +1,7 @@
+import type { Language } from '@prisma/client';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { generateBarcodePng, generateQrPng } from './barcode.service';
-import { env } from '../config/env';
+import { publicWebUrl } from '../utils/publicWebUrl';
 
 export interface ShippingLabelArgs {
   trackingCode: string;
@@ -10,6 +11,8 @@ export interface ShippingLabelArgs {
   weightLbs?: number | null;
   contentsDescription?: string | null;
   destination?: string | null;
+  /** Recipient UI language — QR points at locale-prefixed public track URL. */
+  customerLanguage?: Language | null;
 }
 
 /**
@@ -85,7 +88,10 @@ export async function generateShippingLabelPdf(
   drawText(args.trackingCode, 16, 130, 14, true);
 
   // QR
-  const qrUrl = `${env.APP_URL}/track/${args.trackingCode}`;
+  const qrUrl = publicWebUrl(
+    `/track/${encodeURIComponent(args.trackingCode)}`,
+    args.customerLanguage ?? null,
+  );
   const qrPng = await generateQrPng(qrUrl);
   const qrImg = await pdf.embedPng(qrPng);
   const qdims = qrImg.scaleToFit(80, 80);

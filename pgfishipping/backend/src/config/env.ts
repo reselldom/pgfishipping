@@ -7,6 +7,8 @@ const schema = z.object({
 
   APP_NAME: z.string().default('PGFI Shipping'),
   APP_URL: z.string().url().default('http://localhost:3030'),
+  /** First segment under APP_URL for public Next.js routes (must match frontend `defaultLocale`). */
+  PUBLIC_WEB_DEFAULT_LOCALE: z.string().default('ht'),
   API_URL: z.string().url().default('http://localhost:4000'),
   ADMIN_URL: z.string().url().default('http://localhost:3001'),
 

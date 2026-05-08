@@ -10,10 +10,9 @@ import {
   uploadSupportAttachment,
   type SupportMessage,
 } from '@/lib/dashboard-api';
+import { clientApiBaseUrl } from '@/lib/client-api-base-url';
 
-const API_ORIGIN = (
-  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api'
-).replace(/\/api\/?$/, '');
+const API_ORIGIN = clientApiBaseUrl().replace(/\/api\/?$/, '');
 
 function SupportChatWidgetInner(): JSX.Element | null {
   const accessToken = useAuthStore((s) => s.accessToken);

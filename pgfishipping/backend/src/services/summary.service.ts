@@ -1,13 +1,15 @@
 import { prisma } from '../config/database';
 import { sendEmail } from './email.service';
 import { logger } from '../utils/logger';
-import { env } from '../config/env';
 import { esc, layout } from '../emails/templates/_helpers';
+import { publicWebUrl } from '../utils/publicWebUrl';
+import type { Language } from '@prisma/client';
 
 export interface UserWeeklySummary {
   userId: string;
   email: string;
   firstName: string;
+  language: Language;
   newPackages: number;
   delivered: number;
   inTransit: number;
@@ -48,6 +50,7 @@ export async function buildUserWeeklySummary(
     userId,
     email: user.email,
     firstName: user.firstName,
+    language: user.language,
     newPackages,
     delivered,
     inTransit,
@@ -85,7 +88,7 @@ Here's your week at a glance:
 
 Wallet balance: $${s.walletBalanceUsd.toFixed(2)} USD
 
-Dashboard: ${env.APP_URL}/dashboard`;
+Dashboard: ${publicWebUrl('/dashboard', s.language)}`;
 
   const html = layout({
     title: 'Your PGFI weekly summary',
@@ -101,7 +104,7 @@ Dashboard: ${env.APP_URL}/dashboard`;
         <tr><td style="padding:8px 0;color:#666;border-top:1px solid #e0e6ee"><strong>Wallet balance</strong></td><td style="padding:8px 0;text-align:right;border-top:1px solid #e0e6ee"><strong>$${s.walletBalanceUsd.toFixed(2)} USD</strong></td></tr>
       </table>
     `,
-    ctaUrl: `${env.APP_URL}/dashboard`,
+    ctaUrl: publicWebUrl('/dashboard', s.language),
     ctaLabel: 'Go to dashboard',
   });
   return { subject, html, text };

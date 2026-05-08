@@ -1,5 +1,6 @@
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
+import { clientApiBaseUrl } from './client-api-base-url';
+
+const API_URL = clientApiBaseUrl();
 
 type ApiEnvelope<T> =
   | { ok: true; data: T; meta?: unknown }

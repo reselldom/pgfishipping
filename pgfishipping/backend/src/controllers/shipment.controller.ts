@@ -205,6 +205,7 @@ export async function label(req: Request, res: Response): Promise<void> {
     weightLbs: ship.weightLbs,
     contentsDescription: ship.contentsDescription,
     destination: ship.destinationCountry,
+    customerLanguage: user.language,
   });
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader(

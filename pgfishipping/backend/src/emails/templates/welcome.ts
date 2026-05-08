@@ -1,10 +1,12 @@
-import { env } from '../../config/env';
+import type { Language } from '@prisma/client';
+import { publicWebUrl } from '../../utils/publicWebUrl';
 
 export interface WelcomeEmailArgs {
   firstName: string;
   customerCode: string;
   airAddress: string;
   seaAddress: string;
+  language?: Language | null;
 }
 
 export function welcomeEmail(args: WelcomeEmailArgs): {
@@ -30,7 +32,7 @@ How it works:
 2. We receive it, register it in your account, and forward to Haiti.
 3. You pick it up from your local PGFI branch.
 
-Login: ${env.APP_URL}/login`;
+Login: ${publicWebUrl('/login', args.language)}`;
 
   const html = `<!doctype html>
 <html><body style="font-family:Arial,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:24px">
@@ -52,7 +54,7 @@ Login: ${env.APP_URL}/login`;
   </ol>
 
   <p style="margin-top:32px">
-    <a href="${env.APP_URL}/dashboard" style="background:#0a3d91;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block">Go to your dashboard</a>
+    <a href="${publicWebUrl('/dashboard', args.language)}" style="background:#0a3d91;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block">Go to your dashboard</a>
   </p>
 
   <p style="margin-top:32px;color:#666;font-size:13px">— The PGFI Shipping Team</p>

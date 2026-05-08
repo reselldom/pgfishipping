@@ -1,11 +1,13 @@
-import { env } from '../../config/env';
+import type { Language } from '@prisma/client';
 import { esc, layout } from './_helpers';
+import { publicWebUrl } from '../../utils/publicWebUrl';
 
 export interface PackageInTransitArgs {
   firstName: string;
   trackingCode: string;
   serviceType: 'AIR' | 'SEA';
   estimatedArrival?: string | null;
+  language?: Language | null;
 }
 
 export function packageInTransitEmail(args: PackageInTransitArgs): {
@@ -14,7 +16,10 @@ export function packageInTransitEmail(args: PackageInTransitArgs): {
   text: string;
 } {
   const subject = `✈️ Your package is on its way to Haiti — ${args.trackingCode}`;
-  const trackUrl = `${env.APP_URL}/track/${args.trackingCode}`;
+  const trackUrl = publicWebUrl(
+    `/track/${encodeURIComponent(args.trackingCode)}`,
+    args.language,
+  );
   const eta = args.estimatedArrival
     ? `Estimated arrival: ${args.estimatedArrival}`
     : `${args.serviceType === 'AIR' ? 'Air' : 'Sea'} freight typically takes ${args.serviceType === 'AIR' ? '3–5 days' : '15–25 days'}.`;

@@ -1,5 +1,6 @@
-import { env } from '../../config/env';
+import type { Language } from '@prisma/client';
 import { esc, layout } from './_helpers';
+import { publicWebUrl } from '../../utils/publicWebUrl';
 
 export interface ThirdPartyAuthArgs {
   firstName: string;
@@ -7,6 +8,7 @@ export interface ThirdPartyAuthArgs {
   authorizedName: string;
   idType: string;
   idNumber: string;
+  language?: Language | null;
 }
 
 export function thirdPartyAuthEmail(args: ThirdPartyAuthArgs): {
@@ -15,7 +17,10 @@ export function thirdPartyAuthEmail(args: ThirdPartyAuthArgs): {
   text: string;
 } {
   const subject = `Third-party pickup authorization saved — ${args.trackingCode}`;
-  const trackUrl = `${env.APP_URL}/track/${args.trackingCode}`;
+  const trackUrl = publicWebUrl(
+    `/track/${encodeURIComponent(args.trackingCode)}`,
+    args.language,
+  );
   const text = `Hi ${args.firstName},
 
 You've authorized the following person to pick up shipment ${args.trackingCode} on your behalf:
