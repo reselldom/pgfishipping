@@ -77,11 +77,14 @@ if [[ -z "${DB_PASSWORD:-}" ]]; then
   done
 fi
 
-# Reset the role password. Use psql's -v to bind the password as a properly
-# escaped SQL string literal (':'new_pw' below) so special characters in the
-# password cannot break the SQL.
-sudo -u postgres psql -v ON_ERROR_STOP=1 -v "new_pw=$DB_PASSWORD" -q -c \
-  "ALTER ROLE \"${DB_USER}\" WITH ENCRYPTED PASSWORD :'new_pw';" >/dev/null
+# Reset the role password. We bind the password as a psql variable and
+# reference it via :'new_pw', which psql substitutes as a properly escaped
+# SQL string literal. NOTE: psql variable substitution only works when the
+# SQL is read from stdin (or a file), NOT when passed via -c, so we feed
+# the SQL through a heredoc.
+sudo -u postgres psql -v ON_ERROR_STOP=1 -v "new_pw=$DB_PASSWORD" -q <<SQL >/dev/null
+ALTER ROLE "${DB_USER}" WITH ENCRYPTED PASSWORD :'new_pw';
+SQL
 
 echo "==> Postgres role $DB_USER password updated."
 
